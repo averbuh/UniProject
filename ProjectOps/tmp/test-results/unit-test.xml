@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="12" failures="0" errors="0" time="1.833052">
+	<testsuite tests="0" failures="0" time="0.000000" name="practice.com/http/cmd/gin" timestamp="2024-02-27T15:51:50+02:00">
+		<properties>
+			<property name="go.version" value="go1.21.1 windows/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="practice.com/http/cmd/gorilla" timestamp="2024-02-27T15:51:50+02:00">
+		<properties>
+			<property name="go.version" value="go1.21.1 windows/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="1" failures="0" time="0.000000" name="practice.com/http/cmd/standart" timestamp="2024-02-27T15:51:50+02:00">
+		<properties>
+			<property name="go.version" value="go1.21.1 windows/amd64"></property>
+		</properties>
+		<testcase classname="practice.com/http/cmd/standart" name="TestRecipesHandler_ServeHTTP" time="0.000000"></testcase>
+	</testsuite>
+	<testsuite tests="11" failures="0" time="0.002000" name="practice.com/http/pkg/repository/recipes" timestamp="2024-02-27T15:51:50+02:00">
+		<properties>
+			<property name="go.version" value="go1.21.1 windows/amd64"></property>
+		</properties>
+		<testcase classname="practice.com/http/pkg/repository/recipes" name="TestMemStore_Add/Add_to_empty_map" time="0.000000"></testcase>
+		<testcase classname="practice.com/http/pkg/repository/recipes" name="TestMemStore_Add" time="0.000000"></testcase>
+		<testcase classname="practice.com/http/pkg/repository/recipes" name="TestMemStore_Get/Find_Ham_and_cheese_toasties" time="0.000000"></testcase>
+		<testcase classname="practice.com/http/pkg/repository/recipes" name="TestMemStore_Get/Not_Found_Ratatouille" time="0.000000"></testcase>
+		<testcase classname="practice.com/http/pkg/repository/recipes" name="TestMemStore_Get" time="0.000000"></testcase>
+		<testcase classname="practice.com/http/pkg/repository/recipes" name="TestMemStore_List/Simple_list" time="0.000000"></testcase>
+		<testcase classname="practice.com/http/pkg/repository/recipes" name="TestMemStore_List" time="0.000000"></testcase>
+		<testcase classname="practice.com/http/pkg/repository/recipes" name="TestMemStore_Remove/Empty_list" time="0.000000"></testcase>
+		<testcase classname="practice.com/http/pkg/repository/recipes" name="TestMemStore_Remove" time="0.000000"></testcase>
+		<testcase classname="practice.com/http/pkg/repository/recipes" name="TestMemStore_Update/Update_butter_to_Ham_and_cheese" time="0.000000"></testcase>
+		<testcase classname="practice.com/http/pkg/repository/recipes" name="TestMemStore_Update" time="0.000000"></testcase>
+	</testsuite>
+</testsuites>

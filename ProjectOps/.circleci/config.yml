@@ -1,0 +1,45 @@
+version: 2.1
+jobs:
+  build_test:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/go:1.21.6
+    parallelism: 4
+    resource_class: large
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v4-{{ checksum "go.sum" }}
+      - run:
+          name: Install Dependencies
+          command: go get ./...
+      - save_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+      - run:
+          name: Run tests
+          command: go list ./... | circleci tests run --command "xargs gotestsum --junitfile tmp/unit-tests.xml --format testname --" --split-by=timings --timings-type=name
+      - store_test_results:
+          path: ./tmp/test-results
+
+
+
+orbs:
+  aws-ecr: circleci/aws-ecr@8.2.1
+
+workflows:
+
+  build_and_test_deploy:
+    jobs:
+      - build_test
+      - aws-ecr/build-and-push-image:  
+          context: aws-dev
+          create-repo: true
+          dockerfile: Dockerfile
+          path: .
+          repo: "services-project-ops"
+          tag: "$CIRCLE_SHA1"
+          requires:
+            - build_test
