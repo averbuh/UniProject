@@ -1,6 +1,7 @@
 apiVersion: v2
 name: mychart
 description: A Helm chart for Kubernetes
+icon: https://kubernetes.io/assets/images/k8s-logo.png
 
 # A chart can be either an 'application' or a 'library' chart.
 #

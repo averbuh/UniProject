@@ -26,9 +26,8 @@ metadata:
   {{if eq .Values.tls true}}
      cert-manager.io/cluster-issuer: letsencrypt-prod
   {{end}} 
-     kubernetes.io/ingress.class: "nginx"
 spec:
-  #ingressClassName: nginx
+  ingressClassName: nginx
 {{if eq .Values.tls true}}
   tls:
   - hosts: 
