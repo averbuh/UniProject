@@ -1,0 +1,14 @@
+{
+  "name": "Dish",
+  "ingredients": [
+    {
+      "name": "bread"
+    },
+    {
+      "name": "ham"
+    },
+    {
+      "name": "cheese"
+    }
+  ]
+}

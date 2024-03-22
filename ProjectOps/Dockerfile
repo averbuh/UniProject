@@ -14,7 +14,7 @@ RUN go get -d -v ./...
 RUN go install -v ./...
 
 # Build
-RUN go build -o ./build/standart_api ./cmd/standart
+RUN go build -o ./build/gin_api ./cmd/gin
 
 # Optional:
 # To bind to a TCP port, runtime parameters must be supplied to the docker command.
@@ -25,4 +25,4 @@ EXPOSE 8080
 EXPOSE 443
 
 # Run
-CMD ["./build/standart_api"]
+CMD ["./build/gin_api"]

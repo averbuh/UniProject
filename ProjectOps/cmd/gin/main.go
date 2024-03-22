@@ -13,7 +13,7 @@ func main() {
 	router := gin.Default()
 
 	// Instantiate recipe Handler and provide a data store
-	store := recipes.NewMemStore()
+	store := recipes.NewPostgres()
 	recipesHandler := NewRecipesHandler(store)
 
 	// Register Routes
@@ -24,7 +24,6 @@ func main() {
 	router.PUT("/recipes/:id", recipesHandler.UpdateRecipe)
 	router.DELETE("/recipes/:id", recipesHandler.DeleteRecipe)
 
-	aboutTime()
 	// Start the server
 	router.Run()
 }
@@ -128,5 +127,4 @@ func (h RecipesHandler) DeleteRecipe(c *gin.Context) {
 
 	// return success payload
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
-
 }
