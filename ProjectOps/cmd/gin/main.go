@@ -15,6 +15,7 @@ func main() {
 	// Instantiate recipe Handler and provide a data store
 	store := recipes.NewPostgres()
 	recipesHandler := NewRecipesHandler(store)
+	defer store.CloseDB()
 
 	// Register Routes
 	router.GET("/", homePage)

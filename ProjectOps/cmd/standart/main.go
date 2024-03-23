@@ -20,7 +20,6 @@ func main() {
 	mux.Handle("/recipes/", RecipesHandler)
 
 	http.ListenAndServe(":8080", mux)
-
 }
 
 type homeHandler struct{}
@@ -123,8 +122,8 @@ func (h *RecipesHandler) GetRecipe(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonBytes)
-
 }
+
 func (h *RecipesHandler) UpdateRecipe(w http.ResponseWriter, r *http.Request) {
 	matches := RecipeReWithID.FindStringSubmatch(r.URL.Path)
 	if len(matches) < 2 {
@@ -148,6 +147,7 @@ func (h *RecipesHandler) UpdateRecipe(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 }
+
 func (h *RecipesHandler) DeleteRecipe(w http.ResponseWriter, r *http.Request) {
 	matches := RecipeReWithID.FindStringSubmatch(r.URL.Path)
 	if len(matches) < 2 {
@@ -161,7 +161,6 @@ func (h *RecipesHandler) DeleteRecipe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-
 }
 
 func InternalServerErrorHandler(w http.ResponseWriter, r *http.Request) {

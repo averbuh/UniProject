@@ -2,14 +2,14 @@ package recipes
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 
-	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 )
 
 const (
-	host     = "172.17.0.2"
+	host     = "172.17.0.3"
 	port     = 5432
 	user     = "postgres"
 	password = "admin"
@@ -25,7 +25,6 @@ func NewPostgres() *Postgres {
 	db, err := sql.Open("postgres", psqlconn)
 	CheckError(err)
 
-	defer db.Close()
 	// check db
 	err = db.Ping()
 	CheckError(err)
@@ -48,25 +47,51 @@ func CheckError(err error) {
 	}
 }
 
+func (p Postgres) CloseDB() {
+	p.db.Close()
+}
+
 func (p Postgres) Add(name string, recipe Recipe) error {
-	insertStmt := `insert into recipes (name, ingredients) values ($1, $2)`
-	var ing_names []string
-	for _, ing := range recipe.Ingredients {
-		ing_names = append(ing_names, ing.Name)
-	}
-	_, e := p.db.Exec(insertStmt, recipe.Name, pq.Array(ing_names))
+	jsonData, e := json.Marshal(recipe.Ingredients)
 	CheckError(e)
-	return nil
+	_, e = p.db.Exec("INSERT INTO recipes VALUES ($1, $2)", recipe.Name, jsonData)
+	CheckError(e)
+	return e
 }
 
 func (p Postgres) Get(name string) (Recipe, error) {
-	fmt.Println("GET called")
-	return Recipe{}, nil
+	fmt.Println("GET called for " + name)
+	rows, e := p.db.Query("SELECT name, ingredients FROM recipes WHERE name = $1", name)
+	CheckError(e)
+	var r Recipe
+	for rows.Next() {
+		var json_bytes []byte
+		e := rows.Scan(&r.Name, &json_bytes) // array with str ingredients
+		CheckError(e)
+		e = json.Unmarshal(json_bytes, &r.Ingredients)
+		CheckError(e)
+	}
+	return r, e
 }
 
 func (p Postgres) List() (map[string]Recipe, error) {
 	fmt.Println("List called")
-	return nil, nil
+	rows, err := p.db.Query("SELECT name, ingredients FROM recipes")
+	CheckError(err)
+	defer rows.Close()
+	recipes := make(map[string]Recipe)
+
+	for rows.Next() {
+		var r Recipe
+		var json_bytes []byte
+		err := rows.Scan(&r.Name, &json_bytes) // array with str ingredients
+		CheckError(err)
+		err = json.Unmarshal(json_bytes, &r.Ingredients)
+		CheckError(err)
+		recipes[r.Name] = r
+	}
+
+	return recipes, nil
 }
 
 func (p Postgres) Update(name string, recipe Recipe) error {
