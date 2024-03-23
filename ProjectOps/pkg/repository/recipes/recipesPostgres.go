@@ -4,9 +4,13 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
 
 	_ "github.com/lib/pq"
 )
+
+var environment = os.Getenv("APP_ENV")
 
 const (
 	host     = "172.17.0.3"
@@ -21,7 +25,18 @@ type Postgres struct {
 }
 
 func NewPostgres() *Postgres {
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	var psqlconn string
+	if environment == "prod" {
+		host := os.Getenv("POSTGRES_HOST")
+		port, _ := strconv.Atoi(os.Getenv("POSTGRES_PORT"))
+		user := os.Getenv("POSTGRES_USER")
+		password := os.Getenv("POSTGRES_PASSWORD")
+		dbname := os.Getenv("POSTGRES_DB")
+		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	} else {
+		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	}
+
 	db, err := sql.Open("postgres", psqlconn)
 	CheckError(err)
 
