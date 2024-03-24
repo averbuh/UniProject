@@ -13,9 +13,10 @@ func main() {
 	router := gin.Default()
 
 	// Instantiate recipe Handler and provide a data store
-	store := recipes.NewPostgres()
+	// store := recipes.NewPostgres()
+	store := recipes.NewMemStore()
 	recipesHandler := NewRecipesHandler(store)
-	defer store.CloseDB()
+	//	defer store.CloseDB()
 
 	// Register Routes
 	router.GET("/", homePage)
