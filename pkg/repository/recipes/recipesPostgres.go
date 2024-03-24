@@ -28,16 +28,22 @@ func NewPostgres() *Postgres {
 	if environment == "prod" {
 		host := "postgres-postgresql.default.svc.cluster.local"
 		port := 5432
-		user := os.Getenv("POSTGRES_USER")
-		password := os.Getenv("POSTGRES_PASSWORD")
-		dbname := os.Getenv("POSTGRES_DB")
+		user, exist := os.LookupEnv("POSTGRES_USER")
+		if !exist {
+			panic("POSTGRES_USER not set")
+		}
+		password, exist := os.LookupEnv("POSTGRES_PASSWORD")
+		if !exist {
+			panic("POSTGRES_PASSWORD not set")
+		}
+		dbname, exist := os.LookupEnv("POSTGRES_DB")
+		if !exist {
+			panic("POSTGRES_DB not set")
+		}
 		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	} else {
 		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	}
-
-	fmt.Println(os.Getenv("POSTGRES_DB"))
-	fmt.Println(os.Getenv("POSTGRES_PASSWORD"))
 
 	db, err := sql.Open("postgres", psqlconn)
 	CheckError(err)
