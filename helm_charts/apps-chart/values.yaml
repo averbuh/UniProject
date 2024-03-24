@@ -19,3 +19,9 @@ maxReplicas: 3
 minReplicas: 1
 
 tls: false
+
+POSTGRES_DB: "postgres"
+
+POSTGRES_USER: "postgres"
+
+POSTGRES_PASSWORD: "testpass"

@@ -26,7 +26,7 @@ type Postgres struct {
 func NewPostgres() *Postgres {
 	var psqlconn string
 	if environment == "prod" {
-		host := "postgres-postgresql.default.svc.cluster.local"
+		host := "postgres-postgresql"
 		port := 5432
 		user, exist := os.LookupEnv("POSTGRES_USER")
 		if !exist {
@@ -50,7 +50,9 @@ func NewPostgres() *Postgres {
 
 	// check db
 	err = db.Ping()
-	CheckError(err)
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Println("Connected!") // insert
 	// hardcoded
