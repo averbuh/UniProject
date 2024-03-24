@@ -37,6 +37,6 @@ workflows:
           dockerfile: Dockerfile
           path: .
           repo: "services-project-ops"
-          tag: "services-project-ops:latest 975050257492.dkr.ecr.eu-central-1.amazonaws.com/services-project-ops:latest"
+          tag: "latest 975050257492.dkr.ecr.eu-central-1.amazonaws.com/services-project-ops:latest"
           requires:
             - build_test
