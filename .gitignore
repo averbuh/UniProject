@@ -1,9 +1,4 @@
 ProjectOps/cmd/gin/.air.toml
-ProjectOps/cmd/gin/tmp
-ProjectOps/tmp
-ProjectOps/cmd/gin/tmp
 ProjectOps/cmd/gin/.air.toml
-ProjectOps/postgres_queries
 ProjectOps/cmd/standart/.air.toml
 ProjectOps/cmd/gin/.air.toml
-ProjectOps/cmd/gin/tmp

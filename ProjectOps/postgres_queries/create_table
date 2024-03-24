@@ -1,0 +1,39 @@
+insert into recipes values (
+    2,
+    'Borsh',
+    '{"ingredients":[{"name": "bread"}, {"name": "ham"}, {"name": "cheese"}]}'
+
+)
+
+
+insert into recipes values (
+    3,
+    'Breakfast',
+    '[{"name": "tomatos"}, {"name": "ham"}, {"name": "cheese"}]'
+
+)
+
+
+
+create table recipes (
+    id serial primary key,
+    name text,
+    ingredients text[]
+)
+
+
+drop table recipes
+
+SELECT * FROM recipes WHERE id = 1 
+
+
+create table recipes (
+    name text primary key,
+    ingredients jsonb
+    
+)
+
+
+SELECT name, ingredients FROM recipes
+
+SELECT name, ingredients FROM recipes WHERE name = 'Dish'
