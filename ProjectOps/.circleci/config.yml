@@ -24,22 +24,19 @@ jobs:
       - store_test_results:
           path: ./tmp/test-results
 
-
-
 orbs:
   aws-ecr: circleci/aws-ecr@8.2.1
 
 workflows:
-
   build_and_test_deploy:
     jobs:
       - build_test
-      - aws-ecr/build-and-push-image:  
+      - aws-ecr/build-and-push-image:
           context: aws-dev
           create-repo: true
           dockerfile: Dockerfile
           path: .
           repo: "services-project-ops"
-          tag: "$CIRCLE_SHA1"
+          tag: "services-project-ops:latest 975050257492.dkr.ecr.eu-central-1.amazonaws.com/services-project-ops:latest"
           requires:
             - build_test

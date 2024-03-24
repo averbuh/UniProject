@@ -5,12 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
 
 	_ "github.com/lib/pq"
 )
 
-var environment = os.Getenv("APP_ENV")
+var environment = "prod"
 
 const (
 	host     = "172.17.0.3"
@@ -27,8 +26,8 @@ type Postgres struct {
 func NewPostgres() *Postgres {
 	var psqlconn string
 	if environment == "prod" {
-		host := os.Getenv("POSTGRES_HOST")
-		port, _ := strconv.Atoi(os.Getenv("POSTGRES_PORT"))
+		host := "postgres-postgresql.default.svc.cluster.local"
+		port := 5432
 		user := os.Getenv("POSTGRES_USER")
 		password := os.Getenv("POSTGRES_PASSWORD")
 		dbname := os.Getenv("POSTGRES_DB")

@@ -36,6 +36,7 @@ spec:
 
       imagePullSecrets:
       - name: ecr
+      - name: postgres-postgresql
 
 ---
 
@@ -71,3 +72,5 @@ spec:
     kind: Deployment
     name: {{ .Release.Name }}
   targetCPUUtilizationPercentage: 50
+
+
