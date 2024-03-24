@@ -27,7 +27,7 @@ func NewPostgres() *Postgres {
 	var psqlconn string
 	if environment == "prod" {
 		host := "postgres-postgresql"
-		port := 80
+		port := 5432
 		user, exist := os.LookupEnv("POSTGRES_USER")
 		if !exist {
 			panic("POSTGRES_USER not set")
