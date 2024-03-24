@@ -1,7 +1,7 @@
 version: 2.1
 jobs:
   build_test:
-    working_directory: ~/repo/ProjectOps
+    working_directory: ~/repo
     docker:
       - image: cimg/go:1.21.6
     parallelism: 4
