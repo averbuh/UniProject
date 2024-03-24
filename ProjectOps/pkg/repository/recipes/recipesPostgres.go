@@ -32,7 +32,7 @@ func NewPostgres() *Postgres {
 		password := os.Getenv("POSTGRES_PASSWORD")
 		dbname := os.Getenv("POSTGRES_DB")
 		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	} else if environment == "dev" {
+	} else {
 		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	}
 
