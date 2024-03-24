@@ -26,7 +26,7 @@ type Postgres struct {
 func NewPostgres() *Postgres {
 	var psqlconn string
 	if environment == "prod" {
-		host := "10.109.175.143"
+		host := "postgres-postgresql"
 		port := 5432
 		user, exist := os.LookupEnv("POSTGRES_USER")
 		if !exist {

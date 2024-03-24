@@ -31,7 +31,7 @@ spec:
           # line below:
           # value: env
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         - containerPort: 443
         env:
           - name: POSTGRES_USER
@@ -41,9 +41,9 @@ spec:
                 key: POSTGRES_USER
           - name: POSTGRES_PASSWORD
             valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
-                key: POSTGRES_PASSWORD
+              secretKeyRef:
+                name: postgres-postgresql
+                key: postgres-password
           - name: POSTGRES_DB
             valueFrom:
               configMapKeyRef:
@@ -101,6 +101,5 @@ metadata:
 data:
   POSTGRES_USER: {{ .Values.POSTGRES_USER }}
   POSTGRES_DB: {{ .Values.POSTGRES_DB }}
-  POSTGRES_PASSWORD: {{ .Values.POSTGRES_PASSWORD }}
 
 
