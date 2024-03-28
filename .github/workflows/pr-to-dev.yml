@@ -38,6 +38,7 @@ jobs:
 
     # Run build of the application
     - name: Run build
+      working-directory: ./cmd/gin
       run: go build .
 
     # Run vet & lint on the code
