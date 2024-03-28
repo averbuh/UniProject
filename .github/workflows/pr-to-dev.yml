@@ -68,7 +68,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        go test ./... -run "${{ steps.test_split.outputs.run}}"
+        go test ./... -list ."
 
       # Send slack notification
       #      - name: Send slack notification
