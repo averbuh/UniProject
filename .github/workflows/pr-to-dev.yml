@@ -28,7 +28,6 @@ jobs:
       with:
         cache: true
         cache-dependency-path: go.sum
-        go-version: '1.22.0' # The Go version to download (if necessary) and use.
 
     # Install all the dependencies
     - name: Install dependencies
