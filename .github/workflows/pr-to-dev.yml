@@ -46,7 +46,7 @@ jobs:
       working-directory: ./cmd/gin
       run: |
         go vet .
-        golint .
+        go lint .
 
   test:
     needs: build
