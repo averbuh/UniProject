@@ -32,9 +32,9 @@ jobs:
 
     # Install all the dependencies
     - name: Install dependencies
+      working-directory: ./cmd/gin
       run: |
-        go version
-        go get -u golang.org/x/lint/golint
+        go get .
 
     # Run build of the application
     - name: Run build
@@ -46,7 +46,6 @@ jobs:
       working-directory: ./cmd/gin
       run: |
         go vet .
-        go lint .
 
   test:
     needs: build
