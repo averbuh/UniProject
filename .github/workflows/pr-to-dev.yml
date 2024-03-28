@@ -58,6 +58,7 @@ jobs:
       fail-fast: false
 
     steps:
+    - uses: actions/checkout@v4
     - name: Run Tests
       run: |
         go run gotest.tools/gotestsum@latest --junitfile tmp/unit-tests.xml --format testname
