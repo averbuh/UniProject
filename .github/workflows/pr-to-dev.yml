@@ -60,7 +60,7 @@ jobs:
     steps:
     - name: Run Tests
       run: |
-        go list ./... | go run gotest.tools/gotestsum@latest --junitfile tmp/unit-tests.xml --format testname
+        go run gotest.tools/gotestsum@latest --junitfile tmp/unit-tests.xml --format testname
 
       # Send slack notification
       #      - name: Send slack notification
