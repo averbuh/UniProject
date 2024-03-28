@@ -5,11 +5,12 @@ name: CI - PR to Dev
 on:
   push:
     branches:
-      - dev
+    - dev
   pull_request:
     branches:
-      - dev
+    - dev
 
+  workflow_dispatch:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # The "build" workflow
@@ -22,32 +23,32 @@ jobs:
         go-version: ["1.20", "1.21.x", "1.22.x"]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v4
 
-      # Setup Go
-      - name: Setup Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v4
-        with:
-          cache: true
-          cache-dependency-path: go.sum
-          go-version: ${{ matrix.go-version }}# The Go version to download (if necessary) and use.
+    # Setup Go
+    - name: Setup Go ${{ matrix.go-version }}
+      uses: actions/setup-go@v4
+      with:
+        cache: true
+        cache-dependency-path: go.sum
+        go-version: ${{ matrix.go-version }}# The Go version to download (if necessary) and use.
 
-      # Install all the dependencies
-      - name: Install dependencies
-        run: |
-          go version
-          go get -u golang.org/x/lint/golint
+    # Install all the dependencies
+    - name: Install dependencies
+      run: |
+        go version
+        go get -u golang.org/x/lint/golint
 
-      # Run build of the application
-      - name: Run build
-        run: go build .
+    # Run build of the application
+    - name: Run build
+      run: go build .
 
-      # Run vet & lint on the code
-      - name: Run vet & lint
-        run: |
-          go vet .
-          golint .
+    # Run vet & lint on the code
+    - name: Run vet & lint
+      run: |
+        go vet .
+        golint .
 
   test:
     needs: build
@@ -60,24 +61,24 @@ jobs:
       fail-fast: false
 
     steps:
-      # Run testing on the code
-      - name: Generate go test Slice
-        id: test_split
-        uses: hashicorp-forge/go-test-split-action@v1
-        with:
-          total: ${{ matrix.parallel }}
-          index: ${{ matrix.index }}
+    # Run testing on the code
+    - name: Generate go test Slice
+      id: test_split
+      uses: hashicorp-forge/go-test-split-action@v1
+      with:
+        total: ${{ matrix.parallel }}
+        index: ${{ matrix.index }}
 
-      - name: Run Tests
-        run: |
-          go test ./... -run "${{ steps.test_split.outputs.run}}"
+    - name: Run Tests
+      run: |
+        go test ./... -run "${{ steps.test_split.outputs.run}}"
 
-        # Send slack notification
-        #      - name: Send slack notification
-        #        uses: 8398a7/action-slack@v3
-        #        with:
-        #          status: ${{ job.status }}
-        #          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
-        #        env:
-        #          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        #        if: always() # Pick up events even if the job fails or is canceled.
+      # Send slack notification
+      #      - name: Send slack notification
+      #        uses: 8398a7/action-slack@v3
+      #        with:
+      #          status: ${{ job.status }}
+      #          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
+      #        env:
+      #          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      #        if: always() # Pick up events even if the job fails or is canceled.
