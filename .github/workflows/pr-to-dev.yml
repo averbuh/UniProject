@@ -58,13 +58,9 @@ jobs:
       fail-fast: false
 
     steps:
-    - name: Setup gotestsum
-      run: |
-        go install gotest.tools/gotestsum@latest
-
     - name: Run Tests
       run: |
-        go list ./... | gotestsum --junitfile tmp/unit-tests.xml --format testname
+        go list ./... | go run gotest.tools/gotestsum@latest --junitfile tmp/unit-tests.xml --format testname
 
       # Send slack notification
       #      - name: Send slack notification
