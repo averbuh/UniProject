@@ -1,4 +1,3 @@
-[![CI - PR to Dev](https://github.com/averbuh/UniProject/actions/workflows/pr-to-dev.yml/badge.svg?branch=dev)](https://github.com/averbuh/UniProject/actions/workflows/pr-to-dev.yml)
 # CICD pipeline for microservice application deployed in Kubernetes cluster in AWS
 
 ## Overview
