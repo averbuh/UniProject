@@ -51,11 +51,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        parallel: [2]
-        index: [0, 1]
-      fail-fast: false
+#    strategy:
+#      matrix:
+#        parallel: [2]
+#        index: [0, 1]
+#      fail-fast: false
 
     steps:
     - uses: actions/checkout@v4
