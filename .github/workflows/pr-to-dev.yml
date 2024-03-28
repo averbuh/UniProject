@@ -66,9 +66,14 @@ jobs:
         total: ${{ matrix.parallel }}
         index: ${{ matrix.index }}
 
+    - name: Setup gotestsum
+      uses: autero1/action-gotestsum@v2
+      with:
+        gotestsum_version: 1.11.0
+
     - name: Run Tests
       run: |
-        go test ./... -list ."
+        go list ./... | gotestsum --junitfile tmp/unit-tests.xml --format testname
 
       # Send slack notification
       #      - name: Send slack notification
