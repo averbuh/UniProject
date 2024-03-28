@@ -34,7 +34,8 @@ workflows:
     - aws-ecr/build-and-push-image:
         filters:
           branches:
-          - dev
+            only:
+            - dev
         context: aws-dev
         create-repo: true
         dockerfile: Dockerfile
