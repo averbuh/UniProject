@@ -43,6 +43,7 @@ jobs:
 
     # Run vet & lint on the code
     - name: Run vet & lint
+      working-directory: ./cmd/gin
       run: |
         go vet .
         golint .
@@ -67,6 +68,7 @@ jobs:
         index: ${{ matrix.index }}
 
     - name: Run Tests
+      working-directory: ./cmd/gin
       run: |
         go test ./... -run "${{ steps.test_split.outputs.run}}"
 
