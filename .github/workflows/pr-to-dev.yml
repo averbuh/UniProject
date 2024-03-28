@@ -58,14 +58,6 @@ jobs:
       fail-fast: false
 
     steps:
-    # Run testing on the code
-    - name: Generate go test Slice
-      id: test_split
-      uses: hashicorp-forge/go-test-split-action@v1
-      with:
-        total: ${{ matrix.parallel }}
-        index: ${{ matrix.index }}
-
     - name: Setup gotestsum
       run: |
         go install gotest.tools/gotestsum@latest
