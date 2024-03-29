@@ -1,0 +1,198 @@
+version: 2.1
+
+orbs:
+  aws-ecr: orbies/aws-ecr@1.2.1
+  aws-ecr-circle: circleci/aws-ecr@9.0.4
+  helm: circleci/helm@3.0.2
+  aws-eks: circleci/aws-eks@2.2.0
+  aws-cli: circleci/aws-cli@4.1.3
+
+  # analyze repo and display code coverage
+  sonarcloud: sonarsource/sonarcloud@2.0.0
+
+
+
+jobs:
+
+  lint:
+    working_directory: ~/repo
+    docker:
+    - image: golangci/golangci-lint:v1.45
+    steps:
+    - checkout
+    - run: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
+    - persist_to_workspace:
+        root: ~/repo
+        paths:
+        - golanci-report.xml
+
+  build_test:
+    working_directory: ~/repo
+    docker:
+    - image: cimg/go:1.21.6
+    resource_class: large
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+        - go-mod-v4-{{ checksum "go.sum" }}
+    - run:
+        name: Install Dependencies
+        command: go get ./...
+    - save_cache:
+        key: go-mod-v4-{{ checksum "go.sum" }}
+        paths:
+        - "/go/pkg/mod"
+
+    - run:
+        name: Run tests
+        command: |
+          mkdir -p /tmp/test-reports
+          gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+
+    - store_test_results:
+        path: /tmp/test-reports
+
+    - run:
+        name: Create temp dir for artifacts
+        command: mkdir -p /tmp/artifacts
+
+    - run:
+        name: Run coverage
+        command: |
+          go test ./... -race -coverprofile=coverage.out -json > report.json
+          go tool cover -html=coverage.out -o coverage.html
+          mv coverage.html /tmp/artifacts
+
+    - store_artifacts:
+        path: /tmp/artifacts
+
+    - persist_to_workspace:
+        root: ~/repo
+        paths:
+        - coverage.out
+        - report.json
+
+  sonar:
+    working_directory: ~/repo
+    docker:
+    - image: cimg/go:1.21.6
+    steps:
+    - checkout
+    - attach_workspace:
+        at: ~/repo
+
+    - sonarcloud/scan:
+        sonar_token_variable_name: SONAR_TOKEN
+
+
+
+  delete_helm_release:
+    docker:
+    - image: cimg/go:1.21.6
+    parameters:
+      cluster-name:
+        description: Cluster name
+        type: string
+    steps:
+    - aws-eks/update-kubeconfig-with-authenticator:
+        cluster-name: << parameters.cluster-name >>
+    - helm/delete_helm_release:
+        helm_version: v3.2.4
+        release_name: grafana-release
+        timeout: 600s
+  install_helm_chart:
+    docker:
+    - image: cimg/go:1.21.6
+    parameters:
+      cluster-name:
+        description: Cluster name
+        type: string
+    steps:
+    - aws-eks/update-kubeconfig-with-authenticator:
+        cluster-name: << parameters.cluster-name >>
+    - helm/install_helm_chart:
+        add_repo: "${AWS_ECR_HELM_REPO_NAME}"
+        chart: stable/grafana
+        helm_version: v3.2.4
+        release_name: grafana-release
+
+
+workflows:
+  build_and_test_deploy:
+    jobs:
+    - build_test
+    - sonar:
+        requires:
+        - build_test
+
+#   - aws-ecr-circle/build_and_push_image:
+#       filters:
+#         branches:
+#           only:
+#           - main
+#       account_id: ${AWS_ACCOUNT_ID}
+#       auth:
+#       - aws-cli/setup:
+#           #profile: OIDC-USER
+#           role_arn: arn:aws:iam::123456789012:role/VALID_OIDC_ECR_ROLE
+#       context: CircleCI_OIDC_Token
+#       create_repo: true
+#       dockerfile: Dockerfile
+#       extra_build_args: '--compress'
+#       no_output_timeout: 20m
+#       path: .
+#       platform: linux/amd64
+#       profile_name: OIDC-User
+#       public_registry: false
+#       push_image: true
+#       region: ${AWS_DEFAULT_REGION}
+#       repo: "services-project-ops"
+#       repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
+#       repo_encryption_type: KMS
+#       repo_policy_path: repo-policy.json
+#       repo_scan_on_push: true
+#       set_repo_policy: true
+#       skip_when_tags_exist: false
+#       tag: "latest"
+#       requires:
+#       - build_test
+
+#   - aws-ecr/push-helm-chart:
+#       filters:
+#         branches:
+#           only:
+#           - main
+#       account-url: $AWS_ECR_ACCOUNT_URL
+#       aws-access-key-id: $AWS_ACCESS_KEY_ID
+#       aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
+#       create-repo: false
+#       path: ./charts
+#       region: eu-central-1
+#       repo: "${AWS_ECR_HELM_REPO_NAME}"
+#       tag: "latest"
+#       requires:
+#       - aws-ecr-circle/build_and_push_image
+#   - install_helm_chart:
+#       filters:
+#         branches:
+#           only:
+#           - main
+#       cluster-name: test-cluster
+#   - delete_helm_release:
+#       filters:
+#         branches:
+#           only:
+#           - main
+#       cluster-name: test-cluster
+#       requires:
+#       - install_helm_chart
+#   - aws-eks/delete-cluster:
+#       filters:
+#         branches:
+#           only:
+#           - main
+#       cluster-name: test-cluster
+#       requires:
+#       - delete_helm_release
+#       wait: true

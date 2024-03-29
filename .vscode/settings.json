@@ -1,0 +1,3 @@
+{
+    "circleci.filters.branchFilter": "currentBranch"
+}
