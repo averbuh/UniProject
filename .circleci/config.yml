@@ -75,7 +75,7 @@ workflows:
         account_id: ${AWS_ACCOUNT_ID}
         auth:
         - aws-cli/setup:
-            profile: OIDC-USER
+            #profile: OIDC-USER
             role_arn: arn:aws:iam::123456789012:role/VALID_OIDC_ECR_ROLE
         context: CircleCI_OIDC_Token
         create_repo: true
