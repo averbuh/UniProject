@@ -18,7 +18,6 @@ jobs:
     docker:
     - image: cimg/go:1.21.6
     resource_class: large
-    parallelism: 3
     steps:
     - checkout
     - restore_cache:
@@ -33,17 +32,25 @@ jobs:
         - "/go/pkg/mod"
 
     - run:
+        name: Run tests
+        command: |
+          mkdir -p /tmp/test-reports
+          gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+
+    - store_test_results:
+        path: /tmp/test-reports
+
+    - run:
         name: Create temp dir for artifacts
         command: mkdir -p /tmp/artifacts
+
     - run:
-        name: Run tests and generate coverage
+        name: Run coverage
         command: |
-          go list ./... | circleci tests run --command "xargs gotestsum --junitfile ./tmp/unit-tests.xml --format testname --" --split-by=timings --timings-type=name
-          go test -coverprofile coverage.out ./...
-          go tool cover -html=coverage.out -o /tmp/coverage.html
-          mv /tmp/coverage.html /tmp/artifacts
-    - store_test_results:
-        path: ./tmp/test-results
+          go test ./... -race -coverprofile=coverage.out -json > report.json
+          go tool cover -html=coverage.out -o coverage.html
+          mv coverage.html /tmp/artifacts
+
     - store_artifacts:
         path: /tmp/artifacts
 
@@ -51,7 +58,7 @@ jobs:
         root: ~/repo
         paths:
         - coverage.out
-        - ./tmp/unit-tests.xml
+        - report.json
 
   sonar:
     working_directory: ~/repo
