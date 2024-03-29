@@ -16,7 +16,7 @@ jobs:
   test_and_coverage:
     working_directory: ~/repo
     docker:
-    - image: circleci/golang:1.17
+    - image: cimg/go:1.21.6
     steps:
     - checkout
     - restore_cache:
@@ -53,7 +53,7 @@ jobs:
   sonar:
     working_directory: ~/repo
     docker:
-    - image: circleci/golang:1.17
+    - image: cimg/go:1.21.6
     steps:
     - checkout
     - attach_workspace:
@@ -65,7 +65,7 @@ jobs:
   build:
     working_directory: ~/repo
     docker:
-    - image: circleci/golang:1.17
+    - image: cimg/go:1.21.6
     steps:
     - checkout
     - restore_cache:
@@ -91,7 +91,7 @@ jobs:
         path: /tmp/artifacts/build
 
 orbs:
-  sonarcloud: sonarsource/sonarcloud@1.0.3
+  sonarcloud: sonarsource/sonarcloud@2.0.0
 
 workflows:
   ci:
