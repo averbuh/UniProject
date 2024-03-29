@@ -61,6 +61,7 @@ jobs:
         at: ~/repo
 
     - sonarcloud/scan:
+        cache_version: 2
         sonar_token_variable_name: SONAR_TOKEN
 
   build:
@@ -82,7 +83,7 @@ jobs:
         - "/go/pkg/mod"
 
 orbs:
-  sonarcloud: sonarsource/sonarcloud@1.0.3
+  sonarcloud: sonarsource/sonarcloud@2.0.0
 
 workflows:
   ci:
