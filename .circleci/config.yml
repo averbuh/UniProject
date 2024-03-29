@@ -13,6 +13,19 @@ orbs:
 
 
 jobs:
+
+  lint:
+    working_directory: ~/repo
+    docker:
+    - image: golangci/golangci-lint:v1.45
+    steps:
+    - checkout
+    - run: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
+    - persist_to_workspace:
+        root: ~/repo
+        paths:
+        - golanci-report.xml
+
   build_test:
     working_directory: ~/repo
     docker:
