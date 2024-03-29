@@ -33,12 +33,11 @@ jobs:
     - run:
         name: Run tests and generate coverage
         command: |
-          go list ./... | circleci tests run --command "xargs gotestsum --junitfile tmp/unit-tests.xml --format testname --" --split-by=timings --timings-type=name
-          go test -cover -coverprofile tmp/coverage.out -covermode=atomic ./...
-          go tool cover -html=tmp/coverage.out -o tmp/coverage.html
-          mv coverage.html /tmp/artifacts
+          go list ./... | circleci tests run --command "xargs gotestsum --junitfile tmp/unit-tests.xml --format testname -- -coverprofile /tmp/coverage.out ./..." --split-by=timings --timings-type=name
+          go tool cover -html=/tmp/coverage.out -o /tmp/coverage.html
+          mv /tmp/coverage.html /tmp/artifacts
     - store_test_results:
-        path: ./tmp/test-results
+        path: /tmp/test-results
     - store_artifacts:
         path: /tmp/artifacts
 
