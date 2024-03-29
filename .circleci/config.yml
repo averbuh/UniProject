@@ -44,6 +44,12 @@ jobs:
     - store_artifacts:
         path: /tmp/artifacts
 
+    - persist_to_workspace:
+        root: ~/repo
+        paths:
+        - /tmp/coverage.out
+        - /tmp/unit-tests.xml
+
   sonar:
     working_directory: ~/repo
     docker:
