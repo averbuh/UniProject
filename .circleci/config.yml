@@ -18,6 +18,7 @@ jobs:
     docker:
     - image: cimg/go:1.21.6
     resource_class: large
+    parallelism: 3
     steps:
     - checkout
     - restore_cache:
@@ -37,7 +38,7 @@ jobs:
     - run:
         name: Run tests and generate coverage
         command: |
-          go list ./... | circleci tests run --command "xargs gotestsum --junitfile ./tmp/unit-tests.xml --format testname -- " --split-by=timings --timings-type=name
+          go list ./... | circleci tests run --command "xargs gotestsum --junitfile ./tmp/unit-tests.xml --format testname --" --split-by=timings --timings-type=name
           go test -coverprofile coverage.out ./...
           go tool cover -html=coverage.out -o /tmp/coverage.html
           mv /tmp/coverage.html /tmp/artifacts
