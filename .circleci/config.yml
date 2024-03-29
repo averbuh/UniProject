@@ -67,29 +67,19 @@ jobs:
     working_directory: ~/repo
     docker:
     - image: cimg/go:1.21.6
+    resource_class: large
     steps:
     - checkout
     - restore_cache:
         keys:
         - go-mod-v4-{{ checksum "go.sum" }}
-
     - run:
         name: Install Dependencies
-        command: go mod download
-
+        command: go get ./...
     - save_cache:
         key: go-mod-v4-{{ checksum "go.sum" }}
         paths:
         - "/go/pkg/mod"
-
-    - run:
-        name: Run build
-        command: |
-          mkdir -p /tmp/artifacts/build
-          go build -ldflags "-s -w" -o exec main.go
-          mv exec /tmp/artifacts/build
-    - store_artifacts:
-        path: /tmp/artifacts/build
 
 orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
