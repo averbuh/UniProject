@@ -1,42 +1,99 @@
 version: 2.1
+
 jobs:
-  build_test:
+  lint:
     working_directory: ~/repo
     docker:
-      - image: cimg/go:1.21.6
-    parallelism: 4
+    - image: cimg/go:1.21.6
+    steps:
+    - checkout
+    - run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
+    - run: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
+    - persist_to_workspace:
+        root: ~/repo
+        paths:
+        - golanci-report.xml
+
+  test_and_coverage:
+    working_directory: ~/repo
+    docker:
+    - image: cimg/go:1.21.6
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+        - go-mod-v4-{{ checksum "go.sum" }}
+
+    - run:
+        name: Install Dependencies
+        command: go mod download
+
+    - save_cache:
+        key: go-mod-v4-{{ checksum "go.sum" }}
+        paths:
+        - "/go/pkg/mod"
+
+    - run:
+        name: Run unit tests
+        command: |
+          mkdir -p /tmp/test-reports
+          gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+    - store_test_results:
+        path: /tmp/test-reports
+
+    - run:
+        name: Run coverage
+        command: |
+          go test ./... -race -coverprofile=coverage.out -json > report.json
+    - persist_to_workspace:
+        root: ~/repo
+        paths:
+        - coverage.out
+        - report.json
+
+  sonar:
+    working_directory: ~/repo
+    docker:
+    - image: cimg/go:1.21.6
+    steps:
+    - checkout
+    - attach_workspace:
+        at: ~/repo
+
+    - sonarcloud/scan:
+        cache_version: 1
+        sonar_token_variable_name: SONAR_TOKEN
+
+  build:
+    working_directory: ~/repo
+    docker:
+    - image: cimg/go:1.21.6
     resource_class: large
     steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - go-mod-v4-{{ checksum "go.sum" }}
-      - run:
-          name: Install Dependencies
-          command: go get ./...
-      - save_cache:
-          key: go-mod-v4-{{ checksum "go.sum" }}
-          paths:
-            - "/go/pkg/mod"
-      - run:
-          name: Run tests
-          command: go list ./... | circleci tests run --command "xargs gotestsum --junitfile tmp/unit-tests.xml --format testname --" --split-by=timings --timings-type=name
-      - store_test_results:
-          path: ./tmp/test-results
+    - checkout
+    - restore_cache:
+        keys:
+        - go-mod-v4-{{ checksum "go.sum" }}
+    - run:
+        name: Install Dependencies
+        command: go get ./...
+    - save_cache:
+        key: go-mod-v4-{{ checksum "go.sum" }}
+        paths:
+        - "/go/pkg/mod"
 
 orbs:
-  aws-ecr: circleci/aws-ecr@8.2.1
+  sonarcloud: sonarsource/sonarcloud@2.0.0
 
 workflows:
-  build_and_test_deploy:
+  ci:
     jobs:
-      - build_test
-      - aws-ecr/build-and-push-image:
-          context: aws-dev
-          create-repo: true
-          dockerfile: Dockerfile
-          path: .
-          repo: "services-project-ops"
-          tag: "latest"
-          requires:
-            - build_test
+    - lint
+    - test_and_coverage
+    - sonar:
+        requires:
+        - lint
+        - test_and_coverage
+    - build:
+        requires:
+        - sonar
