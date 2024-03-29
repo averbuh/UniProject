@@ -4,9 +4,10 @@ jobs:
   lint:
     working_directory: ~/repo
     docker:
-    - image: golangci/golangci-lint:v1.45
+    - image: cimg/go:1.21.6
     steps:
     - checkout
+    - run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
     - run: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
     - persist_to_workspace:
         root: ~/repo
