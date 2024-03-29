@@ -36,8 +36,8 @@ jobs:
     - run:
         name: Run tests and generate coverage
         command: |
-          go list ./... | circleci tests run --command "xargs gotestsum --junitfile tmp/unit-tests.xml --format testname -- -coverprofile /tmp/coverage.out ./..." --split-by=timings --timings-type=name
-          go tool cover -html=/tmp/coverage.out -o /tmp/coverage.html
+          go list ./... | circleci tests run --command "xargs gotestsum --junitfile unit-tests.xml --format testname -- -coverprofile coverage.out ./..." --split-by=timings --timings-type=name
+          go tool cover -html=coverage.out -o /tmp/coverage.html
           mv /tmp/coverage.html /tmp/artifacts
     - store_test_results:
         path: /tmp/test-results
@@ -45,7 +45,7 @@ jobs:
         path: /tmp/artifacts
 
     - persist_to_workspace:
-        root: /tmp
+        root: ~/repo
         paths:
         - coverage.out
         - unit-tests.xml
@@ -57,7 +57,7 @@ jobs:
     steps:
     - checkout
     - attach_workspace:
-        at: /tmp
+        at: ~/repo
 
     - sonarcloud/scan:
         project_root: ~/repo
