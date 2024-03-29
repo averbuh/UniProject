@@ -5,6 +5,7 @@ orbs:
   aws-ecr-circle: circleci/aws-ecr@9.0.4
   helm: circleci/helm@3.0.2
   aws-eks: circleci/aws-eks@2.2.0
+  aws-cli: circleci/aws-cli@4.1.3
 
 jobs:
   build_test:
@@ -71,11 +72,30 @@ workflows:
           branches:
             only:
             - main
-        context: aws-dev
-        create-repo: true
+        account_id: ${AWS_ACCOUNT_ID}
+        auth:
+        - aws-cli/setup:
+            profile: OIDC-USER
+            role_arn: arn:aws:iam::123456789012:role/VALID_OIDC_ECR_ROLE
+        context: CircleCI_OIDC_Token
+        create_repo: true
         dockerfile: Dockerfile
+        executors: base
+        extra_build_args: '--compress'
+        no_output_timeout: 20m
         path: .
+        platform: linux/amd64
+        profile_name: OIDC-User
+        public_registry: false
+        push_image: true
+        region: ${AWS_DEFAULT_REGION}
         repo: "services-project-ops"
+        repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
+        repo_encryption_type: KMS
+        repo_policy_path: repo-policy.json
+        repo_scan_on_push: true
+        set_repo_policy: true
+        skip_when_tags_exist: false
         tag: "latest"
         requires:
         - build_test
