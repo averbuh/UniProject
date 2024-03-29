@@ -45,10 +45,10 @@ jobs:
         path: /tmp/artifacts
 
     - persist_to_workspace:
-        root: /
+        root: /tmp
         paths:
-        - /tmp/coverage.out
-        - /tmp/unit-tests.xml
+        - coverage.out
+        - unit-tests.xml
 
   sonar:
     working_directory: ~/repo
@@ -57,7 +57,7 @@ jobs:
     steps:
     - checkout
     - attach_workspace:
-        at: /
+        at: /tmp
 
     - sonarcloud/scan:
         sonar_token_variable_name: SONAR_TOKEN
