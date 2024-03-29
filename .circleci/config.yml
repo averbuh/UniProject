@@ -60,6 +60,7 @@ jobs:
         at: /tmp
 
     - sonarcloud/scan:
+        project_root: ~/repo
         sonar_token_variable_name: SONAR_TOKEN
 
 
