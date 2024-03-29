@@ -1,4 +1,11 @@
 version: 2.1
+
+orbs:
+  aws-ecr: orbies/aws-ecr@1.2.1
+  aws-ecr-circle: circleci/aws-ecr@9.0.4
+  helm: circleci/helm@3.0.2
+  aws-eks: circleci/aws-eks@2.2.0
+
 jobs:
   build_test:
     working_directory: ~/repo
@@ -24,18 +31,46 @@ jobs:
     - store_test_results:
         path: ./tmp/test-results
 
-orbs:
-  aws-ecr: circleci/aws-ecr@8.2.1
+  delete_helm_release:
+    docker:
+    - image: cimg/go:1.21.6
+    parameters:
+      cluster-name:
+        description: Cluster name
+        type: string
+    steps:
+    - aws-eks/update-kubeconfig-with-authenticator:
+        cluster-name: << parameters.cluster-name >>
+    - helm/delete_helm_release:
+        helm_version: v3.2.4
+        release_name: grafana-release
+        timeout: 600s
+  install_helm_chart:
+    docker:
+    - image: cimg/go:1.21.6
+    parameters:
+      cluster-name:
+        description: Cluster name
+        type: string
+    steps:
+    - aws-eks/update-kubeconfig-with-authenticator:
+        cluster-name: << parameters.cluster-name >>
+    - helm/install_helm_chart:
+        add_repo: "${AWS_ECR_HELM_REPO_NAME}"
+        chart: stable/grafana
+        helm_version: v3.2.4
+        release_name: grafana-release
+
 
 workflows:
   build_and_test_deploy:
     jobs:
     - build_test
-    - aws-ecr/build-and-push-image:
+    - aws-ecr-circle/build_and_push_image:
         filters:
           branches:
             only:
-            - dev
+            - main
         context: aws-dev
         create-repo: true
         dockerfile: Dockerfile
@@ -44,3 +79,42 @@ workflows:
         tag: "latest"
         requires:
         - build_test
+
+    - aws-ecr/push-helm-chart:
+        filters:
+          branches:
+            only:
+            - main
+        account-url: AWS_ECR_ACCOUNT_URL
+        aws-access-key-id: AWS_ACCESS_KEY_ID
+        aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+        create-repo: false
+        path: ./charts
+        region: AWS_DEFAULT_REGION
+        repo: "${AWS_ECR_HELM_REPO_NAME}"
+        tag: 1.0.0
+        requires:
+        - aws-ecr-circle/build_and_push_image
+    - install_helm_chart:
+        filters:
+          branches:
+            only:
+            - main
+        cluster-name: test-cluster
+    - delete_helm_release:
+        filters:
+          branches:
+            only:
+            - main
+        cluster-name: test-cluster
+        requires:
+        - install_helm_chart
+    - aws-eks/delete-cluster:
+        filters:
+          branches:
+            only:
+            - main
+        cluster-name: test-cluster
+        requires:
+        - delete_helm_release
+        wait: true
