@@ -1,0 +1,33 @@
+# =====================================================
+#   Standard properties
+# =====================================================
+
+sonar.projectKey=averbuh_UniProject
+sonar.organization=averbuh
+sonar.projectVersion=1.0
+
+sonar.sources=pkg
+sonar.exclusions=**/*_test.go,**/vendor/**
+ 
+sonar.tests=pkg
+sonar.test.inclusions=**/*_test.go
+sonar.test.exclusions=**/vendor/**
+
+# =====================================================
+#   Meta-data for the project
+# =====================================================
+
+sonar.links.homepage=YOUR_PUBLIC_REPOSITORY_URL
+# sonar.links.ci=
+sonar.links.scm=YOUR_PUBLIC_REPOSITORY_URL
+sonar.links.issue=YOUR_PUBLIC_REPOSITORY_URL/issues
+
+# =====================================================
+#   Properties specific to Go
+# =====================================================
+
+sonar.go.gometalinter.reportPaths=golanci-report.xml
+# sonar.go.govet.reportPaths=govet-report.out
+# sonar.go.golint.reportPaths=golint-report.out
+sonar.go.tests.reportPaths=/tmp/unit-tests.xml
+sonar.go.coverage.reportPaths=/tmp/coverage.out
