@@ -67,73 +67,73 @@ workflows:
   build_and_test_deploy:
     jobs:
     - build_test
-    - aws-ecr-circle/build_and_push_image:
-        filters:
-          branches:
-            only:
-            - main
-        account_id: ${AWS_ACCOUNT_ID}
-        auth:
-        - aws-cli/setup:
-            #profile: OIDC-USER
-            role_arn: arn:aws:iam::123456789012:role/VALID_OIDC_ECR_ROLE
-        context: CircleCI_OIDC_Token
-        create_repo: true
-        dockerfile: Dockerfile
-        extra_build_args: '--compress'
-        no_output_timeout: 20m
-        path: .
-        platform: linux/amd64
-        profile_name: OIDC-User
-        public_registry: false
-        push_image: true
-        region: ${AWS_DEFAULT_REGION}
-        repo: "services-project-ops"
-        repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
-        repo_encryption_type: KMS
-        repo_policy_path: repo-policy.json
-        repo_scan_on_push: true
-        set_repo_policy: true
-        skip_when_tags_exist: false
-        tag: "latest"
-        requires:
-        - build_test
+#   - aws-ecr-circle/build_and_push_image:
+#       filters:
+#         branches:
+#           only:
+#           - main
+#       account_id: ${AWS_ACCOUNT_ID}
+#       auth:
+#       - aws-cli/setup:
+#           #profile: OIDC-USER
+#           role_arn: arn:aws:iam::123456789012:role/VALID_OIDC_ECR_ROLE
+#       context: CircleCI_OIDC_Token
+#       create_repo: true
+#       dockerfile: Dockerfile
+#       extra_build_args: '--compress'
+#       no_output_timeout: 20m
+#       path: .
+#       platform: linux/amd64
+#       profile_name: OIDC-User
+#       public_registry: false
+#       push_image: true
+#       region: ${AWS_DEFAULT_REGION}
+#       repo: "services-project-ops"
+#       repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
+#       repo_encryption_type: KMS
+#       repo_policy_path: repo-policy.json
+#       repo_scan_on_push: true
+#       set_repo_policy: true
+#       skip_when_tags_exist: false
+#       tag: "latest"
+#       requires:
+#       - build_test
 
-    - aws-ecr/push-helm-chart:
-        filters:
-          branches:
-            only:
-            - main
-        account-url: $AWS_ECR_ACCOUNT_URL
-        aws-access-key-id: $AWS_ACCESS_KEY_ID
-        aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
-        create-repo: false
-        path: ./charts
-        region: eu-central-1
-        repo: "${AWS_ECR_HELM_REPO_NAME}"
-        tag: "latest"
-        requires:
-        - aws-ecr-circle/build_and_push_image
-    - install_helm_chart:
-        filters:
-          branches:
-            only:
-            - main
-        cluster-name: test-cluster
-    - delete_helm_release:
-        filters:
-          branches:
-            only:
-            - main
-        cluster-name: test-cluster
-        requires:
-        - install_helm_chart
-    - aws-eks/delete-cluster:
-        filters:
-          branches:
-            only:
-            - main
-        cluster-name: test-cluster
-        requires:
-        - delete_helm_release
-        wait: true
+#   - aws-ecr/push-helm-chart:
+#       filters:
+#         branches:
+#           only:
+#           - main
+#       account-url: $AWS_ECR_ACCOUNT_URL
+#       aws-access-key-id: $AWS_ACCESS_KEY_ID
+#       aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
+#       create-repo: false
+#       path: ./charts
+#       region: eu-central-1
+#       repo: "${AWS_ECR_HELM_REPO_NAME}"
+#       tag: "latest"
+#       requires:
+#       - aws-ecr-circle/build_and_push_image
+#   - install_helm_chart:
+#       filters:
+#         branches:
+#           only:
+#           - main
+#       cluster-name: test-cluster
+#   - delete_helm_release:
+#       filters:
+#         branches:
+#           only:
+#           - main
+#       cluster-name: test-cluster
+#       requires:
+#       - install_helm_chart
+#   - aws-eks/delete-cluster:
+#       filters:
+#         branches:
+#           only:
+#           - main
+#       cluster-name: test-cluster
+#       requires:
+#       - delete_helm_release
+#       wait: true
