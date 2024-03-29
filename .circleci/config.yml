@@ -85,14 +85,14 @@ workflows:
           branches:
             only:
             - main
-        account-url: AWS_ECR_ACCOUNT_URL
-        aws-access-key-id: AWS_ACCESS_KEY_ID
-        aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+        account-url: $AWS_ECR_ACCOUNT_URL
+        aws-access-key-id: $AWS_ACCESS_KEY_ID
+        aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
         create-repo: false
         path: ./charts
-        region: AWS_DEFAULT_REGION
+        region: eu-central-1
         repo: "${AWS_ECR_HELM_REPO_NAME}"
-        tag: 1.0.0
+        tag: "latest"
         requires:
         - aws-ecr-circle/build_and_push_image
     - install_helm_chart:
