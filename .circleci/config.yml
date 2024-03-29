@@ -6,6 +6,8 @@ orbs:
   helm: circleci/helm@3.0.2
   aws-eks: circleci/aws-eks@2.2.0
   aws-cli: circleci/aws-cli@4.1.3
+
+  # analyze repo and display code coverage
   sonarcloud: sonarsource/sonarcloud@2.0.0
 
 
