@@ -11,8 +11,11 @@ workflows:
     - path-filtering/filter:
         filters:
           branches:
+            only:
+            - ${CIRCLE_BRANCH}
             ignore:
             - main
+
         name: check-updated-files-feature
         # <regex path-to-test> <parameter-to-set> <value-of-pipeline-parameter>
         mapping: |
