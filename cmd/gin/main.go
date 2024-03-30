@@ -17,13 +17,17 @@ func main() {
 	recipesHandler := NewRecipesHandler(store)
 	defer store.CloseDB()
 
+	recipesRoutes := map[string]string{
+		"id": "/recipes/:id",
+	}
+
 	// Register Routes
 	router.GET("/", homePage)
 	router.GET("/recipes", recipesHandler.ListRecipes)
 	router.POST("/recipes", recipesHandler.CreateRecipe)
-	router.GET("/recipes/:id", recipesHandler.GetRecipe)
-	router.PUT("/recipes/:id", recipesHandler.UpdateRecipe)
-	router.DELETE("/recipes/:id", recipesHandler.DeleteRecipe)
+	router.GET(recipesRoutes["id"], recipesHandler.GetRecipe)
+	router.PUT(recipesRoutes["id"], recipesHandler.UpdateRecipe)
+	router.DELETE(recipesRoutes["id"], recipesHandler.DeleteRecipe)
 
 	// Start the server
 	router.Run()
