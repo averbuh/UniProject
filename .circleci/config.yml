@@ -16,9 +16,9 @@ workflows:
         name: check-updated-files-feature
         # <regex path-to-test> <parameter-to-set> <value-of-pipeline-parameter>
         mapping: |
-          restaurant/* run-test-service true
-          recipes/* run-test-service true
-          .circleci/* run-test-service true
+          restaurant/.* run-test-service true
+          recipes/.* run-test-service true
+          .circleci/.* run-test-service true
         base-revision: main
         config-path: .circleci/feature_config.yml
     - path-filtering/filter:
@@ -28,8 +28,8 @@ workflows:
             - main
         name: check-updated-files-main
         mapping: |
-          restaurant/* run-test-service true
-          recipes/* run-test-service true
+          restaurant/.* run-test-service true
+          recipes/.* run-test-service true
         base-revision: main
         config-path: .circleci/main_config.yml
 
