@@ -1,0 +1,27 @@
+sequence-diagram
+
+
+title CI/CD Pipeline with CircleCI and AWS Deployment
+
+Developer [icon: user] > Repo [icon: git]: Code commit
+activate Repo
+Repo > CircleCI [icon: circleci]: Trigger pipeline
+activate CircleCI
+CircleCI > CircleCI: Build application
+loop [label: Run tests] {
+  CircleCI > CircleCI: Automated test
+}
+else [label: if tests fail]{
+  CircleCI > Developer: Notification on fail
+}
+alt [label: if tests pass] {
+    CircleCI > AWS [icon: aws-ec2]: Deploy to cluster
+    AWS > CircleCI: Deployment success
+    CircleCI > Developer: Notification of success
+}
+else [label: if tests fail] {
+    CircleCI > Developer: Notification of failure
+}
+deactivate CircleCI
+
+
