@@ -53,21 +53,26 @@ By implementing CI/CD practices, teams can reduce the risk of introducing bugs a
 
 
 
-![CICD pipeline](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---xx4LuN5QgEHXUAoWXZPSY---figure---mfZQAvRtDj14EFcLMGcTLA.png "CICD pipeline")
+![CICD pipeline](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---o3Kyb7XTV0MRj5_X0r7KJ---figure---mfZQAvRtDj14EFcLMGcTLA.png "CICD pipeline")
 
 ## Pull Request to Dev
-![Feature plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---BgaJZCfXAzNQyUpuWyx8g---figure---3vHb4JfAk9hj0iBDfKpfYQ.png "Feature plus")
+![Feature plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---w5IPqtRnFzuho_vjWSl3n---figure---3vHb4JfAk9hj0iBDfKpfYQ.png "Feature plus")
 
 ## Push to Dev
-### Tests:
+### 
 
 
-![Dev plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---A3OMbXUSY8wdJMSSGEPTT---figure---dt2_G6UMvJ2JnsUsnP1Xpw.png "Dev plus")
+![Dev plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---TncTBTNKa4NUfFy1LMDnk---figure---dt2_G6UMvJ2JnsUsnP1Xpw.png "Dev plus")
 
 
 
-Helm values for Dev env
+Quality assurance(QA)
 
+- Helm values for qa:
+    - app_mode: qa
+    - app_url: https://qa.app.example.com
+    - db_user: qa-user
+    - db_password: qa-password
 # 🛸Deployment environments
 ## Kubernetes and Backend
 Kubernetes, often abbreviated as K 8 s, is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications.
@@ -86,26 +91,36 @@ With Kubernetes, developers can define their application's desired state using d
 - Nginx Ingress controller - for routing, load balancing and more
 - Services for static DNS names and ip adresses
 ### 
-
+![K8s_worker](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure----M7uD3yu7IyGY9czfx15i---figure---tbMByHI0RF5ynmZRu77Jlg.png "K8s_worker")
 
 ## Staging Environment
-![Stage plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---bU5xAaPbBEyu7EXrBovwI---figure---9DH40NjOIIG2Jwn9B5E1Kg.png "Stage plus")
+![Stage plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---Zva1iZIQuaB9INRiujn_e---figure---9DH40NjOIIG2Jwn9B5E1Kg.png "Stage plus")
+
+**Staging environments** consist of software, hardware, and configuration similar to the production environments. It is through these similarities testers can mimic the real-world production environment.
+
+Staging environments are replicas of the production environments. It imitates the production environment as closely as possible to ensure application quality. The purpose of setting up a staging environment is to validate the application approaching the production stage to ensure the app will perform well post-deployment.
 
 
 
-Helm values for staging
+- Helm values for staging:
+    - app_mode: stage
+    - app_url: https://staging.app.example.com
+    - db_user: staging-user
+    - db_password: staging-password
+
 
 ## Production Environment
 
 
-![Realease plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---ubPuaPFumbQqwz6aT5e0----figure---3yj3XuJeOGQnwNcDixsycg.png "Realease plus")
+![Realease plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---kjMHHPTr27wS70evBzSyR---figure---3yj3XuJeOGQnwNcDixsycg.png "Realease plus")
 
 
 
-
-
-Helm VAlues for prod
-
+- Helm values for staging:
+    - app_mode: production
+    - app_url: https://prod.app.example.com
+    - db_user: production-user
+    - db_password: production-password
 
 
 # 😝Conclusion
