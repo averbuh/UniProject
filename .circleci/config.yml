@@ -105,6 +105,7 @@ jobs:
 
 orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
+  slack: circleci/slack@4.13.2
 
 workflows:
   ci:
