@@ -81,6 +81,27 @@ jobs:
         key: go-mod-v4-{{ checksum "go.sum" }}
         paths:
         - "/go/pkg/mod"
+  notify:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "*This is a text notification*",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: always
 
 orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
@@ -97,3 +118,7 @@ workflows:
     - build:
         requires:
         - sonar
+  send-notification:
+    jobs:
+      - notify:
+          context: slack-secrets
