@@ -83,7 +83,7 @@ jobs:
         - "/go/pkg/mod"
   notify:
     docker:
-      - image: 'cimg/base:stable'
+      - image: 'cimg/base:current'
     steps:
       - slack/notify:
           custom: |
