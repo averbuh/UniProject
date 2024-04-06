@@ -51,19 +51,57 @@ CI/CD helps improve the efficiency and reliability of software development by au
 
 By implementing CI/CD practices, teams can reduce the risk of introducing bugs and errors into their code, improve collaboration between team members, and accelerate the delivery of new features and updates to end users. Overall, CI/CD helps streamline the software development process and increase the overall quality of the code being produced.
 
-
-
-![CICD pipeline](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---o3Kyb7XTV0MRj5_X0r7KJ---figure---mfZQAvRtDj14EFcLMGcTLA.png "CICD pipeline")
+- **CircleCI:** This is a continuous integration and continuous delivery (CI/CD) platform. It can automate many of the steps mentioned above, including running secret scans, linting, unit tests, and builds. CircleCI can be configured to trigger these tasks whenever there are code changes, allowing for faster feedback and earlier detection of issues.
+![CICD pipeline](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---yV3gYK2qBfyP1svgl_Xkp---figure---mfZQAvRtDj14EFcLMGcTLA.png "CICD pipeline")
 
 ## Pull Request to Dev
-![Feature plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---w5IPqtRnFzuho_vjWSl3n---figure---3vHb4JfAk9hj0iBDfKpfYQ.png "Feature plus")
+On this step run tests for smallest units of services like classes, functions and check for secrets in repository.
 
+![Feature plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---Hgntsh7Ym_nNlA3j9haG0---figure---3vHb4JfAk9hj0iBDfKpfYQ.png "Feature plus")
+
+
+
+1. **Secret Scan:** This involves searching the codebase for any sensitive information that might have been accidentally committed, such as API keys, passwords, or credit card numbers. Secret scans help prevent such information leaks.
+2. **Lint:** Linting is a static code analysis technique that checks for stylistic errors and potential bugs without actually running the code. It helps enforce coding conventions and identify areas for improvement.
+3. **Code Quality with SonarCloud:**
+    - SonarCloud can provide comprehensive analysis of code quality, including metrics for readability, maintainability, complexity, potential bugs, and code coverage. It can also track these metrics over time to identify trends and areas for improvement.
+4. **Build:** The build process involves compiling the source code into an executable program or a deployable artifact. This typically involves steps like compiling, linking, and packaging the code along with any dependencies.
+5. **Unit Test:** Unit tests are small, focused tests that verify the functionality of individual units of code, such as functions, classes, or modules. They help ensure that each piece of code works as expected in isolation.
+6. **Code Coverage:** The percentage of code that is executed by the unit tests. High code coverage indicates that most of the code has been tested, reducing the risk of bugs.
 ## Push to Dev
 ### 
 
 
-![Dev plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---TncTBTNKa4NUfFy1LMDnk---figure---dt2_G6UMvJ2JnsUsnP1Xpw.png "Dev plus")
+![Dev plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---t4ISW2wBbm1ZeqFhugO8B---figure---dt2_G6UMvJ2JnsUsnP1Xpw.png "Dev plus")
 
+
+
+**2. SAST (Static Application Security Testing):**
+
+- **Action:** Analyze the codebase for security vulnerabilities without executing it.
+- **Tools:** SonarQube
+**3. App Build:**
+
+- **Action:** Compile the source code into an executable program or a deployable artifact.
+- **Tools:** Build tools specific to your programming language (e.g., Make, Gradle, Maven)
+**4. Upload Artifacts:**
+
+- **Action:** Transfer the built application files (DockerImage, Helm chart, tar builds) to a repository for deployment.
+**5. Deploy to Dev Environment:**
+
+- **Action:** Move the uploaded artifact to a development (Dev) environment for testing.
+**6. Integration Tests, URL/API Checks:**
+
+- **Action:** Run automated tests that verify how different parts of your application work together. URL/API checks ensure endpoints are reachable and functional.
+- **Tools:** Postman (API testing)
+**7. Functional Tests:**
+
+- **Action:** Run automated tests that verify the application's core functionalities from a user's perspective.
+- **Tools:** Testing frameworks like Selenium (web UI)
+**8. Automated UI Tests:**
+
+- **Action:** Run automated tests that interact with the application's user interface (UI) to ensure it behaves as expected.
+- **Tools:** Testing frameworks like Selenium (web UI)
 
 
 Quality assurance(QA)
@@ -73,7 +111,7 @@ Quality assurance(QA)
     - app_url: https://qa.app.example.com
     - db_user: qa-user
     - db_password: qa-password
-# 🛸Deployment environments
+# 🛸Deployment
 ## Kubernetes and Backend
 Kubernetes, often abbreviated as K 8 s, is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications.
 
@@ -86,20 +124,37 @@ With Kubernetes, developers can define their application's desired state using d
 - Terraform module for dif env 
 
 
+![image.png](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___s4vn9oIrPB5G1lN5l5juG.png "image.png")
+
+
+
 ### Network
 - CNI Plugin - for Pod-to-Pod connection on different nodes( AWS CNI)
 - Nginx Ingress controller - for routing, load balancing and more
 - Services for static DNS names and ip adresses
 ### 
-![K8s_worker](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure----M7uD3yu7IyGY9czfx15i---figure---tbMByHI0RF5ynmZRu77Jlg.png "K8s_worker")
+![K8s_worker](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---NjuJ2H28Zd2uO3f6cf18V---figure---tbMByHI0RF5ynmZRu77Jlg.png "K8s_worker")
 
 ## Staging Environment
-![Stage plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---Zva1iZIQuaB9INRiujn_e---figure---9DH40NjOIIG2Jwn9B5E1Kg.png "Stage plus")
+![Stage plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---PI67u4KGNVz3GYbK4ov6z---figure---9DH40NjOIIG2Jwn9B5E1Kg.png "Stage plus")
 
 **Staging environments** consist of software, hardware, and configuration similar to the production environments. It is through these similarities testers can mimic the real-world production environment.
 
 Staging environments are replicas of the production environments. It imitates the production environment as closely as possible to ensure application quality. The purpose of setting up a staging environment is to validate the application approaching the production stage to ensure the app will perform well post-deployment.
 
+**Load testing** simulate high user loads on your application to assess its performance under stress. This helps identify bottlenecks and ensure the application scales effectively. 
+
+- **Apache JMeter:** A free and powerful load testing tool with a large user base and extensive features for simulating various user behaviors.
+**Dynamic Application Security Testing**. It's a security testing technique used to identify vulnerabilities in a running application. Unlike SAST (Static Application Security Testing) that analyzes code without execution, DAST simulates real-world attacks on a functioning application to see how it reacts.
+
+- **OWASP ZAP:** Free and open-source, ZAP is a powerful and versatile DAST tool with a large community and extensive features.
+
+
+Beta Test:
+
+- **Identify Bugs and Issues:** Uncover any bugs, crashes, or functionality problems that the development team might have missed.
+- **Evaluate Usability:** Assess how users interact with the product, identify any confusing or frustrating elements, and ensure it's user-friendly.
+- **Gather Feedback:** Get valuable insights from real users about the product's features, performance, and overall user experience.
 
 
 - Helm values for staging:
@@ -112,8 +167,19 @@ Staging environments are replicas of the production environments. It imitates th
 ## Production Environment
 
 
-![Realease plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---kjMHHPTr27wS70evBzSyR---figure---3yj3XuJeOGQnwNcDixsycg.png "Realease plus")
+![Realease plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---j6zUey9mDWqLw4HqPR2B9---figure---3yj3XuJeOGQnwNcDixsycg.png "Realease plus")
 
+- **Execution:**
+    - **Deployment:** Move the application or service from the development/staging environment to the production environment using deployment tools and automation.
+    - **Monitoring:** Closely monitor the application's performance and user activity after deployment to identify any problems.
+- **Post-Deployment:**
+    - **Analyze and Address Issues:** Evaluate any issues encountered and address them promptly.
+    - **Gather Feedback:** Collect and analyze user feedback on the new version and use it for future improvements.
+**Tools used in production rollouts:**
+
+- **CI/CD Platforms:** Tools like CircleCI, Jenkins, or AWS CodeDeploy automate build, test, and deployment processes.
+- **Configuration Management Tools:** Tools like Ansible, Chef, or Puppet manage infrastructure configuration and ensure consistency across environments.
+- **Monitoring Tools:** Tools like Prometheus, Grafana, or Datadog track application performance and health after deployment.
 
 
 - Helm values for staging:
@@ -121,6 +187,8 @@ Staging environments are replicas of the production environments. It imitates th
     - app_url: https://prod.app.example.com
     - db_user: production-user
     - db_password: production-password
+
+
 
 
 # 😝Conclusion
