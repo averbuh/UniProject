@@ -1,57 +1,61 @@
 cloud-architecture-diagram
 
+direction right
 
-AWS{
-  VPC{
-    Public elb
-    Privite elb
-   
-    az1{
-      Privite subnet1{
-        Master1
-        Worker1
-        Worker2
-      }
-      Public subnet1{
-
-      }
-    }
-    az2{
-      Privite subnet2{
-        Master2
-        Worker3
-        Worker4
-      }
-      Public subnet2{
-
-      }
-    }
-    az3{
-      Privite subnet3{
-        Master3
-        Worker5
-        Worker6
-      }
-      Public subnet3{
-
-      }
-    }
+EKS{
+Kubernetes Cluster [icon: kubernetes] {
+  Nginx Ingress Controller [icon: nginx]
+  Frontend {
+    App_service [icon: k8s-svc]
+    App_pods [icon: k8s-pod]
+  }
+  Backend [color: blue] {
+    Suppliers_s [icon: k8s-svc]
+    Restaurants_s [icon: k8s-svc]
+    Receipts_s [icon: k8s-svc]
+    Suppliers_pods [icon: k8s-pod]
+    Restaurants_pods [icon: k8s-pod]
+    Receipts_pods [icon: k8s-pod]
+  }
+  Monitoring {
+    Graphana [icon: grafana, color: orangered]
+    Prometheus [icon: prometheus, color: orangered]
   }
   
-  
+  Database [icon: data] {
+    Postgres [icon: postgres, color: blueviolet]
+  }
+  Cache [icon: cache] {
+    Redis [icon: redis, color: red]
+  }
+  Logging {
+    Logstash [icon: logstash]
+    ElasticSearch [icon: elasticsearch]
+    Kibana [icon: kibana] 
+  }
+  Ingress [icon: k8s-ing]
+}
+Route53[icon: aws-route-53]
+Load Balancer [icon: aws-elb]
+AWS Certificate Manager [icon: aws-certificate-manager]
 
-
-  RDS [icon: aws-rds]
-  S3 [icon: aws-s3]
-  Route53[icon: aws-route-53]
-  Load Balancer [icon: aws-elb]
 }
 
+Load Balancer <> AWS Certificate Manager
 
 
-Public elb < Client
+Database <> Backend
+Cache <> Backend
 
 Client [icon: computer]
 
-direction up
 
+
+Client < Route53 - Load Balancer - Nginx Ingress Controller
+
+Nginx Ingress Controller - Ingress - App_service - App_pods
+App_pods - Suppliers_s, Restaurants_s, Receipts_s
+
+Suppliers_s > Suppliers_pods
+Restaurants_s > Restaurants_pods
+Receipts_s > Receipts_pods

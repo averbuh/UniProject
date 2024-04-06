@@ -1,40 +1,57 @@
 cloud-architecture-diagram
 
-CircleCI Pipeline [icon: circle-ci] {
-  Checkout repo [icon: github]
-  Build [icon: docker]
-  ecr [label: ECR, icon: aws-ecr]
-  Unit Test [icon: alert-circle]
+
+AWS{
+  VPC{
+    Public elb
+    Privite elb
+   
+    az1{
+      Privite subnet1{
+        Master1
+        Worker1
+        Worker2
+      }
+      Public subnet1{
+
+      }
+    }
+    az2{
+      Privite subnet2{
+        Master2
+        Worker3
+        Worker4
+      }
+      Public subnet2{
+
+      }
+    }
+    az3{
+      Privite subnet3{
+        Master3
+        Worker5
+        Worker6
+      }
+      Public subnet3{
+
+      }
+    }
+  }
   
-  Intergration test [icon: alert-circle]
-  Finish {
-    Deploy [icon: k8s-deploy]
-  }
-  Test [icon: alert-circle]
-  Install or Upgrade Helm Chart [icon: helm]
-  Notification Manager [icon: slack]
-  Start {
-    Dev [icon: d365-human-resources, color: green]
-  }
+  
+
+
+  RDS [icon: aws-rds]
+  S3 [icon: aws-s3]
+  Route53[icon: aws-route-53]
+  Load Balancer [icon: aws-elb]
 }
 
 
-Dev > Checkout repo : hoook on pull request
-Checkout repo > Build
-Build > ecr : Push Open Container Initiative (OCI) artifacts (Image & Chart)
-Build > Test 
-Test - Unit Test, Intergration test
-Test > Notification Manager 
-Notification Manager > Dev : if errors
 
+Public elb < Client
 
+Client [icon: computer]
 
-Notification Manager > Deploy : if all okay
-Deploy - Install or Upgrade Helm Chart
-ecr > Install or Upgrade Helm Chart : pull helm chart
-
-
-
-
-
+direction up
 

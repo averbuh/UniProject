@@ -44,68 +44,6 @@ Once dev's code is accepted and merged into the develop branch, then the release
 
 Once all the bugs are fixed and testing is successful, the release branch code will get merged into the master branch, then tagged and deployed to the production environment.
 
-# 🛸App Deployment(AWS,K8s)
-## Kubernetes and Backend
-Kubernetes, often abbreviated as K 8 s, is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications.
-
-Kubernetes allows developers to easily deploy and manage containerized applications across a cluster of machines. It provides features such as automated scaling, load balancing, self-healing, and rolling updates, making it easier to manage and scale applications in a dynamic and distributed environment.
-
-With Kubernetes, developers can define their application's desired state using declarative configuration files, which specify the desired number of containers, resource requirements, networking rules, and other settings. Kubernetes then takes care of scheduling and managing the containers to ensure that the application runs smoothly and efficiently.
-
-
-
-[﻿K8s_worker](https://app.eraser.io/workspace/gLS3GlE11kV4Ul0K11od?elements=tbMByHI0RF5ynmZRu77Jlg)K8s Worker Node:
-
-![K8s_worker](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---WpqanK55TwkDAPEk68e7Z---figure---tbMByHI0RF5ynmZRu77Jlg.png "K8s_worker")
-
-### Network
-- CNI Plugin - for Pod-to-Pod connection on different nodes( AWS CNI)
-- Nginx Ingress controller - for routing, load balancing and more
-- Services for static DNS names and ip adresses
-- **DNS server** add-on [﻿https://coredns.io/](https://coredns.io/)  #what
-### Configs
-
-
-
-
-
-
-### Helm releases
-
-
-
-
-### Session state data
-![[12 factor app summary#^bm87qv]]
-
-Micro-services should be stateless. Store all session data to datastores like Redis or Memcached.
-
-### **Port binding** - Export services via port binding
-In a local development environment, the developer visits a service URL like `http://localhost:5000/` to access the service exported by their app. In deployment, a routing layer handles routing requests from a public-facing hostname to the port-bound web processes.
-
-### Logs
-- [﻿Fluent](https://www.fluentd.org/) 
-Grafana - Loki - Fluentd
-
-### Todo
-- [ ] Create **Helm** chart for app:
-    - [x] DB
-    - [ ] Monitoring
-        - [ ] Add and setting Prometheus
-        - [x] Graphana
-    - [ ] Services
-    - [ ] App deployment
-    - [ ] Secrets (passwords and more)
-    - [ ] Configuration files
-## AWS (Terraform & Terrastruct)
-Terraform is an open-source infrastructure as code tool created by HashiCorp. It allows users to define and provision infrastructure resources using a declarative configuration language. With Terraform, you can define your infrastructure in code using configuration files, called Terraform scripts, which describe the desired state of your infrastructure. Terraform then automates the process of provisioning and managing infrastructure resources across various cloud providers, such as AWS, Azure, Google Cloud, and more.
-
-Terraform provides a way to manage infrastructure resources in a consistent and repeatable manner, making it easier to scale and maintain infrastructure configurations. It also supports infrastructure drift detection, allowing you to compare the actual state of your infrastructure with the desired state defined in your Terraform scripts.
-
-- [ ] Write **Terraform** module:
-    - [ ] EKS
-
-
 # 🛤CICD
 Continuous Integration and Continuous Deployment (CI/CD) is a set of practices and tools used by software development teams to automate the process of integrating code changes, testing them, and deploying them to production environments. 
 
@@ -115,26 +53,58 @@ By implementing CI/CD practices, teams can reduce the risk of introducing bugs a
 
 
 
-![CICD pipeline](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---HdsBwYhKN2jONxpciao-P---figure---mfZQAvRtDj14EFcLMGcTLA.png "CICD pipeline")
+![CICD pipeline](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---xx4LuN5QgEHXUAoWXZPSY---figure---mfZQAvRtDj14EFcLMGcTLA.png "CICD pipeline")
 
 ## Pull Request to Dev
-![Feature plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---z0423zcaEkxMDBBSNqMbl---figure---3vHb4JfAk9hj0iBDfKpfYQ.png "Feature plus")
+![Feature plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---BgaJZCfXAzNQyUpuWyx8g---figure---3vHb4JfAk9hj0iBDfKpfYQ.png "Feature plus")
 
 ## Push to Dev
 ### Tests:
 
 
-![Dev plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---5TjPSH0RvnheWKQdvXhWY---figure---dt2_G6UMvJ2JnsUsnP1Xpw.png "Dev plus")
+![Dev plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---A3OMbXUSY8wdJMSSGEPTT---figure---dt2_G6UMvJ2JnsUsnP1Xpw.png "Dev plus")
+
+
+
+Helm values for Dev env
+
+# 🛸Deployment environments
+## Kubernetes and Backend
+Kubernetes, often abbreviated as K 8 s, is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications.
+
+Kubernetes allows developers to easily deploy and manage containerized applications across a cluster of machines. It provides features such as automated scaling, load balancing, self-healing, and rolling updates, making it easier to manage and scale applications in a dynamic and distributed environment.
+
+With Kubernetes, developers can define their application's desired state using declarative configuration files, which specify the desired number of containers, resource requirements, networking rules, and other settings. Kubernetes then takes care of scheduling and managing the containers to ensure that the application runs smoothly and efficiently.
+
+
+
+- Terraform module for dif env 
+
+
+### Network
+- CNI Plugin - for Pod-to-Pod connection on different nodes( AWS CNI)
+- Nginx Ingress controller - for routing, load balancing and more
+- Services for static DNS names and ip adresses
+### 
+
 
 ## Staging Environment
-![Stage plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---F6gdue-x8u-sKlNFdyppN---figure---9DH40NjOIIG2Jwn9B5E1Kg.png "Stage plus")
+![Stage plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---bU5xAaPbBEyu7EXrBovwI---figure---9DH40NjOIIG2Jwn9B5E1Kg.png "Stage plus")
+
+
+
+Helm values for staging
 
 ## Production Environment
 
 
-![Realease plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---jyXDMTGgkvc28u6fw6ktT---figure---3yj3XuJeOGQnwNcDixsycg.png "Realease plus")
+![Realease plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---ubPuaPFumbQqwz6aT5e0----figure---3yj3XuJeOGQnwNcDixsycg.png "Realease plus")
 
 
+
+
+
+Helm VAlues for prod
 
 
 
@@ -145,10 +115,9 @@ By implementing CI/CD practices, teams can reduce the risk of introducing bugs a
 <!-- eraser-additional-content -->
 ## Diagrams
 <!-- eraser-additional-files -->
-<a href="/README-CI/CD Pipeline with CircleCI and AWS Deployment-1.eraserdiagram" data-element-id="YUt59gsIKI9glFJueyQ4y"><img src="/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---diagram----76ec49a498c9a2c947a50df130266cc0-CI-CD-Pipeline-with-CircleCI-and-AWS-Deployment.png" alt="" data-element-id="YUt59gsIKI9glFJueyQ4y" /></a>
-<a href="/README-cloud-architecture-2.eraserdiagram" data-element-id="5bdsd_EFGbYs8GSTeo1BM"><img src="/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---diagram----6e3534aad42b3ca7c7fdff8216866ddb.png" alt="" data-element-id="5bdsd_EFGbYs8GSTeo1BM" /></a>
-<a href="/README-cloud-architecture-3.eraserdiagram" data-element-id="vFy9TdHncMc-fAIb1BCsw"><img src="/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---diagram----4a2240d1c071351a913135d20c926fd2.png" alt="" data-element-id="vFy9TdHncMc-fAIb1BCsw" /></a>
-<a href="/README-cloud-architecture-4.eraserdiagram" data-element-id="On1Yi80bcZJI8_9qJc-cq"><img src="/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---diagram----c647751ffe8bf737b1ac9e88bd23ad7f.png" alt="" data-element-id="On1Yi80bcZJI8_9qJc-cq" /></a>
+<a href="/README-cloud-architecture-1.eraserdiagram" data-element-id="5bdsd_EFGbYs8GSTeo1BM"><img src="/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---diagram----6e3534aad42b3ca7c7fdff8216866ddb.png" alt="" data-element-id="5bdsd_EFGbYs8GSTeo1BM" /></a>
+<a href="/README-cloud-architecture-2.eraserdiagram" data-element-id="vFy9TdHncMc-fAIb1BCsw"><img src="/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---diagram----4a2240d1c071351a913135d20c926fd2.png" alt="" data-element-id="vFy9TdHncMc-fAIb1BCsw" /></a>
+<a href="/README-cloud-architecture-3.eraserdiagram" data-element-id="On1Yi80bcZJI8_9qJc-cq"><img src="/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---diagram----75d9043fe6e8ad3cc6d43bc65233591e.png" alt="" data-element-id="On1Yi80bcZJI8_9qJc-cq" /></a>
 <!-- end-eraser-additional-files -->
 <!-- end-eraser-additional-content -->
 <!--- Eraser file: https://app.eraser.io/workspace/gLS3GlE11kV4Ul0K11od --->
