@@ -1,0 +1,98 @@
+version: 2.1
+
+orbs:
+  sonarcloud: sonarsource/sonarcloud@2.0.0
+
+
+parameters:
+  run-test-service:
+    default: false
+    type: boolean
+
+workflows:
+  service-1:
+    when: << pipeline.parameters.run-test-service >>
+    jobs:
+    - Lint
+    - Test and coverage
+    - Sonar:
+        requires:
+        - Lint
+        - Test and coverage
+
+jobs:
+
+  Lint:
+    working_directory: ~/repo
+    docker:
+    - image: cimg/go:1.21.6
+    steps:
+    - checkout
+    - run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
+    - run: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
+    - persist_to_workspace:
+        root: ~/repo
+        paths:
+        - golanci-report.xml
+
+  Test and coverage:
+    working_directory: ~/repo
+    docker:
+    - image: cimg/go:1.21.6
+    resource_class: large
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+        - go-mod-v4-{{ checksum "go.sum" }}
+    - run:
+        name: Install Dependencies
+        command: go get ./...
+    - save_cache:
+        key: go-mod-v4-{{ checksum "go.sum" }}
+        paths:
+        - "/go/pkg/mod"
+
+    - run:
+        name: Run unit tests
+        command: |
+          mkdir -p /tmp/test-reports
+          gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+
+    - store_test_results:
+        path: /tmp/test-reports
+
+    - run:
+        name: Create temp dir for artifacts
+        command: mkdir -p /tmp/artifacts
+
+    - run:
+        name: Run coverage
+        command: |
+          go test ./... -race -coverprofile=coverage.out -json > report.json
+          go tool cover -html=coverage.out -o coverage.html
+          mv coverage.html /tmp/artifacts
+
+    - store_artifacts:
+        path: /tmp/artifacts
+
+    - persist_to_workspace:
+        root: ~/repo
+        paths:
+        - coverage.out
+        - report.json
+
+  Sonar:
+    working_directory: ~/repo
+    docker:
+    - image: cimg/go:1.21.6
+    steps:
+    - checkout
+    - attach_workspace:
+        at: ~/repo
+
+    - sonarcloud/scan:
+        sonar_token_variable_name: SONAR_TOKEN
+
+
+
