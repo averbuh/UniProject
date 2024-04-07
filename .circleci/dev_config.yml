@@ -11,9 +11,16 @@ parameters:
   deploy-to-dev:
     default: false
     type: boolean
+  deploy-to-stage:
+    default: false
+    type: boolean
+  deploy-to-prod:
+    default: false
+    type: boolean
+
 
 workflows:
-  deploy:
+  Push_to_ECR:
     when: << pipeline.parameters.deploy-to-dev >>
     jobs:
     - aws-ecr-circle/build_and_push_image:
@@ -61,6 +68,10 @@ workflows:
         tag: "latest"
         requires:
         - aws-ecr-circle/build_and_push_image
+
+  Deploy_to_EKS:        
+    when: << pipeline.parameters.deploy-to-stage >> || << pipeline.parameters.deploy-to-prod >>
+    jobs:
     - install_helm_chart:
         filters:
           branches:
@@ -84,8 +95,6 @@ workflows:
         requires:
         - delete_helm_release
         wait: true
-
-
 
 
 jobs:
