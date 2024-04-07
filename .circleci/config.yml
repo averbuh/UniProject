@@ -1,99 +1,40 @@
 version: 2.1
 
-jobs:
-  lint:
-    working_directory: ~/repo
-    docker:
-    - image: cimg/go:1.21.6
-    steps:
-    - checkout
-    - run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
-    - run: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
-    - persist_to_workspace:
-        root: ~/repo
-        paths:
-        - golanci-report.xml
 
-  test_and_coverage:
-    working_directory: ~/repo
-    docker:
-    - image: cimg/go:1.21.6
-    steps:
-    - checkout
-    - restore_cache:
-        keys:
-        - go-mod-v4-{{ checksum "go.sum" }}
-
-    - run:
-        name: Install Dependencies
-        command: go mod download
-
-    - save_cache:
-        key: go-mod-v4-{{ checksum "go.sum" }}
-        paths:
-        - "/go/pkg/mod"
-
-    - run:
-        name: Run unit tests
-        command: |
-          mkdir -p /tmp/test-reports
-          gotestsum --junitfile /tmp/test-reports/unit-tests.xml
-    - store_test_results:
-        path: /tmp/test-reports
-
-    - run:
-        name: Run coverage
-        command: |
-          go test ./... -race -coverprofile=coverage.out -json > report.json
-    - persist_to_workspace:
-        root: ~/repo
-        paths:
-        - coverage.out
-        - report.json
-
-  sonar:
-    working_directory: ~/repo
-    docker:
-    - image: cimg/go:1.21.6
-    steps:
-    - checkout
-    - attach_workspace:
-        at: ~/repo
-
-    - sonarcloud/scan:
-        cache_version: 1
-        sonar_token_variable_name: SONAR_TOKEN
-
-  build:
-    working_directory: ~/repo
-    docker:
-    - image: cimg/go:1.21.6
-    resource_class: large
-    steps:
-    - checkout
-    - restore_cache:
-        keys:
-        - go-mod-v4-{{ checksum "go.sum" }}
-    - run:
-        name: Install Dependencies
-        command: go get ./...
-    - save_cache:
-        key: go-mod-v4-{{ checksum "go.sum" }}
-        paths:
-        - "/go/pkg/mod"
+setup: true
 
 orbs:
-  sonarcloud: sonarsource/sonarcloud@2.0.0
+  path-filtering: circleci/path-filtering@1.0.0 #TODO check latest version
+
 
 workflows:
-  ci:
+  always-run:
     jobs:
-    - lint
-    - test_and_coverage
-    - sonar:
-        requires:
-        - lint
-        - test_and_coverage
-    - build:
-        requires:
-        - sonar
+
+    - path-filtering/filter:
+        filters:
+          branches:
+            ignore:
+            - main
+
+        name: check-updated-files-feature
+        # <regex path-to-test> <parameter-to-set> <value-of-pipeline-parameter>
+        mapping: |
+          restaurant/.* run-test-service true
+          recipes/.* run-test-service true
+          .circleci/.* run-test-service true
+        base-revision: main
+        config-path: .circleci/feature_config.yml
+    - path-filtering/filter:
+        filters:
+          branches:
+            only:
+            - main
+        name: check-updated-files-main
+        mapping: |
+          restaurant/.* run-test-service true
+          recipes/.* run-test-service true
+        base-revision: main
+        config-path: .circleci/main_config.yml
+
+
