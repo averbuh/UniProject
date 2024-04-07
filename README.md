@@ -15,6 +15,16 @@
 - Github tags for releases in main branch 
 - Helm charts and releases 
 - Docker images and containers 
+This project aims to establish a robust and automated CI/CD pipeline for our software development process. By implementing continuous integration and continuous delivery (CI/CD), we aim to achieve significant gains in:
+
+- **Efficiency:** Automating tasks like code building, testing, and deployment will free up developer time and reduce manual effort.
+- **Quality:** Continuous integration with automated testing will help identify and fix bugs early in the development cycle.
+- **Delivery Speed:** Frequent and automated deployments will allow for faster feature delivery and quicker response to user needs.
+- **Reliability:** Consistent and automated processes will minimize human error and ensure a more reliable deployment process.
+This document outlines the specific tools and procedures that will be implemented within the CI/CD pipeline. We'll detail the stages involved, from code checkout and security scans to testing, deployment, and monitoring. Additionally, we'll discuss the expected benefits and potential challenges associated with this project.
+
+By successfully implementing a CI/CD pipeline, we can significantly improve our development workflow, deliver higher-quality software faster, and ultimately enhance user satisfaction.
+
 # 😺Codebase
 Github repositories:
 
@@ -52,12 +62,12 @@ CI/CD helps improve the efficiency and reliability of software development by au
 By implementing CI/CD practices, teams can reduce the risk of introducing bugs and errors into their code, improve collaboration between team members, and accelerate the delivery of new features and updates to end users. Overall, CI/CD helps streamline the software development process and increase the overall quality of the code being produced.
 
 - **CircleCI:** This is a continuous integration and continuous delivery (CI/CD) platform. It can automate many of the steps mentioned above, including running secret scans, linting, unit tests, and builds. CircleCI can be configured to trigger these tasks whenever there are code changes, allowing for faster feedback and earlier detection of issues.
-![CICD pipeline](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---yV3gYK2qBfyP1svgl_Xkp---figure---mfZQAvRtDj14EFcLMGcTLA.png "CICD pipeline")
+![CICD pipeline](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---WHliGseN5cf9X37Ms63DV---figure---mfZQAvRtDj14EFcLMGcTLA.png "CICD pipeline")
 
 ## Pull Request to Dev
 On this step run tests for smallest units of services like classes, functions and check for secrets in repository.
 
-![Feature plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---Hgntsh7Ym_nNlA3j9haG0---figure---3vHb4JfAk9hj0iBDfKpfYQ.png "Feature plus")
+![Feature plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---02OMzReBvZH0wUDXVV70x---figure---3vHb4JfAk9hj0iBDfKpfYQ.png "Feature plus")
 
 
 
@@ -72,7 +82,7 @@ On this step run tests for smallest units of services like classes, functions an
 ### 
 
 
-![Dev plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---t4ISW2wBbm1ZeqFhugO8B---figure---dt2_G6UMvJ2JnsUsnP1Xpw.png "Dev plus")
+![Dev plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---slj6SJI47B9_OnlnqFoBo---figure---dt2_G6UMvJ2JnsUsnP1Xpw.png "Dev plus")
 
 
 
@@ -82,29 +92,28 @@ On this step run tests for smallest units of services like classes, functions an
 - **Tools:** SonarQube
 **3. App Build:**
 
-- **Action:** Compile the source code into an executable program or a deployable artifact.
-- **Tools:** Build tools specific to your programming language (e.g., Make, Gradle, Maven)
+- Compile the source code into an executable program or a deployable artifact: Docker image, application build
 **4. Upload Artifacts:**
 
-- **Action:** Transfer the built application files (DockerImage, Helm chart, tar builds) to a repository for deployment.
+- Transfer the built application files (DockerImage) to a repository for deployment.
 **5. Deploy to Dev Environment:**
 
-- **Action:** Move the uploaded artifact to a development (Dev) environment for testing.
+- Move the uploaded artifact to a development (Dev) environment for testing.
 **6. Integration Tests, URL/API Checks:**
 
-- **Action:** Run automated tests that verify how different parts of your application work together. URL/API checks ensure endpoints are reachable and functional.
+- Run automated tests that verify how different parts of application work together. URL/API checks ensure endpoints are reachable and functional.
 - **Tools:** Postman (API testing)
 **7. Functional Tests:**
 
-- **Action:** Run automated tests that verify the application's core functionalities from a user's perspective.
+- Run automated tests that verify the application's core functionalities from a user's perspective.
 - **Tools:** Testing frameworks like Selenium (web UI)
 **8. Automated UI Tests:**
 
-- **Action:** Run automated tests that interact with the application's user interface (UI) to ensure it behaves as expected.
+- Run automated tests that interact with the application's user interface (UI) to ensure it behaves as expected.
 - **Tools:** Testing frameworks like Selenium (web UI)
 
 
-Quality assurance(QA)
+Quality assurance(QA) environment
 
 - Helm values for qa:
     - app_mode: qa
@@ -119,9 +128,9 @@ Kubernetes allows developers to easily deploy and manage containerized applicati
 
 With Kubernetes, developers can define their application's desired state using declarative configuration files, which specify the desired number of containers, resource requirements, networking rules, and other settings. Kubernetes then takes care of scheduling and managing the containers to ensure that the application runs smoothly and efficiently.
 
+- ****
+**Infrastructure as Code (IaC):** Terraform allows you to define your EKS cluster infrastructure as code. This code can be version controlled, shared with your team, and reused across environments. This promotes consistency, repeatability, and easier collaboration.
 
-
-- Terraform module for dif env 
 
 
 ![image.png](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___s4vn9oIrPB5G1lN5l5juG.png "image.png")
@@ -133,10 +142,10 @@ With Kubernetes, developers can define their application's desired state using d
 - Nginx Ingress controller - for routing, load balancing and more
 - Services for static DNS names and ip adresses
 ### 
-![K8s_worker](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---NjuJ2H28Zd2uO3f6cf18V---figure---tbMByHI0RF5ynmZRu77Jlg.png "K8s_worker")
+![K8s_worker](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---mYUbtYZEMqKwOB1afm1LC---figure---tbMByHI0RF5ynmZRu77Jlg.png "K8s_worker")
 
 ## Staging Environment
-![Stage plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---PI67u4KGNVz3GYbK4ov6z---figure---9DH40NjOIIG2Jwn9B5E1Kg.png "Stage plus")
+![Stage plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---6hOCpUon13noSdTmp-HXM---figure---9DH40NjOIIG2Jwn9B5E1Kg.png "Stage plus")
 
 **Staging environments** consist of software, hardware, and configuration similar to the production environments. It is through these similarities testers can mimic the real-world production environment.
 
@@ -167,7 +176,7 @@ Beta Test:
 ## Production Environment
 
 
-![Realease plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---j6zUey9mDWqLw4HqPR2B9---figure---3yj3XuJeOGQnwNcDixsycg.png "Realease plus")
+![Realease plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---SGGLMeq_k-JjmifqVQf1m---figure---3yj3XuJeOGQnwNcDixsycg.png "Realease plus")
 
 - **Execution:**
     - **Deployment:** Move the application or service from the development/staging environment to the production environment using deployment tools and automation.
@@ -177,12 +186,10 @@ Beta Test:
     - **Gather Feedback:** Collect and analyze user feedback on the new version and use it for future improvements.
 **Tools used in production rollouts:**
 
-- **CI/CD Platforms:** Tools like CircleCI, Jenkins, or AWS CodeDeploy automate build, test, and deployment processes.
-- **Configuration Management Tools:** Tools like Ansible, Chef, or Puppet manage infrastructure configuration and ensure consistency across environments.
 - **Monitoring Tools:** Tools like Prometheus, Grafana, or Datadog track application performance and health after deployment.
 
 
-- Helm values for staging:
+- Helm values for production:
     - app_mode: production
     - app_url: https://prod.app.example.com
     - db_user: production-user
@@ -192,7 +199,7 @@ Beta Test:
 
 
 # 😝Conclusion
-
+The implementation of a CI/CD pipeline represents a significant step forward in our development process. By automating key tasks and integrating them into a continuous flow, we have established a foundation for faster, more reliable, and higher-quality software delivery.
 
 
 <!-- eraser-additional-content -->
