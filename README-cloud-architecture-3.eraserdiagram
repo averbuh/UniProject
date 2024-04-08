@@ -2,8 +2,8 @@ cloud-architecture-diagram
 
 direction right
 
-EKS{
-Kubernetes Cluster [icon: kubernetes] {
+Elastic K8s Service (EKS) {
+K8s Worker Node [icon: kubernetes] {
   Nginx Ingress Controller [icon: nginx]
   Frontend {
     App_service [icon: k8s-svc]
@@ -35,12 +35,12 @@ Kubernetes Cluster [icon: kubernetes] {
   }
   Ingress [icon: k8s-ing]
 }
-Route53[icon: aws-route-53]
+
 Load Balancer [icon: aws-elb]
 AWS Certificate Manager [icon: aws-certificate-manager]
 
 }
-
+Route53[icon: aws-route-53]
 Load Balancer <> AWS Certificate Manager
 
 
