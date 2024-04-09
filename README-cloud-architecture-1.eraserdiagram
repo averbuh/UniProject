@@ -1,40 +1,59 @@
 cloud-architecture-diagram
 
-CircleCI Pipeline [icon: circle-ci] {
-  Checkout repo [icon: github]
-  Build [icon: docker]
-  ecr [label: ECR, icon: aws-ecr]
-  Unit Test [icon: alert-circle]
+direction right
+VPC {
+K8s Worker Node [icon: kubernetes] {
+  Nginx Ingress Controller [icon: nginx]
+  Frontend {
+    App_service [icon: k8s-svc]
+    App_pods [icon: k8s-pod]
+  }
+  Backend [color: blue] {
+    Suppliers_s [icon: k8s-svc]
+    Restaurants_s [icon: k8s-svc]
+    Receipts_s [icon: k8s-svc]
+    Suppliers_pods [icon: k8s-pod]
+    Restaurants_pods [icon: k8s-pod]
+    Receipts_pods [icon: k8s-pod]
+  }
+  Monitoring {
+    Prometheus [icon: prometheus, color: orangered]
+    Grafana [icon: grafana, color: orangered]
+  }
   
-  Intergration test [icon: alert-circle]
-  Finish {
-    Deploy [icon: k8s-deploy]
+  Database [icon: data] {
+    Postgres [icon: postgres, color: blueviolet]
   }
-  Test [icon: alert-circle]
-  Install or Upgrade Helm Chart [icon: helm]
-  Notification Manager [icon: slack]
-  Start {
-    Dev [icon: d365-human-resources, color: green]
+  Cache [icon: cache] {
+    Redis [icon: redis, color: red]
   }
+  Logging {
+    Fluentbit [icon: none] 
+  }
+  Ingress [icon: k8s-ing]
 }
 
+Load Balancer [icon: aws-elb]
 
-Dev > Checkout repo : hoook on pull request
-Checkout repo > Build
-Build > ecr : Push Open Container Initiative (OCI) artifacts (Image & Chart)
-Build > Test 
-Test - Unit Test, Intergration test
-Test > Notification Manager 
-Notification Manager > Dev : if errors
+}
+AWS Certificate Manager  [icon: aws-certificate-manager]
 
+Route53[icon: aws-route-53]
+Load Balancer <> AWS Certificate Manager
 
 
-Notification Manager > Deploy : if all okay
-Deploy - Install or Upgrade Helm Chart
-ecr > Install or Upgrade Helm Chart : pull helm chart
+Database <> Backend
+Cache <> Backend
 
+Client [icon: computer]
 
 
 
+Client < Route53 - Load Balancer - Nginx Ingress Controller
 
+Nginx Ingress Controller - Ingress - App_service - App_pods
+App_pods - Suppliers_s, Restaurants_s, Receipts_s
 
+Suppliers_s > Suppliers_pods
+Restaurants_s > Restaurants_pods
+Receipts_s > Receipts_pods

@@ -41,7 +41,7 @@ By successfully implementing a CI/CD pipeline, we can significantly improve our 
 **Additional Considerations:**
 
 - **Container Registry:** Container registry Amazon ECR (Elastic Container Registry) to store Docker images for microservices.
-- **Monitoring & Logging:** Prometheus and Grafana for monitoring microservices and CloudWatch for logging.
+- **Monitoring & Logging:** Prometheus and Grafana for monitoring microservices and Fluentbit for logging.
 ## Branch strategy(Git Flow)
 A branch strategy is a set of guidelines that define how developers use branches in a version control system (VCS) like Git. It helps manage code changes, avoid conflicts, and maintain a clear version history, especially when multiple developers are working on the same project.
 
@@ -67,7 +67,7 @@ This section outlines the Continuous Integration and Continuous Delivery (CI/CD)
 - **Deployment and Configuration Management:** Containerized microservices will be deployed and managed on the EKS cluster using Helm charts.
 The big picture of CICD pipeline from Pull Request to Production Deploy:
 
-![CICD pipeline](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---2iLCkBt9hx5EYGdLCJCQz---figure---mfZQAvRtDj14EFcLMGcTLA.png "CICD pipeline")
+![CICD pipeline](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---Aq7IIOuFMiHbdAnl1HTBd---figure---mfZQAvRtDj14EFcLMGcTLA.png "CICD pipeline")
 
 
 
@@ -82,7 +82,7 @@ Pipeline results will trigger real-time updates in our dedicated Slack channel, 
 ## Pull Request to Dev
 This stage meticulously tests the building blocks of our code (classes and functions) through **unit testing**. Additionally, a thorough security scan is conducted to identify any sensitive information (secrets) accidentally left within the repository.
 
-![Feature plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---7KnJDBseGGGHPqQbvda5M---figure---3vHb4JfAk9hj0iBDfKpfYQ.png "Feature plus")
+![Feature plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---9Xh2xAYz1c3ksT_U-uLLc---figure---3vHb4JfAk9hj0iBDfKpfYQ.png "Feature plus")
 
 
 
@@ -94,8 +94,6 @@ This stage meticulously tests the building blocks of our code (classes and funct
 5. **Unit Test:** Unit tests are small, focused tests that verify the functionality of individual units of code, such as functions, classes, or modules. They help ensure that each piece of code works as expected in isolation.
 6. **Code Coverage:** The percentage of code that is executed by the unit tests. High code coverage indicates that most of the code has been tested, reducing the risk of bugs.
 ## Push to Dev
-
-
 Once the code is deemed complete, the developer submits a pull request for the feature branch to be merged into the `dev` branch. This initiates a review process, potentially involving the QA team or automated testing pipelines in the QA environment, to ensure quality and functionality before the merge is approved.
 
 
@@ -105,7 +103,7 @@ QA stands for **Quality Assurance**. It's a broad term encompassing the processe
 - Developers play a crucial role in QA, writing unit tests and ensuring code quality.
 
 
-![Dev plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---1zvhF-k2-7bDLXzV4WC5Q---figure---dt2_G6UMvJ2JnsUsnP1Xpw.png "Dev plus")
+![Dev plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---37HXVPmBT4VUZ0lAXZpV8---figure---dt2_G6UMvJ2JnsUsnP1Xpw.png "Dev plus")
 
 
 
@@ -162,13 +160,20 @@ With Kubernetes, developers can define their application's desired state using d
 ![image.png](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___s4vn9oIrPB5G1lN5l5juG.png "image.png")
 
 ### Worker Node:
-![K8s_worker](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---HRBk5Pg-qb2IQqmE9H9gi---figure---tbMByHI0RF5ynmZRu77Jlg.png "K8s_worker")
+![K8s_worker](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---zDBlenvOWYBHPx2-Eh0kF---figure---tbMByHI0RF5ynmZRu77Jlg.png "K8s_worker")
 
 
 
+## Helm chart
+A Helm chart is a package that contains all the resources needed to deploy an application to Kubernetes, such as:
 
+- Kubernetes deployment manifest (defines how to run containerized applications)
+- Service manifest (defines how to expose the application)
+- ConfigMaps and Secrets (store sensitive configuration data)
+- Additional resource manifests (e.g., Ingress resources for external access)
+When you install a Helm chart using the `helm install` command, Helm creates a release on your Kubernetes cluster. This release represents a running instance of the application defined in the chart. Each release has a unique name that you specify during installation.
 
-## Helm charts for deploying three microservices
+### Helm charts for deploying three microservices
 **Chart Structure:**
 
 - **Chart.yaml:** This file defines the metadata for the chart, including name, version, dependencies on other charts (if any), and a brief description.
@@ -191,8 +196,20 @@ The `values.yaml` file might include default values for:
     - **Git Commit SHA:** Use Git commit SHAs as tags to tie deployments to specific code commits in the version control system.
 - `service.port` : Default port for all microservice services.
 - Individual service ports and resource requirements can be defined for each microservice.
+### Upgrade Helm release on EKS cluster
+**Helm Upgrade:** 
+
+Replacing `<release-name>` with the actual name of Helm release and `<chart-name>` with the name of the Helm chart:
+
+```
+helm upgrade <release-name> <chart-name> [flags] [values.yaml]
+```
+**Values Overrides:** If specific configuration changes are required, utilize the `--set`  flag or a values file within the `helm upgrade`  command to override default values in the Helm chart.
+
 ## Staging Environment
-![Stage plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---9nBmWAEru_LrOfpuTHZde---figure---9DH40NjOIIG2Jwn9B5E1Kg.png "Stage plus")
+Invoked when the Dev environment pipeline passes all checks.
+
+![Stage plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---Vdpul0s9bX3jDXeTUVLHA---figure---9DH40NjOIIG2Jwn9B5E1Kg.png "Stage plus")
 
 **Staging environments** consist of software, hardware, and configuration similar to the production environments. It is through these similarities testers can mimic the real-world production environment.
 
@@ -221,19 +238,23 @@ Tools like** OWASP ZAP:** Free and open-source, ZAP is a powerful and versatile 
 
 
 ## Production Environment
+Initiated after successful completion of the Staging pipeline.
 
-
-![Realease plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---eUvklceN07jOOZtJyZjGJ---figure---3yj3XuJeOGQnwNcDixsycg.png "Realease plus")
+![Realease plus](/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---figure---CSNU4tPKA4aOfMigB2nry---figure---3yj3XuJeOGQnwNcDixsycg.png "Realease plus")
 
 - **Execution:**
-    - **Deployment:** Move the application or service from the development/staging environment to the production environment using deployment tools and automation.
+    - **Deployment:** Serve application from the staging environment to the production environment using Helm.
     - **Monitoring:** Closely monitor the application's performance and user activity after deployment to identify any problems.
 - **Post-Deployment:**
     - **Analyze and Address Issues:** Evaluate any issues encountered and address them promptly.
     - **Gather Feedback:** Collect and analyze user feedback on the new version and use it for future improvements.
-**Tools used in production rollouts:**
+        - **Monitoring Tools:** Tools like Prometheus, Grafana, Fluentbit track application performance and health after deployment.
+**Rollback strategy**
 
-- **Monitoring Tools:** Tools like Prometheus, Grafana, or Datadog track application performance and health after deployment.
+A rollback strategy is a crucial plan of action that outlines the steps to take in case a deployment to a production environment causes unexpected issues or problems. Its primary goal is to quickly revert to a previously working state, minimizing downtime and impact on users.
+
+- **Rollback:** Reverts to a previously working state, essentially undoing the deployment.  Helm allows rollbacks to previous releases using the `helm rollback` command. 
+- **Rollforward:** Involves deploying a new version that specifically addresses the issue that caused the initial deployment failure. This approach can be considered if a simple rollback isn't feasible or desirable.
 
 
 - Helm values for production:
@@ -241,20 +262,14 @@ Tools like** OWASP ZAP:** Free and open-source, ZAP is a powerful and versatile 
     - app_url: https://prod.app.example.com
     - db_user: production-user
     - db_password: production-password
-
-
-
-
-# 😝Conclusion
+# Conclusion
 The implementation of a CI/CD pipeline represents a significant step forward in our development process. By automating key tasks and integrating them into a continuous flow, we have established a foundation for faster, more reliable, and higher-quality software delivery.
 
 
 <!-- eraser-additional-content -->
 ## Diagrams
 <!-- eraser-additional-files -->
-<a href="/README-cloud-architecture-1.eraserdiagram" data-element-id="5bdsd_EFGbYs8GSTeo1BM"><img src="/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---diagram----6e3534aad42b3ca7c7fdff8216866ddb.png" alt="" data-element-id="5bdsd_EFGbYs8GSTeo1BM" /></a>
-<a href="/README-cloud-architecture-2.eraserdiagram" data-element-id="vFy9TdHncMc-fAIb1BCsw"><img src="/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---diagram----4a2240d1c071351a913135d20c926fd2.png" alt="" data-element-id="vFy9TdHncMc-fAIb1BCsw" /></a>
-<a href="/README-cloud-architecture-3.eraserdiagram" data-element-id="On1Yi80bcZJI8_9qJc-cq"><img src="/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---diagram----589bd003000adfb132925b1b95229daa.png" alt="" data-element-id="On1Yi80bcZJI8_9qJc-cq" /></a>
+<a href="/README-cloud-architecture-1.eraserdiagram" data-element-id="On1Yi80bcZJI8_9qJc-cq"><img src="/.eraser/gLS3GlE11kV4Ul0K11od___XWe2mTYyEQVK1seoxfgZbWU7S5g1___---diagram----7c326c8e6ff824b2825349bdd3eabd00.png" alt="" data-element-id="On1Yi80bcZJI8_9qJc-cq" /></a>
 <!-- end-eraser-additional-files -->
 <!-- end-eraser-additional-content -->
 <!--- Eraser file: https://app.eraser.io/workspace/gLS3GlE11kV4Ul0K11od --->
