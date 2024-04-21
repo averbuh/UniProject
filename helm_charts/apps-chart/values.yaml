@@ -8,6 +8,8 @@ AppsPorts:
 
 AppName: "restourant"
 
+AppMode: 
+
 tier: backend
 
 replicas: 3

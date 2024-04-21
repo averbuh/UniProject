@@ -2,17 +2,18 @@ package recipes
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"os"
 
-	_ "github.com/lib/pq"
+	"context"
+
+	"github.com/lib/pq"
 )
 
-var environment = "prod"
+var environment = "dev"
 
 const (
-	host     = "172.17.0.3"
+	host     = "172.17.0.2"
 	port     = 5432
 	user     = "postgres"
 	password = "admin"
@@ -23,7 +24,7 @@ type Postgres struct {
 	db *sql.DB
 }
 
-func NewPostgres() *Postgres {
+func NewPostgres() (*Postgres, error) {
 	var psqlconn string
 	if environment == "prod" {
 		host := "postgres-postgresql.default.svc.cluster.local"
@@ -50,20 +51,20 @@ func NewPostgres() *Postgres {
 
 	// check db
 	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
+	CheckError(err)
 
 	fmt.Println("Connected!") // insert
 	// hardcoded
 
+	err = CreateTable(db)
+	CheckError(err)
 	// dynamic
 	//	insertDynStmt := `insert into "Students"("Name", "Roll_Number") values($1, $2)`
 	//	_, e = db.Exec(insertDynStmt, "Jack", 21)
 	//	CheckError(e)
 	return &Postgres{
 		db: db,
-	}
+	}, err
 }
 
 func CheckError(err error) {
@@ -76,24 +77,39 @@ func (p Postgres) CloseDB() {
 	p.db.Close()
 }
 
-func (p Postgres) Add(name string, recipe Recipe) error {
-	jsonData, e := json.Marshal(recipe.Ingredients)
+func CreateTable(db *sql.DB) error {
+	// delete table if it exists
+	_, e := db.Exec("DROP TABLE IF EXISTS recipes")
 	CheckError(e)
-	_, e = p.db.Exec("INSERT INTO recipes VALUES ($1, $2)", recipe.Name, jsonData)
+	_, e = db.Exec("CREATE TABLE IF NOT EXISTS recipes(name varchar not null primary key, istoday boolean, ingredients text[] , description varchar, image varchar)")
+	CheckError(e)
+	// new recipes
+	ins := "INSERT INTO recipes (name, istoday, ingredients, description, image) VALUES ($1, $2, $3, $4, $5)"
+
+	ingredients := []string{"eggs", "milk", "flour", "sugar"}
+
+	_, e = db.Exec(ins, "toast", true, pq.Array(ingredients), "some description", "")
+
+	CheckError(e)
+	return e
+}
+
+func (p Postgres) Add(name string, recipe Recipe) error {
+	_, e := func() (sql.Result, error) {
+		var args []any = []any{name, recipe.IsToday, pq.Array(recipe.Ingredients), recipe.Description, recipe.Image}
+		return p.db.ExecContext(context.Background(), "INSERT INTO recipes VALUES ($1, $2, $3, $4, $5)", args...)
+	}()
 	CheckError(e)
 	return e
 }
 
 func (p Postgres) Get(name string) (Recipe, error) {
 	fmt.Println("GET called for " + name)
-	rows, e := p.db.Query("SELECT name, ingredients FROM recipes WHERE name = $1", name)
+	rows, e := p.db.Query("SELECT name, istoday, ingredients, description, image FROM recipes WHERE name = $1", name)
 	CheckError(e)
 	var r Recipe
 	for rows.Next() {
-		var json_bytes []byte
-		e := rows.Scan(&r.Name, &json_bytes) // array with str ingredients
-		CheckError(e)
-		e = json.Unmarshal(json_bytes, &r.Ingredients)
+		e := rows.Scan(&r.Name, &r.IsToday, pq.Array(&r.Ingredients), &r.Description, &r.Image) // array with str ingredients
 		CheckError(e)
 	}
 	return r, e
@@ -101,28 +117,43 @@ func (p Postgres) Get(name string) (Recipe, error) {
 
 func (p Postgres) List() (map[string]Recipe, error) {
 	fmt.Println("List called")
-	rows, err := p.db.Query("SELECT name, ingredients FROM recipes")
+	sel := "SELECT name, istoday, ingredients, description, image FROM recipes"
+	rows, err := p.db.Query(sel)
 	CheckError(err)
 	defer rows.Close()
 	recipes := make(map[string]Recipe)
 
 	for rows.Next() {
 		var r Recipe
-		var json_bytes []byte
-		err := rows.Scan(&r.Name, &json_bytes) // array with str ingredients
-		CheckError(err)
-		err = json.Unmarshal(json_bytes, &r.Ingredients)
+		err := rows.Scan(&r.Name, &r.IsToday, pq.Array(&r.Ingredients), &r.Description, &r.Image) // array with str ingredients
 		CheckError(err)
 		recipes[r.Name] = r
 	}
+
+	// for rows.Next() {
+	// 	var r Recipe
+	// 	var json_bytes []byte
+	// 	err := rows.Scan(&r.Name, &json_bytes) // array with str ingredients
+	// 	CheckError(err)
+	// 	err = json.Unmarshal(json_bytes, &r.Ingredients)
+	// 	CheckError(err)
+	// 	recipes[r.Name] = r
+	// }
 
 	return recipes, nil
 }
 
 func (p Postgres) Update(name string, recipe Recipe) error {
-	return nil
+	_, e := func() (sql.Result, error) {
+		var args []any = []any{name, recipe.IsToday, pq.Array(recipe.Ingredients), recipe.Description, recipe.Image}
+		return p.db.ExecContext(context.Background(), "UPDATE recipes SET istoday = $2, ingredients = $3, description = $4, image = $5 WHERE name = $1", args...)
+	}()
+	CheckError(e)
+	return e
 }
 
 func (p Postgres) Remove(name string) error {
-	return nil
+	_, e := p.db.Exec("DELETE FROM recipes WHERE name = $1", name)
+	CheckError(e)
+	return e
 }
