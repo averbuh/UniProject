@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +13,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
 	"practice.com/http/pkg/repository/recipes"
+)
+
+var environment = "dev"
+
+const (
+	host     = "172.17.0.2"
+	port     = 5432
+	user     = "postgres"
+	password = "admin"
+	dbname   = "postgres"
 )
 
 func main() {
@@ -30,7 +41,32 @@ func main() {
 
 	s3 := recipes.NewS3Store("us-east-1", "test-images-vue")
 
-	store, err := recipes.NewPostgres()
+	var psqlconn string
+	if environment == "prod" {
+		host := "postgres-postgresql.default.svc.cluster.local"
+		port := 5432
+		user, exist := os.LookupEnv("POSTGRES_USER")
+		if !exist {
+			panic("POSTGRES_USER not set")
+		}
+		password, exist := os.LookupEnv("POSTGRES_PASSWORD")
+		if !exist {
+			panic("POSTGRES_PASSWORD not set")
+		}
+		dbname, exist := os.LookupEnv("POSTGRES_DB")
+		if !exist {
+			panic("POSTGRES_DB not set")
+		}
+		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	} else {
+		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	}
+
+	db, err := sql.Open("postgres", psqlconn)
+	if err != nil {
+		log.Print("Failed to connect to database: ", err)
+	}
+	store, err := recipes.NewPostgres(db)
 	if err != nil {
 		log.Print("Failed to connect to database: ", err)
 	}

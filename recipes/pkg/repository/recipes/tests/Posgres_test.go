@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"practice.com/http/pkg/repository/recipes"
 
 	"github.com/lib/pq"
@@ -15,9 +16,10 @@ func TestAdd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create mock database: %v", err)
 	}
+
 	defer db.Close()
 	// Create a new Postgres instance with the mock database
-	p := recipes.Postgres{db: db}
+	p, err := recipes.NewPostgres(db)
 	// Test case 1: Successful insertion
 	mock.ExpectExec("INSERT INTO recipes VALUES").WithArgs("test", true, pq.Array([]string{"ingredient1", "ingredient2"}), "description", "image").WillReturnResult(sqlmock.NewResult(1, 1))
 	err = p.Add("test", recipes.Recipe{IsToday: true, Ingredients: []string{"ingredient1", "ingredient2"}, Description: "description", Image: "image"})

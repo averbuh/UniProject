@@ -3,54 +3,20 @@ package recipes
 import (
 	"database/sql"
 	"fmt"
-	"os"
 
 	"context"
 
 	"github.com/lib/pq"
 )
 
-var environment = "dev"
-
-const (
-	host     = "172.17.0.2"
-	port     = 5432
-	user     = "postgres"
-	password = "admin"
-	dbname   = "postgres"
-)
-
 type Postgres struct {
 	db *sql.DB
 }
 
-func NewPostgres() (*Postgres, error) {
-	var psqlconn string
-	if environment == "prod" {
-		host := "postgres-postgresql.default.svc.cluster.local"
-		port := 5432
-		user, exist := os.LookupEnv("POSTGRES_USER")
-		if !exist {
-			panic("POSTGRES_USER not set")
-		}
-		password, exist := os.LookupEnv("POSTGRES_PASSWORD")
-		if !exist {
-			panic("POSTGRES_PASSWORD not set")
-		}
-		dbname, exist := os.LookupEnv("POSTGRES_DB")
-		if !exist {
-			panic("POSTGRES_DB not set")
-		}
-		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	} else {
-		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	}
-
-	db, err := sql.Open("postgres", psqlconn)
-	CheckError(err)
+func NewPostgres(db *sql.DB) (*Postgres, error) {
 
 	// check db
-	err = db.Ping()
+	err := db.Ping()
 	CheckError(err)
 
 	fmt.Println("Connected!") // insert
