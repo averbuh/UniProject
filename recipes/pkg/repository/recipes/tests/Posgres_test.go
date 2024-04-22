@@ -18,7 +18,6 @@ func TestAdd(t *testing.T) {
 	defer db.Close()
 	// Create a new Postgres instance with the mock database
 	p := recipes.Postgres{db: db}
-	//test
 	// Test case 1: Successful insertion
 	mock.ExpectExec("INSERT INTO recipes VALUES").WithArgs("test", true, pq.Array([]string{"ingredient1", "ingredient2"}), "description", "image").WillReturnResult(sqlmock.NewResult(1, 1))
 	err = p.Add("test", recipes.Recipe{IsToday: true, Ingredients: []string{"ingredient1", "ingredient2"}, Description: "description", Image: "image"})
