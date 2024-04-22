@@ -17,10 +17,10 @@ workflows:
         name: Test Feature Branch
         config-path: .circleci/feature_config.yml
         mapping: |
-          recipes/.go$ run-recipes-go true
-          recipes/.go$ service-path "recipes"
-          suppliers/.go$ run-suppliers-go true
-          suppliers/.go$ service-path "suppliers"
+          recipes/[^/]*\.go run-recipes-go true
+          recipes/[^/]*\.go service-path "recipes"
+          suppliers/[^/]*\.go run-suppliers-go true
+          suppliers/[^/]*\.go service-path "suppliers"
     - path-filtering/filter:
         filters:
           branches:

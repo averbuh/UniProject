@@ -16,7 +16,6 @@ func TestAdd(t *testing.T) {
 		t.Fatalf("Failed to create mock database: %v", err)
 	}
 	defer db.Close()
-#TODO solve the error
 	// Create a new Postgres instance with the mock database
 	p := recipes.Postgres{db: db}
 
