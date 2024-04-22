@@ -75,7 +75,7 @@ jobs:
         command: echo "Hello World"
 
   Lint:
-    working_directory: ~/repo
+    working_directory: ~/repo/<< pipeline.parameters.service-path >>
     executor: go-executor
     steps:
     - checkout
@@ -95,7 +95,8 @@ jobs:
     resource_class: large
     steps:
     - checkout
-    - to_service_dir
+    - to_service_dir:
+        service-path: << pipeline.parameters.service-path >>
     - restore_cache:
         keys:
         - go-mod-v4-{{ checksum "go.sum" }}
@@ -141,7 +142,8 @@ jobs:
     executor: go-executor
     steps:
     - checkout
-    - to_service_dir
+    - to_service_dir:
+        service-path: << pipeline.parameters.service-path >>
     - attach_workspace:
         at: ~/repo
 
