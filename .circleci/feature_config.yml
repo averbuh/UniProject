@@ -2,22 +2,24 @@ version: 2.1
 
 orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
-  my-orb:
-    commands:
-      to_service_dir:
-        parameters:
-          service-path:
-            default: .
-            type: string
-        steps:
-        - run:
-            name: Change directory
-            command: |
-              if [ -z "${{ parameters.service-path }}" ]; then
-                echo "Parameter service-path is empty" >&2
-                exit 1
-              fi
-              cd "{{ parameters.service-path }}"
+
+
+
+commands:
+  to_service_dir:
+    parameters:
+      service-path:
+        default: .
+        type: string
+    steps:
+    - run:
+        name: Change directory
+        command: |
+          if [ -z << parameters.service-path >> ]; then
+            echo "Parameter service-path is empty" >&2
+            exit 1
+          fi
+          cd << parameters.service-path >>
 
 executors:
   go-executor:
@@ -68,7 +70,7 @@ jobs:
     steps:
     - checkout
     # step from steps field
-    - my-orb/to_service_dir:
+    - to_service_dir:
         service-path: << pipeline.parameters.service-path >>
     - run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
     - run: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
@@ -83,7 +85,7 @@ jobs:
     resource_class: large
     steps:
     - checkout
-    - my-orb/to_service_dir
+    - to_service_dir
     - restore_cache:
         keys:
         - go-mod-v4-{{ checksum "go.sum" }}
@@ -129,7 +131,7 @@ jobs:
     executor: go-executor
     steps:
     - checkout
-    - my-orb/to_service_dir
+    - to_service_dir
     - attach_workspace:
         at: ~/repo
 
