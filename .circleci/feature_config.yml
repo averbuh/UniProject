@@ -50,7 +50,7 @@ jobs:
     - checkout
     - run:
         name: Chenge directory
-        command: cd << pipeline.parameters.service-path >>
+        command: cd {{ pipeline.parameters.service-path }}
     - run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
     - run: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
     - persist_to_workspace:
@@ -67,7 +67,7 @@ jobs:
     - checkout
     - run:
         name: Chenge directory
-        command: cd << pipeline.parameters.service-path >>
+        command: cd {{ pipeline.parameters.service-path }}
     - restore_cache:
         keys:
         - go-mod-v4-{{ checksum "go.sum" }}
@@ -114,6 +114,9 @@ jobs:
     - image: cimg/go:1.21.6
     steps:
     - checkout
+    - run:
+        name: Chenge directory
+        command: cd {{ pipeline.parameters.service-path }}
     - attach_workspace:
         at: ~/repo
 
