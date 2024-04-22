@@ -39,18 +39,12 @@ parameters:
 
 
 workflows:
-  Test pipeline recipes param:
-    when: << pipeline.parameters.run-recipes-go >>
-    jobs:
-    - Test feature pipeline
-  Test pipeline suppliers param:
-    when: << pipeline.parameters.run-suppliers-go >>
-    jobs:
-    - Test feature pipeline
   Lint, Test, Coverage Feature:
     when:
       and:
-      - equal: ["recipes", << pipeline.parameters.service-path >>]
+      - or:
+        - equal: ["recipes", << pipeline.parameters.service-path >>]
+        - equal: ["suppliers", << pipeline.parameters.service-path >>]
       - or:
         - << pipeline.parameters.run-recipes-go >>
         - << pipeline.parameters.run-suppliers-go >>

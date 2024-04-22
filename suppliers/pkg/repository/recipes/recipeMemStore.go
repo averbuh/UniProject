@@ -17,7 +17,6 @@ func NewMemStore() *MemStore {
 	}
 }
 
-// test
 func (m MemStore) Add(name string, recipe Recipe) error {
 	m.list[name] = recipe
 	return nil
