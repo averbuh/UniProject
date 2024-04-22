@@ -20,16 +20,16 @@ parameters:
 
 
 workflows:
-  test:
+  Lint, Test, Coverage Feature:
     when: << pipeline.parameters.run-recipes-go >> || << pipeline.parameters.run-suppliers-go >>
     jobs:
     - Test feature pipeline
-    # - Lint
-    # - Test and coverage
-    # - Sonar:
-    #     requires:
-    #     - Lint
-    #     - Test and coverage
+    - Lint
+    - Test and coverage
+    - Sonar:
+        requires:
+        - Lint
+        - Test and coverage
 
 jobs:
 
