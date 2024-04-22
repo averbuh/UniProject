@@ -22,7 +22,7 @@ func NewPostgres(db *sql.DB) (*Postgres, error) {
 	fmt.Println("Connected!") // insert
 	// hardcoded
 
-	err = CreateTable(db)
+	// err = CreateTable(db)
 	CheckError(err)
 	// dynamic
 	//	insertDynStmt := `insert into "Students"("Name", "Roll_Number") values($1, $2)`
@@ -45,9 +45,7 @@ func (p Postgres) CloseDB() {
 
 func CreateTable(db *sql.DB) error {
 	// delete table if it exists
-	_, e := db.Exec("DROP TABLE IF EXISTS recipes")
-	CheckError(e)
-	_, e = db.Exec("CREATE TABLE IF NOT EXISTS recipes(name varchar not null primary key, istoday boolean, ingredients text[] , description varchar, image varchar)")
+	_, e := db.Exec("CREATE TABLE IF NOT EXISTS recipes(name varchar not null primary key, istoday boolean, ingredients text[] , description varchar, image varchar)")
 	CheckError(e)
 	// new recipes
 	ins := "INSERT INTO recipes (name, istoday, ingredients, description, image) VALUES ($1, $2, $3, $4, $5)"

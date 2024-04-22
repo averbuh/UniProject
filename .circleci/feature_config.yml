@@ -105,7 +105,7 @@ jobs:
     - restore_cache:
         working_directory: ./<< pipeline.parameters.service-path >>
         keys:
-        - go-mod-v4-{{ checksum "go.sum" }}
+        - go-mod-v4-{{ checksum "./<< pipeline.parameters.service-path >>/go.sum" }}
     - run:
         working_directory: ./<< pipeline.parameters.service-path >>
         name: Install Dependencies
