@@ -14,7 +14,6 @@ workflows:
           branches:
             ignore:
             - main
-            - dev
         name: Test Feature Branch
         config-path: .circleci/feature_config.yml
         mapping: |
@@ -26,7 +25,7 @@ workflows:
         filters:
           branches:
             only:
-            - dev
+            - main
         name: Deploy to Development
         config-path: .circleci/dev_config.yml
         mapping: |
