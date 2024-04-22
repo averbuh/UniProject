@@ -25,6 +25,7 @@ func TestAdd(t *testing.T) {
 		t.Errorf("Expected no error, but got %v", err)
 	}
 	// Test case 2: Insertion failure
+	//test
 	mock.ExpectExec("INSERT INTO recipes VALUES").WithArgs("test", true, pq.Array([]string{"ingredient1", "ingredient2"}), "description", "image").WillReturnError(errors.New("insertion failed"))
 	err = p.Add("test", recipes.Recipe{IsToday: true, Ingredients: []string{"ingredient1", "ingredient2"}, Description: "description", Image: "image"})
 	if err == nil {

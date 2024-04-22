@@ -92,7 +92,7 @@ jobs:
         working_directory: ./<< pipeline.parameters.service-path >>
         command: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
     - persist_to_workspace:
-        root: ~/repo
+        root: ~/repo/<< pipeline.parameters.service-path >>
         paths:
         - golanci-report.xml
 
@@ -102,33 +102,38 @@ jobs:
     resource_class: large
     steps:
     - checkout
-    - to_service_dir:
-        service-path: << pipeline.parameters.service-path >>
     - restore_cache:
+        working_directory: ./<< pipeline.parameters.service-path >>
         keys:
         - go-mod-v4-{{ checksum "go.sum" }}
     - run:
+        working_directory: ./<< pipeline.parameters.service-path >>
         name: Install Dependencies
         command: go get ./...
     - save_cache:
+        working_directory: ./<< pipeline.parameters.service-path >>
         key: go-mod-v4-{{ checksum "go.sum" }}
         paths:
         - "/go/pkg/mod"
 
     - run:
         name: Run unit tests
+        working_directory: ./<< pipeline.parameters.service-path >>
         command: |
           mkdir -p /tmp/test-reports
           gotestsum --junitfile /tmp/test-reports/unit-tests.xml
 
     - store_test_results:
+        working_directory: ./<< pipeline.parameters.service-path >>
         path: /tmp/test-reports
 
     - run:
+        working_directory: ./<< pipeline.parameters.service-path >>
         name: Create temp dir for artifacts
         command: mkdir -p /tmp/artifacts
 
     - run:
+        working_directory: ./<< pipeline.parameters.service-path >>
         name: Run coverage
         command: |
           go test ./... -race -coverprofile=coverage.out -json > report.json
@@ -136,10 +141,11 @@ jobs:
           mv coverage.html /tmp/artifacts
 
     - store_artifacts:
+        working_directory: ./<< pipeline.parameters.service-path >>
         path: /tmp/artifacts
 
     - persist_to_workspace:
-        root: ~/repo
+        root: ~/repo/<< pipeline.parameters.service-path >>
         paths:
         - coverage.out
         - report.json
@@ -149,10 +155,8 @@ jobs:
     executor: go-executor
     steps:
     - checkout
-    - to_service_dir:
-        service-path: << pipeline.parameters.service-path >>
     - attach_workspace:
-        at: ~/repo
+        at: ~/repo/<< pipeline.parameters.service-path >>
 
     - sonarcloud/scan:
         sonar_token_variable_name: SONAR_TOKEN
