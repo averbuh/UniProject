@@ -15,6 +15,7 @@ workflows:
             only: dev
         name: Test Feature Branch
         config-path: .circleci/feature_config.yml
+        base-revision: dev
         mapping: |
           recipes/.*\.go$ run-recipes-go true
           recipes/.*\.go$ service-path "recipes"
