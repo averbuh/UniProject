@@ -13,11 +13,11 @@ orbs:
         - run:
             name: Change directory
             command: |
-              if [ -z << parameters.service-path >> ]; then
+              if [ -z "${{ parameters.service-path }}" ]; then
                 echo "Parameter service-path is empty" >&2
                 exit 1
               fi
-              cd << parameters.service-path >>
+              cd "{{ parameters.service-path }}"
 
 executors:
   go-executor:
