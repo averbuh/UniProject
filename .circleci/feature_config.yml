@@ -33,9 +33,6 @@ parameters:
   run-suppliers-go:
     default: false
     type: boolean
-  run-frontend:
-    default: false
-    type: boolean
   service-path:
     default: .
     type: string
@@ -43,7 +40,12 @@ parameters:
 
 workflows:
   Lint, Test, Coverage Feature:
-    when: << pipeline.parameters.run-recipes-go >> || << pipeline.parameters.run-suppliers-go >>
+    when:
+      and:
+      - equal: ["recipes", << pipeline.parameters.service-path >>]
+      - or:
+        - << pipeline.parameters.run-recipes-go >>
+        - << pipeline.parameters.run-suppliers-go >>
     jobs:
     - Test feature pipeline
     - Lint
