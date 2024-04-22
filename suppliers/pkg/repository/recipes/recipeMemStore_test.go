@@ -19,6 +19,7 @@ func getHamCheeseToasties() Recipe {
 	}
 }
 
+// test
 func TestMemStore_Add(t *testing.T) {
 	type fields struct {
 		list map[string]Recipe
