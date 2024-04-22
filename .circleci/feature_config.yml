@@ -158,6 +158,7 @@ jobs:
         at: ~/repo/<< pipeline.parameters.service-path >>
 
     - sonarcloud/scan:
+        project_root: ./<< pipeline.parameters.service-path >>
         sonar_token_variable_name: SONAR_TOKEN
 
 
