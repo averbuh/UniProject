@@ -35,6 +35,8 @@ jobs:
 
   Test feature pipeline:
     working_directory: .
+    docker:
+    - image: cimg/go:1.21.6
     steps:
     - run:
         name: Test
