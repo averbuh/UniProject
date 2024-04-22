@@ -94,6 +94,14 @@ func CreateTable(db *sql.DB) error {
 	return e
 }
 
+// Add adds a new recipe to the Postgres database.
+//
+// Parameters:
+// - name: the name of the recipe (string).
+// - recipe: the recipe object containing the recipe details (Recipe).
+//
+// Returns:
+// - error: an error if the insertion fails.
 func (p Postgres) Add(name string, recipe Recipe) error {
 	_, e := func() (sql.Result, error) {
 		var args []any = []any{name, recipe.IsToday, pq.Array(recipe.Ingredients), recipe.Description, recipe.Image}

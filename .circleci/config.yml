@@ -1,40 +1,42 @@
 version: 2.1
 
-
 setup: true
 
 orbs:
-  path-filtering: circleci/path-filtering@1.0.0 #TODO check latest version
+  path-filtering: circleci/path-filtering@1.0.0
 
 
 workflows:
-  always-run:
+  feature-dev-stage-prod:
     jobs:
-
     - path-filtering/filter:
         filters:
           branches:
             ignore:
             - main
-
-        name: check-updated-files-feature
-        # <regex path-to-test> <parameter-to-set> <value-of-pipeline-parameter>
-        mapping: |
-          restaurant/.* run-test-service true
-          recipes/.* run-test-service true
-          .circleci/.* run-test-service true
-        base-revision: main
+            - dev
+        name: Test Feature Branch
         config-path: .circleci/feature_config.yml
+        mapping: |
+          recipes/.go$ run-recipes-go true
+          recipes/.go$ service-path recipes
+          suppliers/.go$ run-suppliers-go true
+          suppliers/.go$ service-path suppliers
+    - path-filtering/filter:
+        filters:
+          branches:
+            only:
+            - dev
+        name: Deploy to Development
+        config-path: .circleci/dev_config.yml
+        mapping: |
+          recipes/.go$ run-recipes-go true
+          suppliers/.go$ run-suppliers-go true
+        #TODO add ability to auto push to main after pipeline is done successfully
     - path-filtering/filter:
         filters:
           branches:
             only:
             - main
-        name: check-updated-files-main
-        mapping: |
-          restaurant/.* run-test-service true
-          recipes/.* run-test-service true
-        base-revision: main
+        name: Deploy to Production
         config-path: .circleci/main_config.yml
-
-
