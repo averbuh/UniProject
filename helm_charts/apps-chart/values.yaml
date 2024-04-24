@@ -6,9 +6,9 @@ AppsPorts:
     port: 443
     targetPort: 8443
 
-AppName: "restourant"
+AppName: "recipes"
 
-AppMode: 
+AppMode:
 
 tier: backend
 
