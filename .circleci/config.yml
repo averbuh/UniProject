@@ -13,7 +13,7 @@ workflows:
         filters:
           branches:
             only: dev
-        name: Test Feature Branch
+        name: Push to Feature branch
         config-path: .circleci/feature_config.yml
         base-revision: dev
         mapping: |
@@ -24,18 +24,9 @@ workflows:
     - path-filtering/filter:
         filters:
           branches:
-            only:
+            only: release
+            ignore:
+            - dev
             - main
-        name: Deploy to Development
+        name: Push to Development branch
         config-path: .circleci/dev_config.yml
-        mapping: |
-          recipes/.go$ run-recipes-go true
-          suppliers/.go$ run-suppliers-go true
-        #TODO add ability to auto push to main after pipeline is done successfully
-    - path-filtering/filter:
-        filters:
-          branches:
-            only:
-            - main
-        name: Deploy to Production
-        config-path: .circleci/main_config.yml
