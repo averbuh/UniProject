@@ -110,5 +110,5 @@ kind: Secret
 metadata:
   name: postgres-postgresql 
 data:
-  postgres-postgresql : cG9zdGdyZXM=
+  postgres-password : cG9zdGdyZXM=
 type: Opaque
