@@ -108,7 +108,7 @@ data:
 apiVersion: v1
 kind: Secret
 metadata:
-  name:  secretName
+  name: postgres-postgresql 
 data:
   postgres-postgresql : cG9zdGdyZXM=
 type: Opaque
