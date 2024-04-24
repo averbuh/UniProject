@@ -4,15 +4,52 @@ orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
 
 
+
+commands:
+  to_service_dir:
+    parameters:
+      service-path:
+        default: .
+        type: string
+    steps:
+    - run:
+        name: Change directory
+        command: |
+          if [ -z << parameters.service-path >> ]; then
+            echo "Parameter service-path is empty" >&2
+            exit 1
+          fi
+          cd << parameters.service-path >>
+
+executors:
+  go-executor:
+    docker:
+    - image: cimg/go:1.21.6
+
 parameters:
-  run-test-service:
+  run-recipes-go:
     default: false
     type: boolean
+  run-suppliers-go:
+    default: false
+    type: boolean
+  service-path:
+    default: "."
+    type: string
+
 
 workflows:
-  service-1:
-    when: << pipeline.parameters.run-test-service >>
+  Lint, Test, Coverage Feature:
+    when:
+      and:
+      - or:
+        - equal: ["recipes", << pipeline.parameters.service-path >>]
+        - equal: ["suppliers", << pipeline.parameters.service-path >>]
+      - or:
+        - << pipeline.parameters.run-recipes-go >>
+        - << pipeline.parameters.run-suppliers-go >>
     jobs:
+    - Test feature pipeline
     - Lint
     - Test and coverage
     - Sonar:
@@ -20,53 +57,76 @@ workflows:
         - Lint
         - Test and coverage
 
+
 jobs:
+
+  Test feature pipeline:
+    working_directory: .
+    executor: go-executor
+    steps:
+    - run:
+        name: Test
+        command: echo "Hello World"
 
   Lint:
     working_directory: ~/repo
-    docker:
-    - image: cimg/go:1.21.6
+    executor: go-executor
     steps:
     - checkout
-    - run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
-    - run: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
+    # step from steps field
+    - to_service_dir:
+        service-path: << pipeline.parameters.service-path >>
+    - run:
+        name: Install golangci-lint
+        working_directory: ./<< pipeline.parameters.service-path >>
+        command: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
+
+    - run:
+        name:
+        working_directory: ./<< pipeline.parameters.service-path >>
+        command: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
     - persist_to_workspace:
-        root: ~/repo
+        root: ~/repo/<< pipeline.parameters.service-path >>
         paths:
         - golanci-report.xml
 
   Test and coverage:
     working_directory: ~/repo
-    docker:
-    - image: cimg/go:1.21.6
+    executor: go-executor
     resource_class: large
     steps:
     - checkout
     - restore_cache:
+        working_directory: ./<< pipeline.parameters.service-path >>
         keys:
-        - go-mod-v4-{{ checksum "go.sum" }}
+        - go-mod-v4-{{ checksum "./<< pipeline.parameters.service-path >>/go.sum" }}
     - run:
+        working_directory: ./<< pipeline.parameters.service-path >>
         name: Install Dependencies
         command: go get ./...
     - save_cache:
-        key: go-mod-v4-{{ checksum "go.sum" }}
+        working_directory: ./<< pipeline.parameters.service-path >>
+        key: go-mod-v4-{{ checksum "./<< pipeline.parameters.service-path >>/go.sum" }}
         paths:
         - "/go/pkg/mod"
-
     - run:
         name: Run unit tests
+        working_directory: ./<< pipeline.parameters.service-path >>
         command: |
           mkdir -p /tmp/test-reports
           gotestsum --junitfile /tmp/test-reports/unit-tests.xml
 
     - store_test_results:
+        working_directory: ./<< pipeline.parameters.service-path >>
         path: /tmp/test-reports
 
     - run:
+        working_directory: ./<< pipeline.parameters.service-path >>
         name: Create temp dir for artifacts
         command: mkdir -p /tmp/artifacts
 
     - run:
+        working_directory: ./<< pipeline.parameters.service-path >>
         name: Run coverage
         command: |
           go test ./... -race -coverprofile=coverage.out -json > report.json
@@ -74,24 +134,25 @@ jobs:
           mv coverage.html /tmp/artifacts
 
     - store_artifacts:
+        working_directory: ./<< pipeline.parameters.service-path >>
         path: /tmp/artifacts
 
     - persist_to_workspace:
-        root: ~/repo
+        root: ~/repo/<< pipeline.parameters.service-path >>
         paths:
         - coverage.out
         - report.json
 
   Sonar:
     working_directory: ~/repo
-    docker:
-    - image: cimg/go:1.21.6
+    executor: go-executor
     steps:
     - checkout
     - attach_workspace:
-        at: ~/repo
+        at: ~/repo/<< pipeline.parameters.service-path >>
 
     - sonarcloud/scan:
+        project_root: ./<< pipeline.parameters.service-path >>
         sonar_token_variable_name: SONAR_TOKEN
 
 

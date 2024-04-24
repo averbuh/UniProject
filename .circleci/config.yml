@@ -1,40 +1,31 @@
 version: 2.1
 
-
 setup: true
 
 orbs:
-  path-filtering: circleci/path-filtering@1.0.0 #TODO check latest version
-
+  path-filtering: circleci/path-filtering@1.0.0
 
 workflows:
-  always-run:
+  feature-dev-stage-prod:
     jobs:
-
     - path-filtering/filter:
         filters:
           branches:
-            ignore:
-            - main
-
-        name: check-updated-files-feature
-        # <regex path-to-test> <parameter-to-set> <value-of-pipeline-parameter>
-        mapping: |
-          restaurant/.* run-test-service true
-          recipes/.* run-test-service true
-          .circleci/.* run-test-service true
-        base-revision: main
+            only: dev
+        name: Push to Feature branch
         config-path: .circleci/feature_config.yml
+        base-revision: dev
+        mapping: |
+          recipes/.*\.go$ run-recipes-go true
+          recipes/.*\.go$ service-path "recipes"
+          suppliers/.*\.go$ run-suppliers-go true
+          suppliers/.*\.go$ service-path "suppliers"
     - path-filtering/filter:
         filters:
           branches:
-            only:
+            only: release
+            ignore:
+            - dev
             - main
-        name: check-updated-files-main
-        mapping: |
-          restaurant/.* run-test-service true
-          recipes/.* run-test-service true
-        base-revision: main
-        config-path: .circleci/main_config.yml
-
-
+        name: Push to Development branch
+        config-path: .circleci/dev_config.yml

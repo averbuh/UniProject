@@ -1,20 +1,76 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
+	"log"
 	"net/http"
+	"os"
+	"time"
+
+	"github.com/gin-contrib/cors"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
 	"practice.com/http/pkg/repository/recipes"
 )
 
+var environment = "dev"
+
+const (
+	host     = "172.17.0.2"
+	port     = 5432
+	user     = "postgres"
+	password = "admin"
+	dbname   = "postgres"
+)
+
 func main() {
 	// Create Gin router
 	router := gin.Default()
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS", "DELETE"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
+	config.ExposeHeaders = []string{"Content-Length"}
+	config.AllowCredentials = true
+	config.MaxAge = 12 * time.Hour
 
+	router.Use(cors.New(config))
 	// Instantiate recipe Handler and provide a data store
-	store := recipes.NewPostgres()
-	recipesHandler := NewRecipesHandler(store)
+
+	s3 := recipes.NewS3Store("us-east-1", "test-images-vue")
+
+	var psqlconn string
+	if environment == "prod" {
+		host := "postgres-postgresql.default.svc.cluster.local"
+		port := 5432
+		user, exist := os.LookupEnv("POSTGRES_USER")
+		if !exist {
+			panic("POSTGRES_USER not set")
+		}
+		password, exist := os.LookupEnv("POSTGRES_PASSWORD")
+		if !exist {
+			panic("POSTGRES_PASSWORD not set")
+		}
+		dbname, exist := os.LookupEnv("POSTGRES_DB")
+		if !exist {
+			panic("POSTGRES_DB not set")
+		}
+		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	} else {
+		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	}
+
+	db, err := sql.Open("postgres", psqlconn)
+	if err != nil {
+		log.Print("Failed to connect to database: ", err)
+	}
+	store, err := recipes.NewPostgres(db)
+	if err != nil {
+		log.Print("Failed to connect to database: ", err)
+	}
+	recipesHandler := NewRecipesHandler(store, &s3)
 	defer store.CloseDB()
 
 	recipesRoutes := map[string]string{
@@ -25,6 +81,8 @@ func main() {
 	router.GET("/", homePage)
 	router.GET("/recipes", recipesHandler.ListRecipes)
 	router.POST("/recipes", recipesHandler.CreateRecipe)
+	router.POST("/recipes/upload", recipesHandler.UploadImage)
+	router.GET("/recipes/image/:image", recipesHandler.GetImage)
 	router.GET(recipesRoutes["id"], recipesHandler.GetRecipe)
 	router.PUT(recipesRoutes["id"], recipesHandler.UpdateRecipe)
 	router.DELETE(recipesRoutes["id"], recipesHandler.DeleteRecipe)
@@ -39,11 +97,13 @@ func homePage(c *gin.Context) {
 
 type RecipesHandler struct {
 	store recipeStore
+	s3    *recipes.S3Store
 }
 
-func NewRecipesHandler(s recipeStore) *RecipesHandler {
+func NewRecipesHandler(s recipeStore, s3 *recipes.S3Store) *RecipesHandler {
 	return &RecipesHandler{
 		store: s,
+		s3:    s3,
 	}
 }
 
@@ -71,6 +131,50 @@ func (h RecipesHandler) CreateRecipe(c *gin.Context) {
 
 	// return success payload
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func (h RecipesHandler) UploadImage(c *gin.Context) {
+
+	// single file
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err))
+		return
+	}
+	log.Println(file.Filename)
+
+	dst := "./tmp/" + file.Filename
+
+	// Upload the file to specific dst.
+	err = c.SaveUploadedFile(file, dst)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err))
+		return
+	}
+
+	h.s3.UploadToS3(dst)
+
+	err = os.Remove(dst)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("remove file err: %s", err))
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func (h RecipesHandler) GetImage(c *gin.Context) {
+
+	//TODO: add redis check
+
+	image := c.Param("image")
+
+	tempUrl := h.s3.GenerateUrl(image)
+
+	fmt.Println(tempUrl)
+	//send url string
+	c.JSON(http.StatusOK, tempUrl)
+
 }
 
 func (h RecipesHandler) ListRecipes(c *gin.Context) {
@@ -118,6 +222,13 @@ func (h RecipesHandler) UpdateRecipe(c *gin.Context) {
 }
 
 func (h RecipesHandler) DeleteRecipe(c *gin.Context) {
+
+	// var recipe recipes.Recipe
+	// if err := c.ShouldBindJSON(&recipe); err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
+
 	id := c.Param("id")
 
 	err := h.store.Remove(id)

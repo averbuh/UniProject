@@ -2,11 +2,13 @@ package recipes
 
 // Represents a recipe
 type Recipe struct {
-	Name        string       `json:"name"`
-	Ingredients []Ingredient `json:"ingredients"`
+	Name        string   `json:"name"`
+	IsToday     bool     `json:"istoday"`
+	Ingredients []string `json:"ingredients"`
+	Description string   `json:"description"`
+	Image       string   `json:"image"`
 }
 
-// Represents individual ingredients
-type Ingredient struct {
-	Name string `json:"name"`
+type Image struct {
+	Url string `json:"url"`
 }
