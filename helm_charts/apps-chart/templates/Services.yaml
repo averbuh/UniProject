@@ -36,7 +36,6 @@ spec:
     secretName: {{ .Release.Name }}-tls
 {{end}}
   rules:
-  - host: {{ .Release.Name }}.domain.org
     http:
       paths:
         - path: /
