@@ -22,12 +22,20 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
+  namespace: {{ .Release.Namespace }}
   annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
   {{if eq .Values.tls true}}
      cert-manager.io/cluster-issuer: letsencrypt-prod
-  {{end}} 
+  {{end}}
+
 spec:
   ingressClassName: nginx
+  defaultBackend:
+    service:
+      name: error
+      port:
+        name: svc-port
 {{if eq .Values.tls true}}
   tls:
   - hosts: 
@@ -45,3 +53,7 @@ spec:
               name: {{ .Release.Name }}-service
               port:
                 number: {{.Values.AppsPorts.http.port}}
+
+
+---
+

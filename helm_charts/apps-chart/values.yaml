@@ -8,6 +8,8 @@ AppsPorts:
 
 AppName: "recipes"
 
+Namespace: "app-services"
+
 AppMode:
 
 tier: backend
