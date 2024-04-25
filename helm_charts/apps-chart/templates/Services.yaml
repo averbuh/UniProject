@@ -22,6 +22,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
+  namespace: {{ .Release.Namespace }}
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
   {{if eq .Values.tls true}}
@@ -43,6 +44,7 @@ spec:
     secretName: {{ .Release.Name }}-tls
 {{end}}
   rules:
+  - host: www.{{ .Release.Name }}.domain.ext
     http:
       paths:
         - path: /
