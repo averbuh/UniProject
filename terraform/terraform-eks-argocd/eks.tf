@@ -168,3 +168,8 @@ resource "aws_autoscaling_group" "eks_worker" {
     ignore_changes = [desired_capacity]
   }
 }
+
+# module "eks-ingress-nginx" {
+#   source  = "lablabs/eks-ingress-nginx/aws"
+#   version = "1.2.0"
+# }

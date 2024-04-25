@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: suppliers-app
+  # Add labels for better organization (optional)
+  labels:
+    app: suppliers
+spec:
+  project: recipes-suppliers-app # Reference the previously created AppProject
+  source:
+    # Replace with details for your suppliers application Git repository
+    repoURL: https://your-git-repo.com/suppliers-app.git
+    path: . # Assuming manifests are at the root of the repository
+    targetRevision: HEAD # Or specific commit SHA/tag
+
+  # Choose either Helm or Kustomize based on your deployment strategy
+  # Uncomment the relevant section and update accordingly
+
+  # Helm deployment (if using Helm chart)
+  helm:
+    chart: backend-service # Replace with your Helm chart name
+
+  # Kustomize deployment (if using kustomization)
+  # kustomize:
+  #   path: overlay  # Path to your kustomization directory (optional, defaults to .)
+
+  # Sync policy defines automatic synchronization behavior
+  syncPolicy:
+    automated:
+      selfHeal: true
+      pruneOnDelete: true
