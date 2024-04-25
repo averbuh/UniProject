@@ -1,69 +1,3 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: recipes-app
-  # Add labels for better organization (optional)
-  labels:
-    app: recipes
-spec:
-  project: recipes-suppliers-app # Reference the previously created AppProject
-  source:
-    # Replace with details for your recipes application Git repository
-    repoURL: https://your-git-repo.com/recipes-app.git
-    path: helm_charts/apps-chart # Assuming manifests are at the root of the repository
-    targetRevision: HEAD # Or specific commit SHA/tag
-
-  # Choose either Helm or Kustomize based on your deployment strategy
-  # Uncomment the relevant section and update accordingly
-
-  # Helm deployment (if using Helm chart)
-  helm:
-    chart: backend-service # Replace with your Helm chart name
-
-  # Sync policy defines automatic synchronization behavior
-  syncPolicy:
-    syncOptions:
-    - CreateNamespace = true
-    automated:
-      selfHeal: true
-      pruneOnDelete: true
-
----
-
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: suppliers-app
-  # Add labels for better organization (optional)
-  labels:
-    app: suppliers
-spec:
-  project: recipes-suppliers-app # Reference the previously created AppProject
-  source:
-    # Replace with details for your suppliers application Git repository
-    repoURL: https://your-git-repo.com/suppliers-app.git
-    path: . # Assuming manifests are at the root of the repository
-    targetRevision: HEAD # Or specific commit SHA/tag
-
-  # Choose either Helm or Kustomize based on your deployment strategy
-  # Uncomment the relevant section and update accordingly
-
-  # Helm deployment (if using Helm chart)
-  helm:
-    chart: backend-service # Replace with your Helm chart name
-
-  # Kustomize deployment (if using kustomization)
-  # kustomize:
-  #   path: overlay  # Path to your kustomization directory (optional, defaults to .)
-
-  # Sync policy defines automatic synchronization behavior
-  syncPolicy:
-    automated:
-      selfHeal: true
-      pruneOnDelete: true
-
----
-
 # Define the API version and kind for ArgoCD Application
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -71,6 +5,36 @@ kind: Application
 # Metadata section includes details about the application's name, namespace, labels, and annotations
 metadata:
   name: recipes
+  namespace: argocd
+  labels:
+    app.kubernetes.io/managed-by: "Helm" # Label indicating that Helm manages this application
+  annotations:
+    meta.helm.sh/release-name: "argocd" # Helm release name
+    meta.helm.sh/release-namespace: "argocd" # Helm release namespace
+
+# Specification section outlines the details of the application
+spec:
+  project: recipes-suppliers-app # Project to which this application belongs
+
+  # Source section specifies the Git repository details and the desired revision
+  source:
+    repoURL: https://github.com/averbuh/UniProject # Git repository URL
+    targetRevision: HEAD # Git branch, tag, or commit hash
+    path: helm_charts/apps-chart # Path within the repository where the application manifests are located
+
+  # Destination section defines the target Kubernetes cluster and namespace
+  destination:
+    server: https://kubernetes.default.svc # Kubernetes cluster URL
+    namespace: apps # Target namespace for deploying the application
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+# Metadata section includes details about the application's name, namespace, labels, and annotations
+metadata:
+  name: suppliers
   namespace: argocd
   labels:
     app.kubernetes.io/managed-by: "Helm" # Label indicating that Helm manages this application
