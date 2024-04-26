@@ -14,7 +14,7 @@ func main() {
 	RecipesHandler := NewRecipesHandler(store)
 
 	mux := http.NewServeMux()
-
+	//test
 	mux.Handle("/", &homeHandler{})
 	mux.Handle("/recipes", RecipesHandler)
 	mux.Handle("/recipes/", RecipesHandler)
