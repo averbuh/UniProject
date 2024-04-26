@@ -34,7 +34,7 @@ workflows:
           session-duration: "1800"
 
         account_id: ${AWS_ECR_REGISTRY_ID}
-        context: CircleCI_OIDC_Token
+        context: aws-dev
         create_repo: true
         dockerfile: Dockerfile
         # executors: base
@@ -75,7 +75,7 @@ workflows:
           role-session-name: "example-session"
           session-duration: "1800"
         account_id: ${AWS_ECR_REGISTRY_ID}
-        context: CircleCI_OIDC_Token
+        context: aws-dev
         create_repo: true
         dockerfile: Dockerfile
         # executors: base
