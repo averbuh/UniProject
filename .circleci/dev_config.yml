@@ -29,7 +29,6 @@ workflows:
           role_arn: arn:aws:iam::975050257492:role/Cirlce-ci-push-ecr
           aws-region: ${AWS_REGION}
           # optional parameters
-          profile-name: OIDC-PROFILE
           role-session-name: "example-session"
           session-duration: "1800"
 
@@ -42,7 +41,6 @@ workflows:
         no_output_timeout: 20m
         path: ./recipes
         platform: linux/amd64
-        profile_name: OIDC-PROFILE
         public_registry: false
         push_image: true
         region: ${AWS_REGION}
