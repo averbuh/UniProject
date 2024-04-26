@@ -51,7 +51,7 @@ workflows:
         repo_scan_on_push: true
         # set_repo_policy: true
         skip_when_tags_exist: false
-        tag: "recipes:{{ << pipeline.git.tag >> || \"latest\" }}"
+        tag: "recipes:${ << pipeline.git.tag >> || \"latest\" }"
 
     - argocd-manual-sync:
 
