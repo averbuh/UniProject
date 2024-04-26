@@ -65,7 +65,10 @@ func main() {
 	store, err := recipes.NewPostgres(db)
 	if err != nil {
 		log.Print("Failed to connect to database: ", err)
+	} else {
+		log.Print("Connected to database")
 	}
+
 	recipesHandler := NewRecipesHandler(store, &s3)
 	defer store.CloseDB()
 
