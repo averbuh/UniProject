@@ -1,28 +1,26 @@
-FROM golang:1.21.1-alpine
+# Use alpine linux as the base image (lightweight)
+FROM golang:alpine AS builder
 
-# Set destination for COPY
-WORKDIR /app
+# Set working directory
+WORKDIR /go/src/recipes
 
-# Copy the source code. Note the slash at the end, as explained in
-# https://docs.docker.com/reference/dockerfile/#copy
-COPY . ./
+# Copy your Go source code (replace "app" with your project name)
+COPY . .
 
-# Download all the dependencies
-RUN go get -d -v ./...
+# Install dependencies
+RUN go mod download
 
-# Install the package
-RUN go install -v ./...
+# Build the Go binary (replace "main.go" with your main file)
+RUN go build -o ./cmd/gin/main 
 
-# Build
-RUN go build -o ./build/gin_api ./cmd/gin
+# Use a slimmer image for the final container
+FROM alpine:latest
 
-# Optional:
-# To bind to a TCP port, runtime parameters must be supplied to the docker command.
-# But we can document in the Dockerfile what ports
-# the application is going to listen on by default.
-# https://docs.docker.com/reference/dockerfile/#expose
+# Copy the built binary
+COPY --from=builder /go/src/recipes/main /recipes
+
 EXPOSE 8080
 EXPOSE 443
 
-# Run
-CMD ["./build/gin_api"]
+# Set the entrypoint to run your application
+ENTRYPOINT [ "/app/main" ]
