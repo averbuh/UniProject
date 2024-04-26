@@ -11,21 +11,23 @@ workflows:
     - path-filtering/filter:
         filters:
           branches:
-            only: dev
-        name: Push to Feature branch
-        config-path: .circleci/feature_config.yml
-        base-revision: dev
-        mapping: |
-          recipes/.*\.go$ run-recipes-go true
-          recipes/.*\.go$ service-path "recipes"
-          suppliers/.*\.go$ run-suppliers-go true
-          suppliers/.*\.go$ service-path "suppliers"
-    - path-filtering/filter:
-        filters:
-          branches:
-            only: release
             ignore:
             - dev
             - main
+        name: Push to Feature branch
+        config-path: .circleci/feature_config.yml
+        base-revision: HEAD
+        mapping: |
+          recipes/.*\.go$ run-recipes-go true
+          suppliers/.*\.go$ run-suppliers-go true
+    - path-filtering/filter:
+        filters:
+          branches:
+            only:
+            - dev
         name: Push to Development branch
         config-path: .circleci/dev_config.yml
+        base-revision: HEAD
+        mapping: |
+          recipes/.*\.go$ run-recipes-go true
+          suppliers/.*\.go$ run-suppliers-go true

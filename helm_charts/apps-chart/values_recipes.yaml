@@ -1,0 +1,29 @@
+AppsPorts:
+  http:
+    port: 80
+    targetPort: 8080
+  https:
+    port: 443
+    targetPort: 8443
+
+AppName: "recipes"
+
+Namespace: "apps"
+
+AppMode: stage
+
+tier: backend
+
+replicas: 3
+
+#image tag or latest
+
+ImageName: 975050257492.dkr.ecr.eu-central-1.amazonaws.com/recipes:{{ .Release.Tag || "latest" }}
+
+maxReplicas: 10
+
+minReplicas: 3
+
+tls: false
+
+

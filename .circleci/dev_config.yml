@@ -1,26 +1,142 @@
 version: 2.1
 
 orbs:
-  helm: circleci/helm@3.0.2
+  # helm: circleci/helm@3.0.2
   aws-ecr: circleci/aws-ecr@9.0.4
-  aws-eks: circleci/aws-eks@2.2.0
+  # aws-eks: circleci/aws-eks@2.2.0
   aws-cli: circleci/aws-cli@4.1.3
-  docker: circleci/docker@2.1.1
-  azure-aks: circleci/azure-aks@0.3.0
-  kubernetes: circleci/kubernetes@1.3.0
+  # docker: circleci/docker@2.1.1
+  # azure-aks: circleci/azure-aks@0.3.0
+  # kubernetes: circleci/kubernetes@1.3.0
+
+
+parameters:
+  run-recipes-go:
+    default: false
+    type: boolean
+  run-suppliers-go:
+    default: false
+    type: boolean
+  service-path:
+    default: "."
+    type: string
 
 
 workflows:
-  Build and Push to ECR:
+  Sync Recipes:
+    when: << pipeline.parameters.run-recipes-go >>
+    papeline.parameters.service-path: recipes
     jobs:
-    - build_and_push_image
-  ArgoCD Sync:
-    jobs:
+    - aws-ecr/build_and_push_image:
+        account_id: ${AWS_ECR_REGISTRY_ID}
+        auth:
+        - aws-cli/setup:
+            profile: circleci-user
+            role_arn: arn:aws:iam::975050257492:user/ci-cd-ecr
+        context: CircleCI_OIDC_Token
+        create_repo: true
+        dockerfile: Dockerfile
+        # executors: base
+        extra_build_args: '--compress'
+        no_output_timeout: 20m
+        path: ./<< pipeline.parameters.service-path >>
+        platform: linux/amd64
+        profile_name: circleci-user
+        public_registry: false
+        push_image: true
+        region: ${AWS_REGION}
+        repo: services-project-ops
+        # repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
+        # repo_encryption_type: KMS
+        # repo_policy_path: repo-policy.json
+        repo_scan_on_push: true
+        # set_repo_policy: true
+        skip_when_tags_exist: false
+        tag: "<< pipeline.parameters.service-path >>:${{ pipeline.git.tag || 'latest' }}"
+
     - argocd-manual-sync:
         server: $ARGOCD_SERVER
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
+        app: recipes
 
+  Sync Suppliers:
+    when: << pipeline.parameters.run-suppliers-go >>
+    papeline.parameters.service-path: suppliers
+    jobs:
+    - aws-ecr/build_and_push_image:
+        account_id: ${AWS_ECR_REGISTRY_ID}
+        auth:
+        - aws-cli/setup:
+            profile: circleci-user
+            role_arn: arn:aws:iam::975050257492:user/ci-cd-ecr
+        context: CircleCI_OIDC_Token
+        create_repo: true
+        dockerfile: Dockerfile
+        # executors: base
+        extra_build_args: '--compress'
+        no_output_timeout: 20m
+        path: ./<< pipeline.parameters.service-path >>
+        platform: linux/amd64
+        profile_name: circleci-user
+        public_registry: false
+        push_image: true
+        region: ${AWS_REGION}
+        repo: services-project-ops
+        # repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
+        # repo_encryption_type: KMS
+        # repo_policy_path: repo-policy.json
+        repo_scan_on_push: true
+        # set_repo_policy: true
+        skip_when_tags_exist: false
+        tag: "<< pipeline.parameters.service-path >>:${{ pipeline.git.tag || 'latest' }}"
+
+    - argocd-manual-sync:
+        server: $ARGOCD_SERVER
+        username: $ARGOCD_USERNAME
+        password: $ARGOCD_PASSWORD
+        app: suppliers
+
+
+
+
+jobs:
+
+  argocd-manual-sync:
+    docker:
+    - image: cimg/base:stable
+    parameters:
+      server:
+        description: |
+          Server IP of ArgoCD
+        type: string
+      username:
+        description: |
+          Username for ArgoCD
+        type: string
+      password:
+        description: |
+          Password for ArgoCD
+        type: string
+      app:
+        type: string
+    steps:
+    - run:
+        name: Install ArgoCD CLI
+        command: |
+          URL=https://<< parameters.server >>/download/argocd-linux-amd64
+          [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
+          $SUDO curl --insecure -sSL -o /usr/local/bin/argocd $URL
+          $SUDO chmod +x /usr/local/bin/argocd
+    - run:
+        name: ArgoCD CLI login
+        command: argocd login << parameters.server >> --insecure --username << parameters.username >> --password << parameters.password >>
+    - run:
+        name: Manual sync
+        command: argocd app sync << parameters.app >>
+    - run:
+        name: Wait for application to reach a synced and healthy state
+        command: argocd app wait << parameters.app >>
 
 
     #TEsts
@@ -66,68 +182,3 @@ workflows:
     #     password: $ARGOCD_PASSWORD
     #     requires:
     #     - argocd-configure
-
-
-jobs:
-  build_and_push_image:
-    aws-ecr/build_and_push_image:
-      account_id: ${AWS_ECR_ACCOUNT_ID}
-      auth:
-      - aws-cli/setup:
-          profile: OIDC-USER
-          role_arn: arn:aws:iam::123456789012:role/VALID_OIDC_ECR_ROLE
-      context: CircleCI_OIDC_Token
-      create_repo: true
-      dockerfile: myDockerfile
-      executors: base
-      extra_build_args: '--compress'
-      no_output_timeout: 20m
-      path: pathToMyDockerfile
-      platform: linux/amd64
-      profile_name: OIDC-User
-      public_registry: false
-      push_image: true
-      region: ${AWS_DEFAULT_REGION}
-      repo: myECRRepository
-      repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
-      repo_encryption_type: KMS
-      repo_policy_path: repo-policy.json
-      repo_scan_on_push: true
-      set_repo_policy: true
-      skip_when_tags_exist: false
-      tag: latest,myECRRepoTag
-
-
-  argocd-manual-sync:
-    docker:
-    - image: cimg/base:stable
-    parameters:
-      server:
-        description: |
-          Server IP of of ArgoCD
-        type: string
-      username:
-        description: |
-          Username for ArgoCD
-        type: string
-      password:
-        description: |
-          Password for ArgoCD
-        type: string
-    steps:
-    - run:
-        name: Install ArgoCD CLI
-        command: |
-          URL=https://<< parameters.server >>/download/argocd-linux-amd64
-          [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
-          $SUDO curl --insecure -sSL -o /usr/local/bin/argocd $URL
-          $SUDO chmod +x /usr/local/bin/argocd
-    - run:
-        name: ArgoCD CLI login
-        command: argocd login << parameters.server >> --insecure --username << parameters.username >> --password << parameters.password >>
-    - run:
-        name: Manual sync
-        command: argocd app sync $APP_NAME
-    - run:
-        name: Wait for application to reach a synced and healthy state
-        command: argocd app wait $APP_NAME

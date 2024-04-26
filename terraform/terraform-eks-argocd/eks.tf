@@ -23,6 +23,44 @@ resource "aws_security_group" "eks" {
   }
 }
 
+module "irsa-ebs-csi" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version = "4.7.0"
+
+  create_role                   = true
+  role_name                     = "AmazonEKSTFEBSCSIRole-${resource.aws_eks_cluster.test.name}"
+  provider_url                  =  data.aws_eks_cluster.test.identity[0].oidc[0].issuer
+  role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
+}
+
+resource "aws_eks_addon" "ebs-csi" {
+  cluster_name             = resource.aws_eks_cluster.test.name
+  addon_name               = "aws-ebs-csi-driver"
+  addon_version            = "v1.30.0-eksbuild.1"
+  service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
+  tags = {
+    "eks_addon" = "ebs-csi"
+    "terraform" = "true"
+  }
+}
+
+# resource "aws_eks_addon" "kube-proxy" {
+#   cluster_name             = resource.aws_eks_cluster.test.name
+#   addon_name               = "kube-proxy"
+#   addon_version            = "v1.29.3-eksbuild.2"
+#   tags = {
+#     "eks_addon" = "kube-proxy"
+#     "terraform" = "true"
+#   }
+# }
+
+
+
+output "identity-oidc-issuer" {
+  value = data.aws_eks_cluster.test.identity[0].oidc[0].issuer
+}
+
 resource "aws_vpc_security_group_ingress_rule" "allow_local_network" {
   security_group_id = aws_security_group.eks.id
 
@@ -66,6 +104,8 @@ resource "aws_iam_role_policy_attachment" "eks_worker_cni_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
   role       = aws_iam_role.eks_worker.name
 }
+
+
 
 resource "aws_iam_role_policy_attachment" "eks_worker_ecr_readonly_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"

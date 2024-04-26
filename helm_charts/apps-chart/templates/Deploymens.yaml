@@ -6,7 +6,7 @@ spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      app: {{ .Values.AppName}}
+      app: {{ .Values.AppName }}
       tier: {{ .Values.tier }}
   template:
     metadata:
@@ -15,7 +15,7 @@ spec:
         tier: {{ .Values.tier }}
     spec:
       containers:
-      - name: {{ .Values.AppName}}
+      - name: {{ .Values.AppName }}
         image: {{ .Values.ImageName }}
         imagePullPolicy: Always
         resources:
@@ -36,18 +36,18 @@ spec:
         env:
           - name: POSTGRES_USER
             valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
+              secretKeyRef:
+                name: postgres-secret
                 key: POSTGRES_USER
           - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: postgres-postgresql
-                key: postgres-password
+                name: postgres-secret 
+                key: POSTGRES_PASSWORD 
           - name: POSTGRES_DB
             valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-config
+              secretKeyRef:
+                name: postgres-secret 
                 key: POSTGRES_DB
 
       imagePullSecrets:
@@ -74,7 +74,6 @@ spec:
 #      - name: {{ .Values.AppName}}
 #        image: {{ .Values.ImageName }}
 
---- 
 
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
@@ -88,27 +87,3 @@ spec:
     kind: Deployment
     name: {{ .Release.Name }}
   targetCPUUtilizationPercentage: 50
-
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-config
-  labels:
-    app: {{ .Values.AppName}}
-    tier: {{ .Values.tier }}
-data:
-  POSTGRES_USER: {{ .Values.POSTGRES_USER }}
-  POSTGRES_DB: {{ .Values.POSTGRES_DB }}
-
-
----
-
-apiVersion: v1
-kind: Secret
-metadata:
-  name: postgres-postgresql 
-data:
-  postgres-password : cG9zdGdyZXM=
-type: Opaque

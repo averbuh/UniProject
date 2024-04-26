@@ -6,7 +6,7 @@ kind: AppProject
 
 # Metadata section includes details about the application project's name, namespace, and finalizers
 metadata:
-  name: recipes-suppliers-app
+  name: apps
   namespace: argocd
 
   # Finalizer ensures that the project is not deleted until it is not referenced by any application
