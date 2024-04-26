@@ -15,16 +15,6 @@ import (
 	"practice.com/http/pkg/repository/recipes"
 )
 
-var environment = "dev"
-
-const (
-	host     = "172.17.0.2"
-	port     = 5432
-	user     = "postgres"
-	password = "admin"
-	dbname   = "postgres"
-)
-
 func main() {
 	// Create Gin router
 	router := gin.Default()
@@ -42,7 +32,7 @@ func main() {
 	s3 := recipes.NewS3Store("us-east-1", "test-images-vue")
 
 	var psqlconn string
-	if environment == "prod" {
+	if os.Getenv("GIN_MODE") == "release" {
 		host := "postgres-postgresql.default.svc.cluster.local"
 		port := 5432
 		user, exist := os.LookupEnv("POSTGRES_USER")
@@ -59,6 +49,12 @@ func main() {
 		}
 		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	} else {
+
+		host := "172.17.0.2"
+		port := 5432
+		user := "postgres"
+		password := "admin"
+		dbname := "postgres"
 		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	}
 

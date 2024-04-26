@@ -13,15 +13,17 @@ COPY . .
 
 EXPOSE 8080
 
+
 # Build the Go binary (replace "main.go" with your main file)
-RUN go build -o /cmd/gin main.go 
+RUN go build -o cmd/gin cmd/gin/main.go 
 
 # Use a slimmer image for the final container
 FROM alpine:latest
 
 WORKDIR /
 # Copy the built binary
-COPY --from=builder /cmd/gin /cmd/gin 
+COPY --from=builder recipes/cmd/gin/main /cmd/gin
+
 
 EXPOSE 8080
 
