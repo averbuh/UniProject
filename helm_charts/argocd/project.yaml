@@ -6,7 +6,7 @@ kind: AppProject
 
 # Metadata section includes details about the application project's name, namespace, and finalizers
 metadata:
-  name: apps
+  name: recipes-suppliers-app
   namespace: argocd
 
   # Finalizer ensures that the project is not deleted until it is not referenced by any application
@@ -22,7 +22,7 @@ spec:
 
   # Define the destination clusters where applications from this project can be deployed
   destinations:
-  - namespace: "*" # Allow deployment to any namespace
+  - namespace: "apps" # Allow deployment to any namespace
     server: https://kubernetes.default.svc # Target Kubernetes cluster URL
     name: "*" # Allow deployment to any cluster
 

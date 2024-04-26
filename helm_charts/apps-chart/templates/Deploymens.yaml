@@ -52,7 +52,7 @@ spec:
 
       imagePullSecrets:
       - name: ecr
-      - name: postgres-postgresql
+      - name: postgres-secret
 
 ---
 

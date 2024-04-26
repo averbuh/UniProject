@@ -142,9 +142,9 @@ resource "aws_launch_template" "eks_worker" {
 resource "aws_autoscaling_group" "eks_worker" {
   name                = "eks-worker"
   vpc_zone_identifier = [aws_subnet.private_1.id, aws_subnet.private_2.id]
-  desired_capacity    = 1
-  max_size            = 1
-  min_size            = 1
+  desired_capacity    = 2
+  max_size            = 3
+  min_size            = 2
 
   launch_template {
     id      = aws_launch_template.eks_worker.id
