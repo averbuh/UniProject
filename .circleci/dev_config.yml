@@ -23,40 +23,12 @@ workflows:
   Sync Recipes:
     when: << pipeline.parameters.run-recipes-go >>
     jobs:
-    - aws-ecr/build_and_push_image:
-        auth:
-        - aws-cli/setup:
-          role_arn: arn:aws:iam::975050257492:role/Cirlce-ci-push-ecr
-          aws-region: ${AWS_REGION}
-          # optional parameters
-          role-session-name: "example-session"
-          session-duration: "1800"
-
-        account_id: ${AWS_ECR_REGISTRY_ID}
+    - build_and_push_image:
         context: aws-dev
-        create_repo: true
-        dockerfile: Dockerfile
-        # executors: base
-        # extra_build_args: '--compress'
-        no_output_timeout: 20m
-        path: recipes
-        platform: linux/amd64
-        public_registry: false
-        push_image: true
-        region: ${AWS_REGION}
-        repo: recipes
-        workspace_root: recipes
-        # repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
-        # repo_encryption_type: KMS
-        # repo_policy_path: repo-policy.json
-        repo_scan_on_push: true
-        # set_repo_policy: true
-        skip_when_tags_exist: false
-        tag: $(if [[ -z "<< pipeline.git.tag >>" ]]; then echo "latest"; else echo "<< pipeline.git.tag >>" ; fi)
  
 
     - argocd-manual-sync:
-        requires: [aws-ecr/build_and_push_image]
+        requires: [build_and_push_image]
         server: $ARGOCD_SERVER
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
@@ -107,6 +79,41 @@ workflows:
 
 
 jobs:
+
+
+  build_and_push_image:
+    machine: 
+      image: ubuntu-2004:current
+    working_directory: ~/repo
+    steps:
+    - aws-ecr/build_and_push_image:
+        attach_workspace: true
+        auth:
+        - aws-cli/setup:
+          role_arn: arn:aws:iam::975050257492:role/Cirlce-ci-push-ecr
+          aws-region: ${AWS_REGION}
+          # optional parameters
+          role-session-name: "example-session"
+          session-duration: "1800"
+        account_id: ${AWS_ECR_REGISTRY_ID}
+        create_repo: true
+        dockerfile: Dockerfile
+        # executors: base
+        # extra_build_args: '--compress'
+        no_output_timeout: 20m
+        path: ./recipes
+        platform: linux/amd64
+        public_registry: false
+        push_image: true
+        region: ${AWS_REGION}
+        repo: recipes
+        # repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
+        # repo_encryption_type: KMS
+        # repo_policy_path: repo-policy.json
+        repo_scan_on_push: true
+        # set_repo_policy: true
+        skip_when_tags_exist: false
+        tag: $(if [[ -z "<< pipeline.git.tag >>" ]]; then echo "latest"; else echo "<< pipeline.git.tag >>" ; fi)
 
   argocd-manual-sync:
     docker:
