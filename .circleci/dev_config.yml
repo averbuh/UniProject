@@ -42,7 +42,7 @@ workflows:
         no_output_timeout: 20m
         path: ./recipes
         platform: linux/amd64
-        profile_name: OIDC-Profile
+        profile_name: "OIDC-PROFILE"
         public_registry: false
         push_image: true
         region: ${AWS_REGION}
@@ -83,7 +83,7 @@ workflows:
         no_output_timeout: 20m
         path: ./suppliers
         platform: linux/amd64
-        profile_name: OIDC-Profile 
+        profile_name: "OIDC-PROFILE" 
         public_registry: false
         push_image: true
         region: ${AWS_REGION}
