@@ -1,26 +1,29 @@
 # Use alpine linux as the base image (lightweight)
 FROM golang:alpine AS builder
 
+ARG CGO_ENABLED=0
 # Set working directory
-WORKDIR /go/src/recipes
+WORKDIR /recipes
 
-# Copy your Go source code (replace "app" with your project name)
-COPY . .
+COPY go.mod go.sum ./
 
 # Install dependencies
 RUN go mod download
+COPY . .
+
+EXPOSE 8080
 
 # Build the Go binary (replace "main.go" with your main file)
-RUN go build -o ./cmd/gin/main 
+RUN go build -o /cmd/gin main.go 
 
 # Use a slimmer image for the final container
 FROM alpine:latest
 
+WORKDIR /
 # Copy the built binary
-COPY --from=builder /go/src/recipes/main /recipes
+COPY --from=builder /cmd/gin /cmd/gin 
 
 EXPOSE 8080
-EXPOSE 443
 
 # Set the entrypoint to run your application
-ENTRYPOINT [ "/app/main" ]
+ENTRYPOINT [ "/cmd/gin" ]
