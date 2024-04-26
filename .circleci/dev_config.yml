@@ -27,7 +27,14 @@ workflows:
         account_id: ${AWS_ECR_REGISTRY_ID}
         auth:
         - aws-cli/setup:
-            role_arn: arn:aws:iam::975050257492:user/ci-cd-ecr
+          role_arn: arn:aws:iam::975050257492:role/Cirlce-ci-push-ecr
+          aws-region: ${AWS_REGION}
+          # optional parameters
+          profile-name: "OIDC-PROFILE"
+          role-session-name: "example-session"
+          session-duration: "1800"
+
+
         context: CircleCI_OIDC_Token
         create_repo: true
         dockerfile: Dockerfile
@@ -50,6 +57,7 @@ workflows:
         tag: "recipes:${{ pipeline.git.tag || 'latest' }}"
 
     - argocd-manual-sync:
+        requires: [aws-ecr/build_and_push_image]
         server: $ARGOCD_SERVER
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
@@ -85,6 +93,7 @@ workflows:
         tag: "suppliers:${{ pipeline.git.tag || 'latest' }}"
 
     - argocd-manual-sync:
+        requires: [aws-ecr/build_and_push_image]
         server: $ARGOCD_SERVER
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
