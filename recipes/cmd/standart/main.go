@@ -17,7 +17,7 @@ func main() {
 	mux.Handle("/", &homeHandler{})
 	mux.Handle("/recipes", RecipesHandler)
 	mux.Handle("/recipes/", RecipesHandler)
-
+	//test
 	http.ListenAndServe(":8080", mux)
 }
 

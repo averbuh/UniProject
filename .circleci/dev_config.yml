@@ -43,7 +43,7 @@ workflows:
         no_output_timeout: 20m
         path: ./recipes
         platform: linux/amd64
-        profile_name: circleci-user
+        profile_name: "OIDC-PROFILE"
         public_registry: false
         push_image: true
         region: ${AWS_REGION}
