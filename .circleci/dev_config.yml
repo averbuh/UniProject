@@ -24,7 +24,6 @@ workflows:
     when: << pipeline.parameters.run-recipes-go >>
     jobs:
     - aws-ecr/build_and_push_image:
-        account_id: ${AWS_ECR_REGISTRY_ID}
         auth:
         - aws-cli/setup:
           role_arn: arn:aws:iam::975050257492:role/Cirlce-ci-push-ecr
@@ -34,7 +33,7 @@ workflows:
           role-session-name: "example-session"
           session-duration: "1800"
 
-
+        account_id: ${AWS_ECR_REGISTRY_ID}
         context: CircleCI_OIDC_Token
         create_repo: true
         dockerfile: Dockerfile
@@ -43,7 +42,7 @@ workflows:
         no_output_timeout: 20m
         path: ./recipes
         platform: linux/amd64
-        profile_name: "OIDC-PROFILE"
+        profile_name: OIDC-Profile
         public_registry: false
         push_image: true
         region: ${AWS_REGION}
@@ -67,10 +66,15 @@ workflows:
     when: << pipeline.parameters.run-suppliers-go >>
     jobs:
     - aws-ecr/build_and_push_image:
-        account_id: ${AWS_ECR_REGISTRY_ID}
         auth:
         - aws-cli/setup:
-            role_arn: arn:aws:iam::975050257492:user/ci-cd-ecr
+          role_arn: arn:aws:iam::975050257492:role/Cirlce-ci-push-ecr
+          aws-region: ${AWS_REGION}
+          # optional parameters
+          profile-name: "OIDC-PROFILE"
+          role-session-name: "example-session"
+          session-duration: "1800"
+        account_id: ${AWS_ECR_REGISTRY_ID}
         context: CircleCI_OIDC_Token
         create_repo: true
         dockerfile: Dockerfile
@@ -79,7 +83,7 @@ workflows:
         no_output_timeout: 20m
         path: ./suppliers
         platform: linux/amd64
-        profile_name: circleci-user
+        profile_name: OIDC-Profile 
         public_registry: false
         push_image: true
         region: ${AWS_REGION}
