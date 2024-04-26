@@ -67,7 +67,6 @@ workflows:
         account_id: ${AWS_ECR_REGISTRY_ID}
         auth:
         - aws-cli/setup:
-            profile: circleci-user
             role_arn: arn:aws:iam::975050257492:user/ci-cd-ecr
         context: CircleCI_OIDC_Token
         create_repo: true
