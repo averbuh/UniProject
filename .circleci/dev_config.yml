@@ -17,15 +17,11 @@ parameters:
   run-suppliers-go:
     default: false
     type: boolean
-  service-path:
-    default: "."
-    type: string
 
 
 workflows:
   Sync Recipes:
     when: << pipeline.parameters.run-recipes-go >>
-    papeline.parameters.service-path: "recipes" 
     jobs:
     - aws-ecr/build_and_push_image:
         account_id: ${AWS_ECR_REGISTRY_ID}
@@ -38,7 +34,7 @@ workflows:
         # executors: base
         extra_build_args: '--compress'
         no_output_timeout: 20m
-        path: ./<< pipeline.parameters.service-path >>
+        path: ./recipes
         platform: linux/amd64
         profile_name: circleci-user
         public_registry: false
@@ -51,7 +47,7 @@ workflows:
         repo_scan_on_push: true
         # set_repo_policy: true
         skip_when_tags_exist: false
-        tag: "<< pipeline.parameters.service-path >>:${{ pipeline.git.tag || 'latest' }}"
+        tag: "recipes:${{ pipeline.git.tag || 'latest' }}"
 
     - argocd-manual-sync:
         server: $ARGOCD_SERVER
@@ -61,7 +57,6 @@ workflows:
 
   Sync Suppliers:
     when: << pipeline.parameters.run-suppliers-go >>
-    papeline.parameters.service-path: "suppliers" 
     jobs:
     - aws-ecr/build_and_push_image:
         account_id: ${AWS_ECR_REGISTRY_ID}
@@ -74,7 +69,7 @@ workflows:
         # executors: base
         extra_build_args: '--compress'
         no_output_timeout: 20m
-        path: ./<< pipeline.parameters.service-path >>
+        path: ./suppliers
         platform: linux/amd64
         profile_name: circleci-user
         public_registry: false
@@ -87,7 +82,7 @@ workflows:
         repo_scan_on_push: true
         # set_repo_policy: true
         skip_when_tags_exist: false
-        tag: "<< pipeline.parameters.service-path >>:${{ pipeline.git.tag || 'latest' }}"
+        tag: "suppliers:${{ pipeline.git.tag || 'latest' }}"
 
     - argocd-manual-sync:
         server: $ARGOCD_SERVER
