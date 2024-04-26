@@ -29,4 +29,3 @@ data:
   POSTGRES_DB: dGVzdGRi #testdb
   POSTGRES_USER: dGVzdHVzZXI= #testuser
   POSTGRES_PASSWORD: dGVzdHBhc3M= #testpass 
-
