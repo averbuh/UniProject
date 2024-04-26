@@ -1,8 +1,12 @@
 # Use alpine linux as the base image (lightweight)
 FROM golang:alpine AS builder
 
+RUN echo before $(pwd)
+
 # Set working directory
 WORKDIR /recipes
+
+RUN echo after $(pwd) 
 
 COPY go.mod go.sum ./
 
