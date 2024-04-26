@@ -51,14 +51,9 @@ workflows:
         repo_scan_on_push: true
         # set_repo_policy: true
         skip_when_tags_exist: false
-        tag: |
-          if [[ << pipeline.git.tag >>  ]]; then
-            recipes: << pipeline.git.tag >>
-          else
-            recipes:latest
+        tag: "${{ if eq(pipeline.git.tag, '') then 'latest' else pipeline.git.tag }}"
 
     - argocd-manual-sync:
-
         requires: [aws-ecr/build_and_push_image]
         server: $ARGOCD_SERVER
         username: $ARGOCD_USERNAME
