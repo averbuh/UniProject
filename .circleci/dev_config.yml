@@ -51,7 +51,8 @@ workflows:
         repo_scan_on_push: true
         # set_repo_policy: true
         skip_when_tags_exist: false
-        tag: latest
+        tag: $(if [[ -z "<< pipeline.git.tag >>" ]]; then echo "latest"; else echo "<< pipeline.git.tag >>" ; fi)
+ 
 
     - argocd-manual-sync:
         requires: [aws-ecr/build_and_push_image]
