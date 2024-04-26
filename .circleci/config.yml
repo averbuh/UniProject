@@ -33,4 +33,4 @@ workflows:
         #   suppliers/.*\.go$ run-suppliers-go true
         mapping: |
           * run-recipes-go true
-          *
+          * run-suppliers-go false
