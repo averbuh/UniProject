@@ -25,7 +25,7 @@ parameters:
 workflows:
   Sync Recipes:
     when: << pipeline.parameters.run-recipes-go >>
-    papeline.parameters.service-path: recipes
+    papeline.parameters.service-path: "recipes" 
     jobs:
     - aws-ecr/build_and_push_image:
         account_id: ${AWS_ECR_REGISTRY_ID}
@@ -61,7 +61,7 @@ workflows:
 
   Sync Suppliers:
     when: << pipeline.parameters.run-suppliers-go >>
-    papeline.parameters.service-path: suppliers
+    papeline.parameters.service-path: "suppliers" 
     jobs:
     - aws-ecr/build_and_push_image:
         account_id: ${AWS_ECR_REGISTRY_ID}
