@@ -101,7 +101,8 @@ jobs:
         # executors: base
         # extra_build_args: '--compress'
         no_output_timeout: 20m
-        path: ~/repo/recipes
+        path: ./recipes
+        build_path: ./recipes
         platform: linux/amd64
         public_registry: false
         push_image: true
