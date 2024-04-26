@@ -16,6 +16,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/", &homeHandler{})
 	mux.Handle("/recipes", RecipesHandler)
+	//fsdf
 	mux.Handle("/recipes/", RecipesHandler)
 	http.ListenAndServe(":8080", mux)
 }
