@@ -44,14 +44,14 @@ workflows:
         public_registry: false
         push_image: true
         region: ${AWS_REGION}
-        repo: services-project-ops
+        repo: recipes
         # repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
         # repo_encryption_type: KMS
         # repo_policy_path: repo-policy.json
         repo_scan_on_push: true
         # set_repo_policy: true
         skip_when_tags_exist: false
-        tag: recipes:$(if [[ -z "<< pipeline.git.tag >>" ]]; then echo "latest"; else echo "<< pipeline.git.tag >>" ; fi)
+        tag: $(if [[ -z "<< pipeline.git.tag >>" ]]; then echo "latest"; else echo "<< pipeline.git.tag >>" ; fi)
  
 
     - argocd-manual-sync:
