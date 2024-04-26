@@ -12,7 +12,7 @@ orbs:
 
 parameters:
   run-recipes-go:
-    default: false
+    default: true 
     type: boolean
   run-suppliers-go:
     default: false
