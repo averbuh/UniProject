@@ -18,6 +18,7 @@ func main() {
 	mux.Handle("/recipes", RecipesHandler)
 	mux.Handle("/recipes/", RecipesHandler)
 	http.ListenAndServe(":8080", mux)
+	//fsdf
 }
 
 type homeHandler struct{}
