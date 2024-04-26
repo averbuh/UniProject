@@ -20,8 +20,6 @@ func main() {
 	http.ListenAndServe(":8080", mux)
 }
 
-//rewr
-
 type homeHandler struct{}
 
 var (
