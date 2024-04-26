@@ -51,9 +51,10 @@ workflows:
         repo_scan_on_push: true
         # set_repo_policy: true
         skip_when_tags_exist: false
-        tag: "recipes:${{ pipeline.git.tag || 'latest' }}"
+        tag: "recipes:{{ .Release.Tag || \"latest\" }}"
 
     - argocd-manual-sync:
+
         requires: [aws-ecr/build_and_push_image]
         server: $ARGOCD_SERVER
         username: $ARGOCD_USERNAME
@@ -92,7 +93,7 @@ workflows:
         repo_scan_on_push: true
         # set_repo_policy: true
         skip_when_tags_exist: false
-        tag: "suppliers:${{ pipeline.git.tag || 'latest' }}"
+        tag: "suppliers:{{ .Release.Tag || \"latest\" }}"
 
     - argocd-manual-sync:
         requires: [aws-ecr/build_and_push_image]
