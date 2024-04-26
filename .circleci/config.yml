@@ -28,6 +28,9 @@ workflows:
         name: Push to Development branch
         config-path: .circleci/dev_config.yml
         base-revision: HEAD
+        # mapping: |
+        #   recipes/.*\.go$ run-recipes-go true
+        #   suppliers/.*\.go$ run-suppliers-go true
         mapping: |
-          recipes/.*\.go$ run-recipes-go true
-          suppliers/.*\.go$ run-suppliers-go true
+          * run-recipes-go true
+          *

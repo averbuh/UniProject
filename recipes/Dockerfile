@@ -1,7 +1,6 @@
 # Use alpine linux as the base image (lightweight)
 FROM golang:alpine AS builder
 
-ARG CGO_ENABLED=0
 # Set working directory
 WORKDIR /recipes
 
@@ -24,6 +23,7 @@ WORKDIR /
 # Copy the built binary
 COPY --from=builder recipes/cmd/gin/main /cmd/gin
 
+ENV GIN_MODE=release
 
 EXPOSE 8080
 
