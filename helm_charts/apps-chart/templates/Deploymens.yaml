@@ -51,7 +51,6 @@ spec:
                 key: POSTGRES_DB
 
       imagePullSecrets:
-      - name: ecr
       - name: postgres-secret
 
 ---

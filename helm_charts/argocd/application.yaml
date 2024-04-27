@@ -19,7 +19,7 @@ spec:
   # Source section specifies the Git repository details and the desired revision
   source:
     repoURL: https://github.com/averbuh/UniProject # Git repository URL
-    targetRevision: HEAD # Git branch, tag, or commit hash
+    targetRevision: dev # Git branch, tag, or commit hash
     path: helm_charts/apps-chart # Path within the repository where the application manifests are located
 
     helm:
@@ -29,6 +29,26 @@ spec:
   destination:
     server: https://kubernetes.default.svc # Kubernetes cluster URL
     namespace: apps # Target namespace for deploying the application
+
+  syncPolicy:
+      automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
+        prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
+        selfHeal: true # Specifies if partial app sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected ( false by default ).
+        allowEmpty: false # Allows deleting all application resources during automatic syncing ( false by default ).
+      syncOptions: # Sync options which modifies sync behavior
+      - Validate=true # disables resource validation (equivalent to 'kubectl apply --validate=false') ( true by default ).
+      - CreateNamespace=true # Namespace Auto-Creation ensures that namespace specified as the application destination exists in the destination cluster.
+      - PrunePropagationPolicy=foreground # Supported policies are background, foreground and orphan.
+      - PruneLast=true # Allow the ability for resource pruning to happen as a final, implicit wave of a sync operation
+      - RespectIgnoreDifferences=true # When syncing changes, respect fields ignored by the ignoreDifferences configuration
+      - ApplyOutOfSyncOnly=true # Only sync out-of-sync resources, rather than applying every object in the application
+      # managedNamespaceMetadata: # Sets the metadata for the application namespace. Only valid if CreateNamespace=true (see above), otherwise it's a no-op.
+      #   labels: # The labels to set on the application namespace
+      #     you: like
+      #   annotations: # The annotations to set on the application namespace
+      #     the: same
+      #     applies: for
+      #     annotations: on-the-namespace
 
 ---
 
