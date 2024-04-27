@@ -33,7 +33,7 @@ func main() {
 
 	var psqlconn string
 	if os.Getenv("GIN_MODE") == "release" {
-		host := "postgres-postgresql.default.svc.cluster.local"
+		host := "postgres-postgresql.postgres.svc.cluster.local"
 		port := 5432
 		user, exist := os.LookupEnv("POSTGRES_USER")
 		if !exist {
