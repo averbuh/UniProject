@@ -18,6 +18,7 @@ spec:
       - name: {{ .Values.AppName }}
         image: {{ .Values.ImageName }}
         imagePullPolicy: Always
+        tag: {{ .Values.tag }}
         resources:
           requests:
             cpu: 100m
@@ -52,6 +53,7 @@ spec:
 
       imagePullSecrets:
       - name: postgres-secret
+      - name: ecr
 
 ---
 
