@@ -18,7 +18,6 @@ spec:
       - name: {{ .Values.AppName }}
         image: {{ .Values.ImageName }}:{{ .Values.tag }}
         imagePullPolicy: Always
-        tag: {{ .Values.tag }}
         resources:
           requests:
             cpu: 100m
