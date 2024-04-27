@@ -88,3 +88,4 @@ spec:
     kind: Deployment
     name: {{ .Release.Name }}
   targetCPUUtilizationPercentage: 50
+ 
