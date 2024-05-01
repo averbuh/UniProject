@@ -33,7 +33,7 @@ func (p Postgres) CloseDB() {
 	p.db.Close()
 }
 
-func CreateTable(db *sql.DB) error {
+func (p Postgres) CreateTestTable(db *sql.DB) error {
 	// delete table if it exists
 	_, e := db.Exec("CREATE TABLE IF NOT EXISTS recipes(name varchar not null primary key, istoday boolean, ingredients text[] , description varchar, image varchar)")
 	CheckError(e)

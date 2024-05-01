@@ -34,6 +34,21 @@ spec:
         - containerPort: 8080
         - containerPort: 443
         env:
+          - name: POSTGRES_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: POSTGRES_HOST
+          - name: REDIS_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-config
+                key: REDIS_HOST
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-secret
+                key: REDIS_PASSWORD
           - name: POSTGRES_USER
             valueFrom:
               secretKeyRef:
@@ -50,8 +65,13 @@ spec:
                 name: postgres-secret 
                 key: POSTGRES_DB
 
+      envFrom:
+      - configMapRef:
+          name: {{ .Release.Name }}-config 
+
       imagePullSecrets:
       - name: postgres-secret
+      - name: redis-secret
       - name: regcred
 
 ---

@@ -8,6 +8,7 @@ orbs:
   # docker: circleci/docker@2.1.1
   # azure-aks: circleci/azure-aks@0.3.0
   # kubernetes: circleci/kubernetes@1.3.0
+  gh-cli: circleci/github-cli@2.3.0
 
 
 parameters:
@@ -25,7 +26,13 @@ workflows:
     jobs:
     - build_and_push_image:
         context: aws-dev
- 
+    - gh-cli/release:
+        context: aws-dev
+        prerelease: true
+        version: '2.1'
+        notes-file: changelog.md
+        tag: << git.branch >>
+        title: The initial release
 
     - argocd-manual-sync:
         requires: [build_and_push_image]
