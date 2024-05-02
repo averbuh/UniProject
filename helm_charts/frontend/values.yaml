@@ -1,0 +1,15 @@
+frontend: 
+  labels: 
+    app: frontend
+  deploy: 
+    name: frontend-deployment
+    containers:
+      name: frontend-app
+      image: frontend
+      tag: latest
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 80
+          name: http
+
+  

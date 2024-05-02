@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.frontend.deploy.name }}
+  labels:
+    app: {{ .Values.frontend.labels.app }}
+spec:
+  replicas: {{ .Values.frontend.deploy.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.frontend.labels.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.frontend.labels.app }}
+    spec:
+      containers:
+        - name: {{ .Values.frontend.deploy.containers.name }}
+          imagePullPolicy: {{ .Values.frontend.deploy.containers.imagePullPolicy }}
+          image: "{{ .Values.frontend.deploy.containers.image }}:{{ .Values.frontend.deploy.containers.tag }}"
+          ports:
+            - containerPort: {{ .Values.frontend.deploy.containers.ports.containerPort }} 
+              name: {{ .Values.frontend.deploy.containers.ports.name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend # select the users pod and expose
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend # label by which pod can be selected
+    spec:
+      containers:
+        - name: frontend-app-container
+          image: gomurali/k8s-frontend-app:latest

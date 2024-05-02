@@ -1,0 +1,85 @@
+{
+  "recipes": [
+    {
+      "id": "3",
+      "name": "gdfgdrtedrt",
+      "istoday": false,
+      "ingredients": [
+        "dfgd"
+      ],
+      "description": null,
+      "image": ""
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "1",
+      "name": "Fruit Supplier",
+      "description": "Supplier 1 description",
+      "image": "vegetables.avif",
+      "category": "Fruits",
+      "recommended": true,
+      "favourite": true,
+      "rating": 3,
+      "products": [
+        {
+          "name": "tomatos"
+        },
+        {
+          "name": "onions"
+        },
+        {
+          "name": "lettuce"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Tomato Supplier",
+      "description": "Supplier 2 description",
+      "image": "meat.jpeg",
+      "category": "Vegetables",
+      "recommended": false,
+      "favourite": false,
+      "rating": 4,
+      "products": [
+        {
+          "name": "tomatos"
+        },
+        {
+          "name": "onions"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Local Farm",
+      "description": "Offers fresh seasonal produce",
+      "image": "fruits1.jpg",
+      "category": "Fruits",
+      "recommended": true,
+      "favourite": true,
+      "rating": 2,
+      "products": [
+        {
+          "name": "Strawberries"
+        },
+        {
+          "name": "Apples"
+        },
+        {
+          "name": "Blueberries"
+        },
+        {
+          "name": "Peaches (seasonal)"
+        }
+      ]
+    }
+  ],
+  "restourant": {
+    "id": 1,
+    "name": "Restourant 1",
+    "rating": 3.5,
+    "description": "Restourant 1 description"
+  }
+}
