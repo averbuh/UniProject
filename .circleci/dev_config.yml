@@ -3,11 +3,11 @@ version: 2.1
 orbs:
   # helm: circleci/helm@3.0.2
   aws-ecr: circleci/aws-ecr@9.0.4
-  # aws-eks: circleci/aws-eks@2.2.0
+    # aws-eks: circleci/aws-eks@2.2.0
   aws-cli: circleci/aws-cli@4.1.3
-  # docker: circleci/docker@2.1.1
-  # azure-aks: circleci/azure-aks@0.3.0
-  # kubernetes: circleci/kubernetes@1.3.0
+    # docker: circleci/docker@2.1.1
+    # azure-aks: circleci/azure-aks@0.3.0
+    # kubernetes: circleci/kubernetes@1.3.0
   gh-cli: circleci/github-cli@2.3.0
 
 
@@ -18,80 +18,84 @@ parameters:
   run-suppliers-go:
     default: false
     type: boolean
+  run-frontend:
+    default: false
+    type: boolean
 
 
 workflows:
+  
+  #IF
+  Sync Frontend:
+    when: << pipeline.parameters.run-frontend >>
+    jobs:
+    - build_and_push_image:
+        context: aws-dev
+        repo: frontend
+    - argocd-manual-sync:
+        requires: [build_and_push_image]
+        server: $ARGOCD_SERVER
+        username: $ARGOCD_USERNAME
+        password: $ARGOCD_PASSWORD
+        app: frontend 
+  #IF
   Sync Recipes:
     when: << pipeline.parameters.run-recipes-go >>
     jobs:
     - build_and_push_image:
         context: aws-dev
-    - gh-cli/release:
-        context: aws-dev
-        prerelease: true
-        version: '2.1'
-        notes-file: changelog.md
-        tag: << git.branch >>
-        title: The initial release
-
+        repo: recipes
     - argocd-manual-sync:
         requires: [build_and_push_image]
         server: $ARGOCD_SERVER
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
         app: recipes
-
+  #IF
   Sync Suppliers:
     when: << pipeline.parameters.run-suppliers-go >>
     jobs:
-    - aws-ecr/build_and_push_image:
-        auth:
-        - aws-cli/setup:
-          role_arn: arn:aws:iam::975050257492:role/Cirlce-ci-push-ecr
-          aws-region: ${AWS_REGION}
-          # optional parameters
-          profile-name: OIDC-PROFILE
-          role-session-name: "example-session"
-          session-duration: "1800"
-        account_id: ${AWS_ECR_REGISTRY_ID}
+    - build_and_push_image:
         context: aws-dev
-        create_repo: true
-        dockerfile: Dockerfile
-        # executors: base
-        extra_build_args: '--compress'
-        no_output_timeout: 20m
-        path: ./suppliers
-        platform: linux/amd64
-        profile_name: OIDC-PROFILE 
-        public_registry: false
-        push_image: true
-        region: ${AWS_REGION}
-        repo: services-project-ops
-        # repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
-        # repo_encryption_type: KMS
-        # repo_policy_path: repo-policy.json
-        repo_scan_on_push: true
-        # set_repo_policy: true
-        skip_when_tags_exist: false
-        tag: "suppliers:{{ .Release.Tag || \"latest\" }}"
-
+        repo: suppliers
     - argocd-manual-sync:
-        requires: [aws-ecr/build_and_push_image]
+        requires: [build_and_push_image]
         server: $ARGOCD_SERVER
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
         app: suppliers
 
 
-
+  #ALL
+  Create Release Branch:
+    requires: [Sync Frontend, Sync Recipes, Sync Suppliers]
+    jobs:
+      - create_branch:
+          branch: 1.0.0-release
 
 jobs:
-
-
+  create_branch:
+    machine: 
+      image: ubuntu-2004:current
+    parameters:
+      branch:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Create branch
+          command: |
+            git checkout -b << parameters.branch >>
+            git commit --allow-empty -m "Initial commit
+            git push origin << parameters.branch >>
+    
   build_and_push_image:
     machine: 
       image: ubuntu-2004:current
     working_directory: ~/repo
+    parameters:
+      repo:
+        type: string
     steps:
     - aws-ecr/build_and_push_image:
         attach_workspace: true
@@ -114,14 +118,24 @@ jobs:
         public_registry: false
         push_image: true
         region: ${AWS_REGION}
-        repo: recipes
+        repo: << parameters.repo >> 
         # repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
         # repo_encryption_type: KMS
         # repo_policy_path: repo-policy.json
         repo_scan_on_push: true
         # set_repo_policy: true
         skip_when_tags_exist: false
-        tag: $(if [[ -z "<< pipeline.git.tag >>" ]]; then echo "latest"; else echo "<< pipeline.git.tag >>" ; fi)
+        tag: echo "<< pipeline.trigger_parameters.circleci.event_time >><< pipeline.trigger_parameters.github_app.commit_sha >>"
+          # Tag the image with the date and time of the build.
+          # This can be done using build automation tools or scripting.
+          # The tag might look like my-app:2024-05-04T1349.
+         
+        # tag: $(if [[ -z "<< pipeline.git.tag >>" ]]; then
+        #         echo "latest";
+        #         else echo "<< pipeline.trigger_parameters.circleci.event_time >><< pipeline.trigger_parameters.github_app.commit_sha >>";
+        #        fi)
+
+
 
   argocd-manual-sync:
     docker:

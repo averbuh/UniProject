@@ -6,6 +6,7 @@ import { ref, onMounted, onUpdated } from 'vue';
 //default component
 let activeComp = ref('recipes');
 
+
 function changeComp(value) {
   activeComp.value = value
 }
@@ -19,7 +20,6 @@ function changeComp(value) {
 
 // })
 </script>
-
 <template>
   <div class="service-selector">
     <ServiceSelector :ButtonAction="changeComp" />

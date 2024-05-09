@@ -40,7 +40,7 @@ kind: Deployment
 metadata:
   name: frontend-deployment
 spec:
-  replicas: 1
+  replicas: 2 
   selector:
     matchLabels:
       app: frontend
@@ -52,3 +52,10 @@ spec:
       containers:
         - name: frontend-app-container
           image: gomurali/k8s-frontend-app:latest
+
+
+            #TODO: Add health check
+            #HACK: This is a hack to get around a k8s bug.
+            #WARNING: This is not safe for production.
+            #FIX: Fix this shit.
+
