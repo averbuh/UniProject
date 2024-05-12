@@ -70,14 +70,14 @@ workflows:
   Create Release Branch:
     jobs:
       - create_branch:
-        branch: "1.0.0-release"
+          release_name: "1.0.0-release"
 
 jobs:
   create_branch:
     machine: 
       image: ubuntu-2004:current
     parameters:
-      branch:
+      release_name:
         type: string
     steps:
     - checkout
@@ -85,17 +85,17 @@ jobs:
       name: Check if branch exists
       command: |
         if git rev-parse --verify << parameters.branch >>; then
-          echo "Branch << parameters.branch >> already exists" >&2
+          echo "Branch << parameters.release_name >> already exists" >&2
           exit 1
         fi
 
     - run:
       name: Create branch
-      requires: [Check if branch exists]
+      requires: Check if branch exists
       command: |
-        git checkout -b << parameters.branch >>
+        git checkout -b << parameters.release_name >>
         git commit --allow-empty -m "Initial commit"
-        git push origin << parameters.branch >>
+        git push origin << parameters.release_name >>
     
   build_and_push_image:
     machine: 
