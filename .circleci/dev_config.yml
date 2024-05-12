@@ -136,7 +136,7 @@ jobs:
         repo_scan_on_push: true
         # set_repo_policy: true
         skip_when_tags_exist: false
-        tag: echo "<< pipeline.trigger_parameters.circleci.event_time >><< pipeline.git.revision >>"
+        tag: "<< pipeline.trigger_parameters.circleci.event_time >><< pipeline.git.revision >>"
           # Tag the image with the date and time of the build.
           # This can be done using build automation tools or scripting.
           # The tag might look like my-app:2024-05-04T1349.
