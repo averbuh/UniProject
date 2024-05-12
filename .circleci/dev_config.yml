@@ -84,7 +84,7 @@ jobs:
     - run:
       name: Check if branch exists
       command: |
-        if git rev-parse --verify << parameters.branch >>; then
+        if git rev-parse --verify << parameters.release_name >>; then
           echo "Branch << parameters.release_name >> already exists" >&2
           exit 1
         fi
