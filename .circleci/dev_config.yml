@@ -137,7 +137,7 @@ jobs:
         # set_repo_policy: true
         skip_when_tags_exist: false
         # tag: 1.0.0
-        tag: $(echo "1.0.0-<< pipeline.trigger_parameters.circleci.event_time >><< pipeline.number >>" | sed 's/:/_/g')
+        tag: $(echo "1.0.0-<< pipeline.number >>" | sed 's/:/_/g')
           # Tag the image with the date and time of the build.
           # This can be done using build automation tools or scripting.
           # The tag might look like my-app:2024-05-04T1349.
