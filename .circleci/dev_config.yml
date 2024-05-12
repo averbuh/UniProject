@@ -70,7 +70,6 @@ workflows:
   Create Release Branch:
     jobs:
       - create_branch:
-        requires: 
         branch: "1.0.0-release"
 
 jobs:
