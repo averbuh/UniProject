@@ -81,22 +81,22 @@ jobs:
       branch:
         type: string
     steps:
-      - checkout
-      - run:
-        name: Check if branch exists
-        command: |
-          if git rev-parse --verify << parameters.branch >>; then
-            echo "Branch << parameters.branch >> already exists" >&2
-            exit 1
-          fi
+    - checkout
+    - run:
+      name: Check if branch exists
+      command: |
+        if git rev-parse --verify << parameters.branch >>; then
+          echo "Branch << parameters.branch >> already exists" >&2
+          exit 1
+        fi
 
-      - run:
-          name: Create branch
-          requires: [Check if branch exists]
-          command: |
-            git checkout -b << parameters.branch >>
-            git commit --allow-empty -m "Initial commit"
-            git push origin << parameters.branch >>
+    - run:
+      name: Create branch
+      requires: [Check if branch exists]
+      command: |
+        git checkout -b << parameters.branch >>
+        git commit --allow-empty -m "Initial commit"
+        git push origin << parameters.branch >>
     
   build_and_push_image:
     machine: 
