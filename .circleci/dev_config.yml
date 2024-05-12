@@ -91,7 +91,8 @@ jobs:
 
     - run:
       name: Create branch
-      requires: Check if branch exists
+      requires:
+        - Check if branch exists
       command: |
         git checkout -b << parameters.release_name >>
         git commit --allow-empty -m "Initial commit"
