@@ -68,10 +68,10 @@ workflows:
 
   #ALL
   Create Release Branch:
-    requires: [Sync Frontend, Sync Recipes, Sync Suppliers]
     jobs:
       - create_branch:
-          branch: 1.0.0-release
+        requires: [Sync Frontend, Sync Recipes, Sync Suppliers]
+        branch: 1.0.0-release
 
 jobs:
   create_branch:
