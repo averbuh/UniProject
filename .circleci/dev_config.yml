@@ -82,19 +82,19 @@ jobs:
     steps:
     - checkout
     - run:
-      name: Check if branch exists
-      command: |
-        if git rev-parse --verify << parameters.branch_name >>; then
-          echo "Branch << parameters.branch_name >> already exists" >&2
-          exit 1
-        fi
+      # name: Check if branch exists
+        command: |
+          if git rev-parse --verify << parameters.branch_name >>; then
+            echo "Branch << parameters.branch_name >> already exists" >&2
+            exit 1
+          fi
 
     - run:
-      name: Create branch
-      command: |
-        git checkout -b << parameters.branch_name >>
-        git commit --allow-empty -m "Initial commit"
-        git push origin << parameters.branch_name >>
+      # name: Create branch
+        command: |
+          git checkout -b << parameters.branch_name >>
+          git commit --allow-empty -m "Initial commit"
+          git push origin << parameters.branch_name >>
     
   build_and_push_image:
     machine: 
