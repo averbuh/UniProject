@@ -15,7 +15,6 @@ metadata:
 
 # Specification section outlines the details of the application project
 spec:
-
   # Define the source repositories permitted for this project
   sourceRepos:
   - "https://github.com/averbuh/UniProject" # Git repository URL
@@ -35,3 +34,7 @@ spec:
   # apps in this cluster to only clusters scoped to this project.
 
   permitOnlyProjectScopedClusters: false
+
+  # namespaceResourceWhitelist:
+  #   - group: ""  # Empty group allows any namespace resource group
+  #     kind: "*"  # Asterisk permits all namespace resource kinds
