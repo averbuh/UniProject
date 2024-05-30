@@ -23,7 +23,7 @@ spec:
   # Define the destination clusters where applications from this project can be deployed
   destinations:
   - namespace: "apps" # Allow deployment to any namespace
-    server: https://kubernetes.default.svc # Target Kubernetes cluster URL
+    # server: https://kubernetes.default.svc # Target Kubernetes cluster URL
     name: "*" # Allow deployment to any cluster
 
   # Enables monitoring of orphaned resources in namespaces

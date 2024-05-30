@@ -47,7 +47,7 @@ spec:
   - host: 
     http:
       paths:
-        - path: /api
+        - path: /{{ .Release.Name }}
           pathType: Prefix
           backend:
             service:
@@ -57,30 +57,3 @@ spec:
 
 --- 
 
-apiVersion: networking.k8s.io/v1
-# For versions before 1.14 use extensions/v1beta1
-kind: Ingress
-metadata:
-  name: my-ingress  # Replace with your desired name
-  annotations:
-    kubernetes.io/ingress.class: "nginx"  # Replace if using a different controller
-    # Optional: Annotations for TLS configuration if desired
-spec:
-  rules:
-    - host: your-domain.com  # Replace with your domain name
-      http:
-        paths:
-          - path: /  # Route root path to your frontend
-            pathType: Prefix
-            backend:
-              service:
-                name: my-frontend-svc  # Replace with your frontend service name
-                port:
-                  number: 80  # Or the port your frontend service listens on
-          - path: /api(/|$)(.*)  # Route API paths to your backend
-            pathType: Prefix
-            backend:
-              service:
-                name: my-backend-svc  # Replace with your backend service name
-                port:
-                  number: 8080  # Or the port your backend service listens on

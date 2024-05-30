@@ -27,7 +27,7 @@ spec:
       - values-recipes.yaml
   # Destination section defines the target Kubernetes cluster and namespace
   destination:
-    server: https://kubernetes.default.svc # Kubernetes cluster URL
+    name: staging-demo 
     namespace: apps # Target namespace for deploying the application
 
   syncPolicy:
@@ -81,7 +81,7 @@ spec:
 
   # Destination section defines the target Kubernetes cluster and namespace
   destination:
-    server: https://kubernetes.default.svc # Kubernetes cluster URL
+    name: staging-demo 
     namespace: apps # Target namespace for deploying the application
 
 
