@@ -94,7 +94,6 @@ jobs:
         git checkout -b << parameters.release_name >>
         git commit --allow-empty -m "Initial commit"
         git push origin << parameters.release_name >>
-      requires: Check if branch exists
     
   build_and_push_image:
     machine: 
