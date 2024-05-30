@@ -17,10 +17,9 @@ tier: backend
 replicas: 3
 
 #image tag or latest
-
-ImageName: 975050257492.dkr.ecr.eu-central-1.amazonaws.com/recipes
-
-tag: "v1.0.0-a8ca02e68f5e58f594a692be6c857fdb5fd811e9"
+image:
+  name: 975050257492.dkr.ecr.eu-central-1.amazonaws.com/recipes
+  tag: "latest"
 
 maxReplicas: 10
 

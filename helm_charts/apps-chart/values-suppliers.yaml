@@ -17,9 +17,9 @@ tier: backend
 replicas: 3
 
 #image tag or latest
-
-ImageName: 975050257492.dkr.ecr.eu-central-1.amazonaws.com/suppliers:{{ .Release.Tag || "latest" }}
-
+image:
+  name: 975050257492.dkr.ecr.eu-central-1.amazonaws.com/suppliers
+  tag: "latest"
 maxReplicas: 10
 
 minReplicas: 3
