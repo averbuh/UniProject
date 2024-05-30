@@ -27,7 +27,6 @@ parameters:
 
 
 workflows:
-  
   #IF
   # Sync Frontend:
   #   when: << pipeline.parameters.run-frontend >>
