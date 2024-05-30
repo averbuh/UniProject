@@ -73,7 +73,6 @@ workflows:
 jobs:
 
   create_branch:
-    type: shell 
     machine: 
       image: ubuntu-2004:current
     parameters:
