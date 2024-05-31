@@ -1,3 +1,4 @@
+
 version: 2.1
 
 orbs:
@@ -44,7 +45,7 @@ workflows:
         repo: recipes
     - argocd-manual-sync:
         requires: [build_and_push_image]
-        server: $ARGOCD_SERVER_DEV
+        server: $ARGOCD_SERVER_STAGE
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
         app: recipes
@@ -58,47 +59,14 @@ workflows:
     - argocd-manual-sync:
         requires: 
           - build_and_push_image
-        server: $ARGOCD_SERVER_DEV
+        server: $ARGOCD_SERVER_STAGE
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
         app: suppliers
 
 
-  #ALL
-  Create Release Branch:
-    jobs:
-    - create_branch:
-        branch_name: "<< pipeline.git.tag >>-release"
-        filters:
-          tags:
-            only:
-              - /^v.*/
 
 jobs:
-
-  create_branch:
-    machine: 
-      image: ubuntu-2004:current
-    parameters:
-      branch_name:
-        type: string
-    working_directory: ~/repo
-    steps:
-    - checkout
-    - run:
-      # name: Check if branch exists
-        command: |
-          if git rev-parse --verify << parameters.branch_name >>; then
-            echo "Branch << parameters.branch_name >> already exists" >&2
-            exit 1
-          fi
-    - run:
-      # name: Create branch
-        command: |
-          git checkout -b << parameters.branch_name >>
-          git commit --allow-empty -m "Initial commit"
-          git push origin << parameters.branch_name >>
-    
 
   build_and_push_image:
     machine: 

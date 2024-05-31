@@ -72,7 +72,7 @@ spec:
   # Source section specifies the Git repository details and the desired revision
   source:
     repoURL: https://github.com/averbuh/UniProject # Git repository URL
-    targetRevision: HEAD # Git branch, tag, or commit hash
+    targetRevision: release-* # Git branch, tag, or commit hash
     path: helm_charts/apps-chart # Path within the repository where the application manifests are located
 
     helm:
