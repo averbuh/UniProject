@@ -59,6 +59,7 @@ func main() {
 		panic("REDIS_PASSWORD not set")
 	}
 
+	// Create new redis object
 	redis, err := recipes.NewRedis(Addr, Password, DB)
 	if err != nil {
 		log.Print("Failed to connect to redis: ", err)
