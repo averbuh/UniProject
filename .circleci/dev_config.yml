@@ -25,12 +25,12 @@ parameters:
 
 
 workflows:
-  Sync Frontend:
-    when: << pipeline.parameters.run-frontend >>
-    jobs:
-    - build_and_push_image:
-        context: aws-dev
-        repo: frontend
+#   Sync Frontend:
+#     when: << pipeline.parameters.run-frontend >>
+#     jobs:
+#     - build_and_push_image:
+#         context: aws-dev
+#         repo: frontend
   #IF
   Sync Recipes:
     when: << pipeline.parameters.run-recipes-go >>
