@@ -83,12 +83,12 @@ echo "Part to increment: $part_to_increment"
 echo "New version: $new_version"
 echo "New tag: $new_tag"
 
-# Confirm with user (optional)
-read -p "Create tag '$new_tag'? (y/N) " confirmation
-if [[ ! "$confirmation" =~ ^[Yy]$ ]]; then
-  echo "Tag creation cancelled."
-  exit 0
-fi
+# # Confirm with user 
+# read -p "Create tag '$new_tag'? (y/N) " confirmation
+# if [[ ! "$confirmation" =~ ^[Yy]$ ]]; then
+#   echo "Tag creation cancelled."
+#   exit 0
+# fi
 
 # Add all changes to the staging area (optional, modify if needed)
 git add .
