@@ -6,11 +6,14 @@ function inc_version_part {
   local version="$2"
   IFS=. read -r major minor patch <<< "$version"
 
+  temp_patch=$((patch++))
   # Handle overflow for patch version (increment minor if necessary)
-  if [[ "$part" == "patch" && $(($patch++)) -gt 9 ]]; then
+  if [[ "$part" == "patch" && $temp_patch -gt 9 ]]; then
     patch=0
     minor=$((minor + 1))
   fi
+
+
 
   # Handle overflow for minor version (increment major if necessary)
   if [[ "$part" == "minor" && $(($minor++)) -gt 9 ]]; then
