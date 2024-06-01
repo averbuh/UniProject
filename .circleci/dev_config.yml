@@ -70,6 +70,7 @@ workflows:
     - create_branch:
         branch_name: "release"
 
+
 jobs:
 
   create_branch:
@@ -93,10 +94,20 @@ jobs:
         name: Create branch
         command: |
           git fetch --all --tags
-          tag=$(git tag -l 'v[0-9]*' --sort=-version:refname | head -n 1)
+          tag=$(git tag -l 'v[0-9].[0-9].[0-9]' --sort=-version:refname | head -n 1)
+          version=${tag#"v"})
+          IFS=. read -r major minor patch <<< "$version"
+          minor=$((minor + 1))
+          patch=0
+          tag="v$major.$minor.$patch"
+          echo "Creating branch: $tag-<< parameters.branch_name >>"
           git checkout -b $tag-<< parameters.branch_name >>
+          # add beta tag
+          git tag $tag-beta
+          git push origin $tag-beta
           git commit --allow-empty -m "Initial commit"
           git push origin $tag-<< parameters.branch_name >>
+
     
 
   build_and_push_image:
