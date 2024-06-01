@@ -12,8 +12,6 @@ orbs:
   slack: circleci/slack@4.13.2
 
 
-
-
 parameters:
   run-recipes-go:
     default: false 
@@ -27,8 +25,6 @@ parameters:
 
 
 workflows:
-
-
   # Sync Frontend:
   #   when: << pipeline.parameters.run-frontend >>
   #   jobs:
@@ -67,13 +63,12 @@ workflows:
   #ALL
   Create Release Branch:
     jobs:
-    - create_branch:
+    - create_branch_or_tag:
         branch_name: "release"
-
 
 jobs:
 
-  create_branch:
+  create_branch_or_tag:
     machine: 
       image: ubuntu-2004:current
     parameters:
@@ -82,34 +77,36 @@ jobs:
     working_directory: ~/repo
     steps:
     - checkout
-    # - run:
-    #     name: Check if branch exists
-    #     command: |
-    #       if git rev-parse --verify $tag-<< parameters.branch_name >>; then
-    #         echo "Branch << parameters.branch_name >> already exists" >&2
-    #         exit 1
-    #       fi
-
     - run:
-        name: Create branch
+        name: Add tag/branch
         command: |
-          git fetch --all --tags
-          tag=$(git tag -l 'v[0-9].[0-9].[0-9]' --sort=-version:refname | head -n 1)
-          version=${tag#"v"})
-          IFS=. read -r major minor patch <<< "$version"
-          minor=$((minor + 1))
-          patch=0
-          tag="v$major.$minor.$patch"
-          echo "Creating branch: $tag-<< parameters.branch_name >>"
-          git checkout -b $tag-<< parameters.branch_name >>
-          # add beta tag
-          git tag $tag-beta
-          git push origin $tag-beta
-          git commit --allow-empty -m "Initial commit"
-          git push origin $tag-<< parameters.branch_name >>
-
+          if [[ $(git branch --contains $CIRCLE_SHA1 | grep release) != ""  ]]; then
+            echo "Commit contains release branch"
+            git fetch --all --tags 
+            tag=$(git tag -l 'v[0-9].[0-9].[0-9]-beta.*' --sort=-version:refname | head -n 1)
+            beta-version=${tag##*.})
+            new-beta-version=$((beta-version + 1))
+            # add beta tag
+            only-tag=${tag%.*}
+            new-tag=$only-tag.$new-beta-version
+            git tag $new-tag
+            git push origin $new-tag 
+          else  
+            git fetch --all --tags
+            tag=$(git tag -l 'v[0-9].[0-9].[0-9]' --sort=-version:refname | head -n 1)
+            version=${tag#"v"})
+            IFS=. read -r major minor patch <<< "$version"
+            minor=$((minor + 1))
+            patch=0
+            tag="v$major.$minor.$patch"
+            echo "Creating branch: $tag-<< parameters.branch_name >>"
+            git checkout -b $tag-<< parameters.branch_name >>
+            # add beta tag
+            git tag $tag-beta.0
+            git push origin $tag-beta.0
+            git push origin $tag-<< parameters.branch_name >>
+          fi
     
-
   build_and_push_image:
     machine: 
       image: ubuntu-2004:current

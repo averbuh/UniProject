@@ -5,12 +5,37 @@ orbs:
   azure-aks: circleci/azure-aks@0.3.0
   gh-cli: circleci/github-cli@2.3.0
 
+
 workflows:
-  Create Release:        
+  Create Release:
     jobs:
-    - gh-cli/release:
-        context: aws-dev
-        prerelease: false
-        notes-file: changelog.md
-        tag: 1.0.0 - release 
-        title: The initial release
+    # - gh-cli/release:
+    #     context: aws-dev
+    #     prerelease: false
+    #     notes-file: changelog.md
+    #     tag: 1.0.0 - release 
+    #     title: The initial release
+      - create_tag:
+
+jobs:
+  create_tag:
+    machine: ubuntu-2004:current
+    working_directory: ~/repo
+    parameters:
+    steps:
+    - checkout
+    - run : 
+        name: Choose branch and create tag
+        command: |
+          #check if branch name contains quickfix
+          if [[ $(git branch --contains $CIRCLE_SHA1 | grep hotfix) != ""  ]]; then
+            echo "Branch name contains hotfix"
+            type=patch
+          elif [[ $(git branch --contains $CIRCLE_SHA1 | grep release) != ""  ]]; then
+            echo "Branch name contains release"
+            type=minor
+          else
+            echo "Branch name does not contain release or hotfix"
+            type=major
+          fi
+          ./semantic-versioning.sh $type 
