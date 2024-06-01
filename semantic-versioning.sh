@@ -6,20 +6,34 @@ function inc_version_part {
   local version="$2"
   IFS=. read -r major minor patch <<< "$version"
 
-  temp_patch=$((patch++))
-  # Handle overflow for patch version (increment minor if necessary)
-  if [[ "$part" == "patch" && $temp_patch -gt 9 ]]; then
-    patch=0
+#   temp_patch=$((++patch))
+#   # Handle overflow for patch version (increment minor if necessary)
+#   if [[ "$part" == "patch" && ($temp_patch -gt 9) ]]; then
+#     patch=0
+#     minor=$((minor + 1))
+#   fi
+
+
+#   temp_minor=$((++minor))
+#   # Handle overflow for minor version (increment major if necessary)
+#   if [[ "$part" == "minor" && ($temp_minor -gt 9) ]]; then
+#     minor=0
+#     major=$((major + 1))
+#   fi
+
+  if [[ $part == "patch" ]]; then
+    patch=$((patch + 1))
+
+  elif [[ $part == "minor" ]]; then
     minor=$((minor + 1))
-  fi
+    patch=0
 
-
-
-  # Handle overflow for minor version (increment major if necessary)
-  if [[ "$part" == "minor" && $(($minor++)) -gt 9 ]]; then
-    minor=0
+  elif [[ $part == "major" ]]; then
     major=$((major + 1))
+    minor=0
+    patch=0
   fi
+
 
   # Update the specific part and format the new version
   if [[ "$part" == "major" ]]; then
@@ -63,6 +77,12 @@ if git describe --exact-match --tags "$new_tag" >/dev/null 2>&1; then
   exit 1
 fi
 
+# Print all variables
+echo "Current version: $current_version"
+echo "Part to increment: $part_to_increment"
+echo "New version: $new_version"
+echo "New tag: $new_tag"
+
 # Confirm with user (optional)
 read -p "Create tag '$new_tag'? (y/N) " confirmation
 if [[ ! "$confirmation" =~ ^[Yy]$ ]]; then
@@ -81,4 +101,6 @@ git tag "$new_tag"
 
 # Print success message
 echo "Successfully created tag: $new_tag"
+
+
 
