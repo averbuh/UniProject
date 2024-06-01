@@ -80,8 +80,8 @@ jobs:
     - run:
         name: Add tag/branch
         command: |
-          if [[ $(git branch --contains $CIRCLE_SHA1 | grep release) != ""  ]]; then
-            echo "Commit contains release branch"
+          if [[ $( << pipeline.trigger_parameters.github_app.commit_title >> | grep release) != ""  ]]; then
+            echo "Merge from Release branch"
             git fetch --all --tags 
             tag=$(git tag -l 'v[0-9].[0-9].[0-9]-beta.*' --sort=-version:refname | head -n 1)
             beta-version=${tag##*.}
