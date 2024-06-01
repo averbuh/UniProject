@@ -95,7 +95,7 @@ jobs:
             git fetch --all --tags
             tag=$(git tag -l 'v[0-9].[0-9].[0-9]' --sort=-version:refname | head -n 1)
             version=${tag#"v"})
-            IFS=. read -r major minor patch <<< "$version"
+            IFS=. read -r major minor patch <\<< "$version"
             minor=$((minor + 1))
             patch=0
             tag="v$major.$minor.$patch"
