@@ -84,7 +84,7 @@ jobs:
             echo "Commit contains release branch"
             git fetch --all --tags 
             tag=$(git tag -l 'v[0-9].[0-9].[0-9]-beta.*' --sort=-version:refname | head -n 1)
-            beta-version=${tag##*.})
+            beta-version=${tag##*.}
             new-beta-version=$((beta-version + 1))
             # add beta tag
             only-tag=${tag%.*}
