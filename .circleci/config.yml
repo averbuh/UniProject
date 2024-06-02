@@ -15,7 +15,7 @@ workflows:
             ignore:
             - dev
             - main
-            - '.*release.*'
+            - '.*release$'
             - '.*hotfix.*'
         name: Push to Feature branch
         config-path: .circleci/feature_config.yml
