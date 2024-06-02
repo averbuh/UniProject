@@ -99,12 +99,18 @@ jobs:
             minor=$((minor + 1))
             patch=0
             tag="v$major.$minor.$patch"
-            echo "Creating branch: $tag-<< parameters.branch_name >>"
-            git checkout -b $tag-<< parameters.branch_name >>
-            # add beta tag
-            git tag $tag-beta.0
-            git push origin $tag-beta.0
-            git push origin $tag-<< parameters.branch_name >>
+            new_branch_name=$tag-<< parameters.branch_name >>
+            if [[ -n "$(git branch --list "$new_branch_name")" ]]; then
+              echo "Branch '$new_branch_name' exists locally."
+            else
+              echo "Branch '$new_branch_name' does not exist locally."
+              echo "Creating branch: $new_branch_name"
+              git checkout -b $new_branch_name
+              git push origin $new_branch_name
+              # add beta tag
+              git tag $tag-beta.0
+              git push origin $tag-beta.0
+            fi
           fi
     
   build_and_push_image:
