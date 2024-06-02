@@ -86,7 +86,7 @@ jobs:
             git fetch --all --tags 
             tag=$(git tag -l 'v[0-9].[0-9].[0-9]-beta.*' --sort=-version:refname | head -n 1)
             beta_version=${tag##*.}
-            new_beta-version=$((beta_version + 1))
+            new_beta_version=$((beta_version + 1))
             # add beta tag
             only_tag=${tag%.*}
             new_tag=$only-tag.$new-beta-version
