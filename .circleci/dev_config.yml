@@ -89,7 +89,7 @@ jobs:
             new_beta_version=$((beta_version + 1))
             # add beta tag
             only_tag=${tag%.*}
-            new_tag=$only-tag.$new-beta-version
+            new_tag=$only_tag.$new_beta_version
             git tag $new_tag
             git push origin $new_tag 
           else  
