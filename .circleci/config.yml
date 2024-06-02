@@ -56,3 +56,5 @@ workflows:
         config-path: .circleci/release_config.yml
         base-revision: HEAD
 
+    #Add release configuration
+
