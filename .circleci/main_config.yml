@@ -25,7 +25,8 @@ workflows:
 
 jobs:
   create_tag:
-    machine: ubuntu-2004:current
+    machine:
+      image: ubuntu-2004:current
     working_directory: ~/repo
     steps:
     - checkout
@@ -42,4 +43,7 @@ jobs:
             echo "Not merge from release or hotfix"
             type=major
           fi
-          ./semantic-versioning.sh $type 
+          new_tag=$(./semantic-versioning.sh $type)
+          git push $new_tag 
+
+          

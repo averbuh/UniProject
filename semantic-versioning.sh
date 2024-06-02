@@ -46,7 +46,7 @@ function inc_version_part {
 }
 
 # Get the current version from the latest git tag (assuming tags follow "vX.Y.Z" format)
-current_version=$(git describe --abbrev=0 --tags)
+current_version=$(git tag -l 'v[0-9].[0-9].[0-9]' | tail -n 1)
 
 # Check if there are no tags (use initial version)
 if [[ -z "$current_version" ]]; then
@@ -91,16 +91,18 @@ echo "New tag: $new_tag"
 # fi
 
 # Add all changes to the staging area (optional, modify if needed)
-git add .
+# git add .
 
 # Create a commit message suggesting the version bump (optional, modify if needed)
-git commit -m "Bump version to $new_version"
+# git commit -m "Bump version to $new_version"
 
 # Create the new git tag
 git tag "$new_tag"
 
 # Print success message
 echo "Successfully created tag: $new_tag"
+
+echo $new_tag
 
 
 
