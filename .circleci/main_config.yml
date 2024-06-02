@@ -45,3 +45,5 @@ jobs:
           fi
           new_tag=$(./semantic-versioning.sh $type)
           git push $new_tag 
+
+          
