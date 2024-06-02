@@ -102,7 +102,7 @@ git tag "$new_tag"
 # Print success message
 echo "Successfully created tag: $new_tag"
 
-git push $new_tag 
+echo $new_tag
 
 
 

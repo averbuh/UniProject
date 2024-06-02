@@ -43,4 +43,5 @@ jobs:
             echo "Not merge from release or hotfix"
             type=major
           fi
-          ./semantic-versioning.sh $type 
+          new_tag=$(./semantic-versioning.sh $type)
+          git push $new_tag 
