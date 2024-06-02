@@ -6,6 +6,11 @@ orbs:
   gh-cli: circleci/github-cli@2.3.0
 
 
+parameters: 
+  run-pipeline:
+    defautl: false
+    type: boolean
+
 workflows:
   Create Release:
     jobs:
