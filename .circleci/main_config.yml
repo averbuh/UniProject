@@ -8,11 +8,12 @@ orbs:
 
 parameters: 
   run-pipeline:
-    defautl: false
+    default: false
     type: boolean
 
 workflows:
   Create Release:
+    when: << pipeline.parameters.run-pipeline >>
     jobs:
     # - gh-cli/release:
     #     context: aws-dev
@@ -20,27 +21,25 @@ workflows:
     #     notes-file: changelog.md
     #     tag: 1.0.0 - release 
     #     title: The initial release
-      - create_tag:
+      - create_tag
 
 jobs:
   create_tag:
     machine: ubuntu-2004:current
     working_directory: ~/repo
-    parameters:
     steps:
     - checkout
     - run : 
         name: Choose branch and create tag
         command: |
-          #check if branch name contains quickfix
-          if [[ $(git branch --contains $CIRCLE_SHA1 | grep hotfix) != ""  ]]; then
-            echo "Branch name contains hotfix"
+          if [[ $( git show --oneline | grep "hotfix" ) != ""  ]]; then
+            echo "Branch merged from hotfix"
             type=patch
-          elif [[ $(git branch --contains $CIRCLE_SHA1 | grep release) != ""  ]]; then
-            echo "Branch name contains release"
+          elif [[ $(git show --oneline | grep "v[0-9].[0-9].[0-9]-release" ) != ""  ]]; then
+            echo "Branch merged from release"
             type=minor
           else
-            echo "Branch name does not contain release or hotfix"
+            echo "Not merge from release or hotfix"
             type=major
           fi
           ./semantic-versioning.sh $type 

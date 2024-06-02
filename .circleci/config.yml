@@ -47,7 +47,9 @@ workflows:
         config-path: .circleci/main_config.yml
         base-revision: HEAD
         mapping: |
-          ./* run-pipeline true
+          .circleci/main_config.yml run-pipeline true
+          .circleci/dev_config.yml run-pipeline true
+          .circleci/config.yml run-pipeline true
 
 
     - path-filtering/filter:
@@ -59,6 +61,7 @@ workflows:
         config-path: .circleci/release_config.yml
         base-revision: HEAD
         mapping: |
-          ./* run-pipeline true
-
+          .circleci/main_config.yml run-pipeline true
+          .circleci/dev_config.yml run-pipeline true
+          .circleci/config.yml run-pipeline true
 

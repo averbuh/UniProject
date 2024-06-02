@@ -92,6 +92,8 @@ jobs:
             new_tag=$only_tag.$new_beta_version
             git tag $new_tag
             git push origin $new_tag 
+          elif [ $( git show --oneline | grep "hotfix" ) != ""  ]]; then
+            echo "Merge from Hotfix branch"
           else  
             git fetch --all --tags
             tag=$(git tag -l 'v[0-9].[0-9].[0-9]' --sort=-version:refname | head -n 1)
