@@ -25,7 +25,8 @@ workflows:
 
 jobs:
   create_tag:
-    machine: ubuntu-2004:current
+    machine:
+      image: ubuntu-2004:current
     working_directory: ~/repo
     steps:
     - checkout
