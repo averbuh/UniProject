@@ -1,6 +1,11 @@
 version: 2.1
 
 
+parameters:
+  run-pipeline:
+  default: false
+  type: boolean
+
 workflows:
   Push to Dev:
     jobs:

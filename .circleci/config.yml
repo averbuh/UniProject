@@ -46,6 +46,9 @@ workflows:
         name: Push to Main branch
         config-path: .circleci/main_config.yml
         base-revision: HEAD
+        mapping: |
+          ./* run-pipeline true
+
 
     - path-filtering/filter:
         filters:
@@ -55,6 +58,7 @@ workflows:
         name: Push to Release branch
         config-path: .circleci/release_config.yml
         base-revision: HEAD
+        mapping: |
+          ./* run-pipeline true
 
-    #Add release configuration
 
