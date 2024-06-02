@@ -14,11 +14,9 @@ func main() {
 	RecipesHandler := NewRecipesHandler(store)
 
 	mux := http.NewServeMux()
-
 	mux.Handle("/", &homeHandler{})
 	mux.Handle("/recipes", RecipesHandler)
 	mux.Handle("/recipes/", RecipesHandler)
-
 	http.ListenAndServe(":8080", mux)
 }
 

@@ -37,19 +37,11 @@ parameters:
     default: "."
     type: string
 
-
 workflows:
-  Lint, Test, Coverage Feature:
-    when:
-      and:
-      - or:
-        - equal: ["recipes", << pipeline.parameters.service-path >>]
-        - equal: ["suppliers", << pipeline.parameters.service-path >>]
-      - or:
-        - << pipeline.parameters.run-recipes-go >>
-        - << pipeline.parameters.run-suppliers-go >>
+  Recipes-tests:
+    when: << pipeline.parameters.run-recipes-go >>
+    pipeline.parameters.service-path: recipes
     jobs:
-    - Test feature pipeline
     - Lint
     - Test and coverage
     - Sonar:
@@ -57,16 +49,18 @@ workflows:
         - Lint
         - Test and coverage
 
+  Suppliers-tests:
+    when: << pipeline.parameters.run-suppliers-go >>
+    pipeline.parameters.service-path: suppliers
+    jobs:
+    - Lint
+    - Test and coverage
+    - Sonar:
+        requires:
+        - Lint
+        - Test and coverage
 
 jobs:
-
-  Test feature pipeline:
-    working_directory: .
-    executor: go-executor
-    steps:
-    - run:
-        name: Test
-        command: echo "Hello World"
 
   Lint:
     working_directory: ~/repo

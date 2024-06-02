@@ -15,16 +15,6 @@ import (
 	"practice.com/http/pkg/repository/recipes"
 )
 
-var environment = "dev"
-
-const (
-	host     = "172.17.0.2"
-	port     = 5432
-	user     = "postgres"
-	password = "admin"
-	dbname   = "postgres"
-)
-
 func main() {
 	// Create Gin router
 	router := gin.Default()
@@ -42,36 +32,59 @@ func main() {
 	s3 := recipes.NewS3Store("us-east-1", "test-images-vue")
 
 	var psqlconn string
-	if environment == "prod" {
-		host := "postgres-postgresql.default.svc.cluster.local"
-		port := 5432
-		user, exist := os.LookupEnv("POSTGRES_USER")
-		if !exist {
-			panic("POSTGRES_USER not set")
-		}
-		password, exist := os.LookupEnv("POSTGRES_PASSWORD")
-		if !exist {
-			panic("POSTGRES_PASSWORD not set")
-		}
-		dbname, exist := os.LookupEnv("POSTGRES_DB")
-		if !exist {
-			panic("POSTGRES_DB not set")
-		}
-		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	} else {
-		psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	host, exist := os.LookupEnv("POSTGRES_HOST")
+	if !exist {
+		panic("POSTGRES_HOST not set")
+	}
+	port := 5432
+	user, exist := os.LookupEnv("POSTGRES_USER")
+	if !exist {
+		panic("POSTGRES_USER not set")
+	}
+	password, exist := os.LookupEnv("POSTGRES_PASSWORD")
+	if !exist {
+		panic("POSTGRES_PASSWORD not set")
+	}
+	dbname, exist := os.LookupEnv("POSTGRES_DB")
+	if !exist {
+		panic("POSTGRES_DB not set")
+	}
+	Addr, exist := os.LookupEnv("REDIS_HOST")
+	if !exist {
+		panic("REDIS_HOST not set")
+	}
+	DB := 0
+	Password, exist := os.LookupEnv("REDIS_PASSWORD")
+	if !exist {
+		panic("REDIS_PASSWORD not set")
 	}
 
+	// Create new redis object
+	redis, err := recipes.NewRedis(Addr, Password, DB)
+	if err != nil {
+		log.Print("Failed to connect to redis: ", err)
+	} else {
+		log.Print("Connected to redis")
+	}
+
+	psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	db, err := sql.Open("postgres", psqlconn)
+
 	if err != nil {
 		log.Print("Failed to connect to database: ", err)
 	}
 	store, err := recipes.NewPostgres(db)
+
+	store.CreateTestTable(db)
+
+	defer store.CloseDB()
 	if err != nil {
 		log.Print("Failed to connect to database: ", err)
+	} else {
+		log.Print("Connected to database")
 	}
-	recipesHandler := NewRecipesHandler(store, &s3)
-	defer store.CloseDB()
+
+	recipesHandler := NewRecipesHandler(store, &s3, redis)
 
 	recipesRoutes := map[string]string{
 		"id": "/recipes/:id",
@@ -82,7 +95,7 @@ func main() {
 	router.GET("/recipes", recipesHandler.ListRecipes)
 	router.POST("/recipes", recipesHandler.CreateRecipe)
 	router.POST("/recipes/upload", recipesHandler.UploadImage)
-	router.GET("/recipes/image/:image", recipesHandler.GetImage)
+	router.GET("/recipes/:id/:image", recipesHandler.GetImage)
 	router.GET(recipesRoutes["id"], recipesHandler.GetRecipe)
 	router.PUT(recipesRoutes["id"], recipesHandler.UpdateRecipe)
 	router.DELETE(recipesRoutes["id"], recipesHandler.DeleteRecipe)
@@ -98,12 +111,14 @@ func homePage(c *gin.Context) {
 type RecipesHandler struct {
 	store recipeStore
 	s3    *recipes.S3Store
+	redis *recipes.Redis
 }
 
-func NewRecipesHandler(s recipeStore, s3 *recipes.S3Store) *RecipesHandler {
+func NewRecipesHandler(s recipeStore, s3 *recipes.S3Store, redis *recipes.Redis) *RecipesHandler {
 	return &RecipesHandler{
 		store: s,
 		s3:    s3,
+		redis: redis,
 	}
 }
 
@@ -165,11 +180,19 @@ func (h RecipesHandler) UploadImage(c *gin.Context) {
 
 func (h RecipesHandler) GetImage(c *gin.Context) {
 
-	//TODO: add redis check
-
+	var tempUrl recipes.Image
 	image := c.Param("image")
 
-	tempUrl := h.s3.GenerateUrl(image)
+	cache, err := h.redis.GetImageURL(image)
+
+	if err != nil {
+		tempUrl = h.s3.GenerateUrl(image)
+		h.redis.AddImageURL(image, tempUrl.Url)
+		log.Println("cache miss")
+	} else {
+		tempUrl = cache
+		log.Println("cache hit")
+	}
 
 	fmt.Println(tempUrl)
 	//send url string

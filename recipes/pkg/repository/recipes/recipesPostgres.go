@@ -15,35 +15,25 @@ type Postgres struct {
 
 func NewPostgres(db *sql.DB) (*Postgres, error) {
 
-	// check db
 	err := db.Ping()
-	CheckError(err)
 
-	fmt.Println("Connected!") // insert
-	// hardcoded
-
-	// err = CreateTable(db)
-	CheckError(err)
-	// dynamic
-	//	insertDynStmt := `insert into "Students"("Name", "Roll_Number") values($1, $2)`
-	//	_, e = db.Exec(insertDynStmt, "Jack", 21)
-	//	CheckError(e)
 	return &Postgres{
 		db: db,
-	}, err
+	}, CheckError(err)
 }
 
-func CheckError(err error) {
+func CheckError(err error) error {
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("Error: %v", err)
 	}
+	return nil
 }
 
 func (p Postgres) CloseDB() {
 	p.db.Close()
 }
 
-func CreateTable(db *sql.DB) error {
+func (p Postgres) CreateTestTable(db *sql.DB) error {
 	// delete table if it exists
 	_, e := db.Exec("CREATE TABLE IF NOT EXISTS recipes(name varchar not null primary key, istoday boolean, ingredients text[] , description varchar, image varchar)")
 	CheckError(e)

@@ -1,0 +1,40 @@
+# AppProject for recipes and suppliers application
+
+# Define the API version and kind for ArgoCD Application Project
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+
+# Metadata section includes details about the application project's name, namespace, and finalizers
+metadata:
+  name: recipes-suppliers-app
+  namespace: argocd
+
+  # Finalizer ensures that the project is not deleted until it is not referenced by any application
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+
+# Specification section outlines the details of the application project
+spec:
+  # Define the source repositories permitted for this project
+  sourceRepos:
+  - "https://github.com/averbuh/UniProject" # Git repository URL
+
+  # Define the destination clusters where applications from this project can be deployed
+  destinations:
+  - namespace: "*" # Allow deployment to any namespace
+    # server: https://kubernetes.default.svc # Target Kubernetes cluster URL
+    name: "*" # Allow deployment to any cluster
+
+  # Enables monitoring of orphaned resources in namespaces
+  orphanedResources:
+    warn: false # Disable warning for orphaned resources
+
+  # By default, applications may sync to any cluster specified under the `destinations` field,
+  # even if they are not scoped to this project. Set the following field to `true` to restrict
+  # apps in this cluster to only clusters scoped to this project.
+
+  permitOnlyProjectScopedClusters: false
+
+  # namespaceResourceWhitelist:
+  #   - group: ""  # Empty group allows any namespace resource group
+  #     kind: "*"  # Asterisk permits all namespace resource kinds
