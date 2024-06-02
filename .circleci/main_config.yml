@@ -13,6 +13,7 @@ parameters:
 
 workflows:
   Create Release:
+    when: << pipeline.parameters.run-pipeline >>
     jobs:
     # - gh-cli/release:
     #     context: aws-dev
@@ -20,13 +21,12 @@ workflows:
     #     notes-file: changelog.md
     #     tag: 1.0.0 - release 
     #     title: The initial release
-      - create_tag:
+      - create_tag
 
 jobs:
   create_tag:
     machine: ubuntu-2004:current
     working_directory: ~/repo
-    parameters:
     steps:
     - checkout
     - run : 
