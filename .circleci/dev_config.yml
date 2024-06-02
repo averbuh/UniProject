@@ -80,17 +80,18 @@ jobs:
     - run:
         name: Add tag/branch
         command: |
+         
           if [[ $( git show --oneline | grep "v[0-9].[0-9].[0-9]-release" ) != ""  ]]; then
             echo "Merge from Release branch"
             git fetch --all --tags 
             tag=$(git tag -l 'v[0-9].[0-9].[0-9]-beta.*' --sort=-version:refname | head -n 1)
-            beta-version=${tag##*.}
-            new-beta-version=$((beta-version + 1))
+            beta_version=${tag##*.}
+            new_beta-version=$((beta_version + 1))
             # add beta tag
-            only-tag=${tag%.*}
-            new-tag=$only-tag.$new-beta-version
-            git tag $new-tag
-            git push origin $new-tag 
+            only_tag=${tag%.*}
+            new_tag=$only-tag.$new-beta-version
+            git tag $new_tag
+            git push origin $new_tag 
           else  
             git fetch --all --tags
             tag=$(git tag -l 'v[0-9].[0-9].[0-9]' --sort=-version:refname | head -n 1)
