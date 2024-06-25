@@ -1,5 +1,5 @@
 resource "aws_iam_role" "eks_cluster" {
-  name               = "eks-cluster"
+  name               = "eks-cluster-argo"
   assume_role_policy = data.aws_iam_policy_document.assume_role_eks.json
 }
 

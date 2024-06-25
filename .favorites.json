@@ -1,0 +1,98 @@
+[
+    {
+        "type": "Group",
+        "name": "helm",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "68f02CoPm4vui5St"
+    },
+    {
+        "type": "Group",
+        "name": "argocd",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "wQGOHiNbhl472oLf"
+    },
+    {
+        "type": "Group",
+        "name": "circleci",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "LVkvNxbfJir6gqsz"
+    },
+    {
+        "type": "Directory",
+        "name": "/home/alex/Documents/projects/Final-project/UniProjects/helm_charts/frontend",
+        "parent_id": "68f02CoPm4vui5St",
+        "workspaceRoot": "/home/alex/Documents/projects/Final-project/UniProjects",
+        "workspacePath": "helm_charts/frontend",
+        "id": "1gPIBOoG6fztA2ky"
+    },
+    {
+        "type": "File",
+        "name": "/home/alex/Documents/projects/Final-project/UniProjects/helm_charts/argocd/applications/application.yaml",
+        "parent_id": "wQGOHiNbhl472oLf",
+        "workspaceRoot": "/home/alex/Documents/projects/Final-project/UniProjects",
+        "workspacePath": "helm_charts/argocd/applications/application.yaml",
+        "id": "ruXGM0c7qjSywN2I"
+    },
+    {
+        "type": "File",
+        "name": "/home/alex/Documents/projects/Final-project/UniProjects/helm_charts/argocd/applications/project.yaml",
+        "parent_id": "wQGOHiNbhl472oLf",
+        "workspaceRoot": "/home/alex/Documents/projects/Final-project/UniProjects",
+        "workspacePath": "helm_charts/argocd/applications/project.yaml",
+        "id": "XqLhbvMxwul561CV"
+    },
+    {
+        "type": "Group",
+        "name": "frontend",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "yAws6ac0gnZ2HuCr"
+    },
+    {
+        "type": "File",
+        "name": "/home/alex/Documents/projects/Final-project/UniProjects/frontend/Dockerfile",
+        "parent_id": "yAws6ac0gnZ2HuCr",
+        "workspaceRoot": "/home/alex/Documents/projects/Final-project/UniProjects",
+        "workspacePath": "frontend/Dockerfile",
+        "id": "Kc2ZBWXLj0sv1lGT"
+    },
+    {
+        "type": "Directory",
+        "name": "/home/alex/Documents/projects/Final-project/UniProjects/.circleci",
+        "parent_id": "LVkvNxbfJir6gqsz",
+        "workspaceRoot": "/home/alex/Documents/projects/Final-project/UniProjects",
+        "workspacePath": ".circleci",
+        "id": "g3m2ownJ6BVPOpqX"
+    },
+    {
+        "type": "Group",
+        "name": "terraform",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "qsV8dXBlcNTzZFov"
+    },
+    {
+        "type": "Directory",
+        "name": "/home/alex/Documents/projects/Final-project/UniProjects/terraform/terraform-base",
+        "parent_id": "qsV8dXBlcNTzZFov",
+        "workspaceRoot": "/home/alex/Documents/projects/Final-project/UniProjects",
+        "workspacePath": "terraform/terraform-base",
+        "id": "6Q3rlXgnJvfO7LjA"
+    },
+    {
+        "type": "Directory",
+        "name": "/home/alex/Documents/projects/Final-project/UniProjects/terraform/terraform-eks-argocd",
+        "parent_id": "qsV8dXBlcNTzZFov",
+        "workspaceRoot": "/home/alex/Documents/projects/Final-project/UniProjects",
+        "workspacePath": "terraform/terraform-eks-argocd",
+        "id": "0zRbqJXusocHBa3d"
+    }
+]

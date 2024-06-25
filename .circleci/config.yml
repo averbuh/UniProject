@@ -15,8 +15,8 @@ workflows:
             ignore:
             - dev
             - main
-            - '.*release$'
-            - '.*hotfix.*'
+            - /.*release$/
+            - /.*hotfix.*/
         name: Push to Feature branch
         config-path: .circleci/feature_config.yml
         base-revision: HEAD
@@ -51,12 +51,11 @@ workflows:
           .circleci/dev_config.yml run-pipeline true
           .circleci/config.yml run-pipeline true
 
-
     - path-filtering/filter:
         filters:
           branches:
             only:
-              - '.*release$'
+              - /.*release$/
         name: Push to Release branch
         config-path: .circleci/release_config.yml
         base-revision: HEAD
@@ -64,4 +63,3 @@ workflows:
           .circleci/main_config.yml run-pipeline true
           .circleci/dev_config.yml run-pipeline true
           .circleci/config.yml run-pipeline true
-
