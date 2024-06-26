@@ -24,7 +24,7 @@ metadata:
   name: {{ .Release.Name }}-ingress
   namespace: {{ .Release.Namespace }}
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /api 
+    nginx.ingress.kubernetes.io/rewrite-target: / 
   {{if eq .Values.tls true}}
      cert-manager.io/cluster-issuer: letsencrypt-prod
   {{end}}
@@ -45,7 +45,6 @@ spec:
 {{end}}
   rules:
   # - host: api.{{ .Release.Name }}.com
-  - host:
     http:
       paths:
         - path: /
