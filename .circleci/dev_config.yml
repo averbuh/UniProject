@@ -60,7 +60,6 @@ workflows:
         app: suppliers
 
 
-  #ALL
   Create Release Branch:
     jobs:
     - create_branch_or_tag:
