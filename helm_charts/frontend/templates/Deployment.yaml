@@ -34,7 +34,7 @@ metadata:
 spec:
   selector:
     app: frontend # select the users pod and expose
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 80
