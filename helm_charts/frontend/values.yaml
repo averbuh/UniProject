@@ -3,6 +3,7 @@ frontend:
     app: frontend
   deploy: 
     name: frontend-deployment
+    replicas: 1
     containers:
       name: frontend-app
       image: frontend
