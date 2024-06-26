@@ -24,7 +24,7 @@ metadata:
   name: {{ .Release.Name }}-ingress
   namespace: {{ .Release.Namespace }}
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /api
+    nginx.ingress.kubernetes.io/rewrite-target: / 
   {{if eq .Values.tls true}}
      cert-manager.io/cluster-issuer: letsencrypt-prod
   {{end}}
@@ -49,6 +49,13 @@ spec:
     http:
       paths:
         - path: /api
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Release.Name }}-service
+              port:
+                number: {{.Values.AppsPorts.http.port}}
+        - path: /api/recipes
           pathType: Prefix
           backend:
             service:
