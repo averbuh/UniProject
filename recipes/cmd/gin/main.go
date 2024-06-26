@@ -84,7 +84,7 @@ func main() {
 	} else {
 		log.Print("Connected to database")
 	}
-
+	// Create new handler
 	recipesHandler := NewRecipesHandler(store, &s3, redis)
 
 	recipesRoutes := map[string]string{
