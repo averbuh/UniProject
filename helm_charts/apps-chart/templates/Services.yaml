@@ -48,8 +48,8 @@ spec:
   - host:
     http:
       paths:
-        - path: /api/
-          pathType: Prefix
+        - path: /api
+          pathType: Exact
           backend:
             service:
               name: {{ .Release.Name }}-service
