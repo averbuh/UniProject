@@ -14,5 +14,5 @@ frontend:
           name: http
 
   
-
+namespace: apps
 
