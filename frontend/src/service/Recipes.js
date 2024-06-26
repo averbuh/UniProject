@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const url_prod = 'http://recipes-service.apps.svc.cluster.local:80'
-const url = 'http://localhost:8080'
+const url = window.location.origin + '/api'
+// const url_dev = 'http://localhost:8080'
 let response
 export const Recipes = {
   async getRecipesData() {

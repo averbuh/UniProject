@@ -47,7 +47,7 @@ spec:
   - host: 
     http:
       paths:
-        - path: /{{ .Release.Name }}
+        - path: /api
           pathType: Prefix
           backend:
             service:
