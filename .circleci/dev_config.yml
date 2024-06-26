@@ -31,7 +31,6 @@ workflows:
 #     - build_and_push_image:
 #         context: aws-dev
 #         repo: frontend
-  #IF
   Sync Recipes:
     when: << pipeline.parameters.run-recipes-go >>
     jobs:

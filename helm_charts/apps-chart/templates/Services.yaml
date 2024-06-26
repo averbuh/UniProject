@@ -44,8 +44,8 @@ spec:
     secretName: {{ .Release.Name }}-tls
 {{end}}
   rules:
-  # - host: 
-  - http:
+  - host: api.{{ .Release.Name }}.com
+    http:
       paths:
         - path: /api
           pathType: Prefix
