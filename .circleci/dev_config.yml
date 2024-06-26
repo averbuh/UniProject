@@ -60,60 +60,60 @@ workflows:
         app: suppliers
 
 
-  Create Release Branch:
-    jobs:
-    - create_branch_or_tag:
-        branch_name: "release"
+  # Create Release Branch:
+  #   jobs:
+  #   - create_branch_or_tag:
+  #       branch_name: "release"
 
 jobs:
 
-  create_branch_or_tag:
-    machine: 
-      image: ubuntu-2004:current
-    parameters:
-      branch_name:
-        type: string
-    working_directory: ~/repo
-    steps:
-    - checkout
-    - run:
-        name: Add tag/branch
-        command: |
+  # create_branch_or_tag:
+  #   machine: 
+  #     image: ubuntu-2004:current
+  #   parameters:
+  #     branch_name:
+  #       type: string
+  #   working_directory: ~/repo
+  #   steps:
+  #   - checkout
+  #   - run:
+  #       name: Add tag/branch
+  #       command: |
          
-          if [[ $( git show --oneline | grep "v[0-9].[0-9].[0-9]-release" ) != ""  ]]; then
-            echo "Merge from Release branch"
-            git fetch --all --tags 
-            tag=$(git tag -l 'v[0-9].[0-9].[0-9]-beta.*' --sort=-version:refname | head -n 1)
-            beta_version=${tag##*.}
-            new_beta_version=$((beta_version + 1))
-            # add beta tag
-            only_tag=${tag%.*}
-            new_tag=$only_tag.$new_beta_version
-            git tag $new_tag
-            git push origin $new_tag 
-          elif [ $( git show --oneline | grep "hotfix" ) != ""  ]]; then
-            echo "Merge from Hotfix branch"
-          else  
-            git fetch --all --tags
-            tag=$(git tag -l 'v[0-9].[0-9].[0-9]' --sort=-version:refname | head -n 1)
-            version=${tag#"v"}
-            IFS=. read -r major minor patch \<<< "$version"
-            minor=$((minor + 1))
-            patch=0
-            tag="v$major.$minor.$patch"
-            new_branch_name=$tag-<< parameters.branch_name >>
-            if [[ -n "$(git branch --list "$new_branch_name")" ]]; then
-              echo "Branch '$new_branch_name' exists locally."
-            else
-              echo "Branch '$new_branch_name' does not exist locally."
-              echo "Creating branch: $new_branch_name"
-              git checkout -b $new_branch_name
-              git push origin $new_branch_name
-              # add beta tag
-              git tag $tag-beta.0
-              git push origin $tag-beta.0
-            fi
-          fi
+  #         if [[ $( git show --oneline | grep "v[0-9].[0-9].[0-9]-release" ) != ""  ]]; then
+  #           echo "Merge from Release branch"
+  #           git fetch --all --tags 
+  #           tag=$(git tag -l 'v[0-9].[0-9].[0-9]-beta.*' --sort=-version:refname | head -n 1)
+  #           beta_version=${tag##*.}
+  #           new_beta_version=$((beta_version + 1))
+  #           # add beta tag
+  #           only_tag=${tag%.*}
+  #           new_tag=$only_tag.$new_beta_version
+  #           git tag $new_tag
+  #           git push origin $new_tag 
+  #         elif [ $( git show --oneline | grep "hotfix" ) != ""  ]]; then
+  #           echo "Merge from Hotfix branch"
+  #         else  
+  #           git fetch --all --tags
+  #           tag=$(git tag -l 'v[0-9].[0-9].[0-9]' --sort=-version:refname | head -n 1)
+  #           version=${tag#"v"}
+  #           IFS=. read -r major minor patch \<<< "$version"
+  #           minor=$((minor + 1))
+  #           patch=0
+  #           tag="v$major.$minor.$patch"
+  #           new_branch_name=$tag-<< parameters.branch_name >>
+  #           if [[ -n "$(git branch --list "$new_branch_name")" ]]; then
+  #             echo "Branch '$new_branch_name' exists locally."
+  #           else
+  #             echo "Branch '$new_branch_name' does not exist locally."
+  #             echo "Creating branch: $new_branch_name"
+  #             git checkout -b $new_branch_name
+  #             git push origin $new_branch_name
+  #             # add beta tag
+  #             git tag $tag-beta.0
+  #             git push origin $tag-beta.0
+  #           fi
+  #         fi
     
   build_and_push_image:
     machine: 

@@ -34,29 +34,29 @@ func main() {
 	var psqlconn string
 	host, exist := os.LookupEnv("POSTGRES_HOST")
 	if !exist {
-		panic("POSTGRES_HOST not set")
+		log.Print("POSTGRES_HOST not set")
 	}
 	port := 5432
 	user, exist := os.LookupEnv("POSTGRES_USER")
 	if !exist {
-		panic("POSTGRES_USER not set")
+		log.Print("POSTGRES_USER not set")
 	}
 	password, exist := os.LookupEnv("POSTGRES_PASSWORD")
 	if !exist {
-		panic("POSTGRES_PASSWORD not set")
+		log.Print("POSTGRES_PASSWORD not set")
 	}
 	dbname, exist := os.LookupEnv("POSTGRES_DB")
 	if !exist {
-		panic("POSTGRES_DB not set")
+		log.Print("POSTGRES_DB not set")
 	}
 	Addr, exist := os.LookupEnv("REDIS_HOST")
 	if !exist {
-		panic("REDIS_HOST not set")
+		log.Print("REDIS_HOST not set")
 	}
 	DB := 0
 	Password, exist := os.LookupEnv("REDIS_PASSWORD")
 	if !exist {
-		panic("REDIS_PASSWORD not set")
+		log.Print("REDIS_PASSWORD not set")
 	}
 
 	// Create new redis object
@@ -67,6 +67,7 @@ func main() {
 		log.Print("Connected to redis")
 	}
 
+	// Create new postgres object
 	psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	db, err := sql.Open("postgres", psqlconn)
 
