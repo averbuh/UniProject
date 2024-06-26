@@ -31,11 +31,11 @@ metadata:
 
 spec:
   ingressClassName: nginx
-  defaultBackend:
-    service:
-      name: error
-      port:
-        name: svc-port
+  # defaultBackend:
+  #   service:
+  #     name: api-ingress
+  #     port:
+  #       name: svc-port
 {{if eq .Values.tls true}}
   tls:
   - hosts: 
@@ -44,8 +44,8 @@ spec:
     secretName: {{ .Release.Name }}-tls
 {{end}}
   rules:
-  - host: 
-    http:
+  # - host: 
+  - http:
       paths:
         - path: /api
           pathType: Prefix
