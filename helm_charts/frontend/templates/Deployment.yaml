@@ -19,8 +19,8 @@ spec:
           imagePullPolicy: {{ .Values.frontend.deploy.containers.imagePullPolicy }}
           image: "{{ .Values.frontend.deploy.containers.image }}:{{ .Values.frontend.deploy.containers.tag }}"
           ports:
-            - containerPort: {{ .Values.frontend.deploy.containers.ports.containerPort }} 
-              name: {{ .Values.frontend.deploy.containers.ports.name }}
+            - containerPort: 80 
+              name: http 
 ---
 apiVersion: v1
 kind: Service
