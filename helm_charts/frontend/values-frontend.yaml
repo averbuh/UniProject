@@ -5,7 +5,7 @@ frontend:
     name: frontend-deployment
     replicas: 1
     containers:
-      name: frontend-app
+      name: 975050257492.dkr.ecr.eu-central-1.amazonaws.com/frontend
       image: frontend
       tag: latest
       imagePullPolicy: IfNotPresent
