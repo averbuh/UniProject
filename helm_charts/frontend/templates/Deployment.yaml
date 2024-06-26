@@ -17,7 +17,7 @@ spec:
       containers:
         - name: {{ .Values.frontend.deploy.containers.name }}
           imagePullPolicy: {{ .Values.frontend.deploy.containers.imagePullPolicy }}
-          image: "{{ .Values.frontend.deploy.containers.name }}:{{ .Values.frontend.deploy.containers.tag }}"
+          image: "{{ .Values.frontend.deploy.containers.image }}:{{ .Values.frontend.deploy.containers.tag }}"
           ports:
             - containerPort: 80 
               name: http 
