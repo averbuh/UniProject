@@ -4,6 +4,10 @@ const url = 'http://afd1df950f69b4a29b47d82a5a1cd9f4-856604395.eu-central-1.elb.
 // const url_dev = 'http://localhost:8080'
 let response
 export const Recipes = {
+
+  getUrl(){
+    return url
+  },
   async getRecipesData() {
     response = await axios.get(url + '/recipes')
     return response.data

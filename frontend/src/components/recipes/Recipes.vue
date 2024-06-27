@@ -101,7 +101,7 @@ const onUpload = async (event) => {
   body.append('file', fileUp)
 
   console.log(body)
-  const imgUpload = await axios.post(Recipes.url + '/recipes/upload', body, {
+  const imgUpload = await axios.post(Recipes.getUrl() + '/recipes/upload', body, {
     headers: {
       'Content-Type': 'multipart/form-data'
     },
