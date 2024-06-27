@@ -38,4 +38,15 @@ export const Recipes = {
     response = await axios.get(url + `/recipes/image/${image}`)
     return response.data
   }
+  // async uploadImage(body) {
+  //   response =await axios.post(url +'/recipes/upload', body, {
+  //     headers: {
+  //       'Content-Type': 'multipart/form-data'
+  //     },
+  //     onUploadProgress: (progressEvent) => {
+  //       const { loaded, total } = progressEvent
+  //     }
+  //   })
+  //   return response
+  // }
 }
