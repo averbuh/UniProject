@@ -43,7 +43,7 @@ workflows:
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
         app: recipes
-
+#fsdf
   Sync Suppliers:
     when: << pipeline.parameters.run-suppliers-go >>
     jobs:
