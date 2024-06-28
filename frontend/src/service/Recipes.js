@@ -10,7 +10,7 @@ export const Recipes = {
   },
   async getRecipesData() {
     response = await axios.get(url + '/recipes')
-    return response.data
+    return response
   },
 
   async addRecipe(recipe) {
@@ -36,7 +36,7 @@ export const Recipes = {
     const recipes = await this.getRecipesData();
 
     console.log(typeof recipes)
-    
+
     if (!Array.isArray(recipes)) {
       throw new Error('Recipes data is not an array.');
     }
