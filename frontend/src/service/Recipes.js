@@ -33,9 +33,10 @@ export const Recipes = {
   },
 
   getTodayRecipes() {
-    return Promise.resolve(
+    const result = Promise.resolve(
       this.getRecipesData().then((recipes) => recipes.filter((recipe) => recipe.istoday === true))
     )
+    return result
   },
 
   async getImageUrl(image) {
