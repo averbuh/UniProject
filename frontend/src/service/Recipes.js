@@ -32,11 +32,14 @@ export const Recipes = {
     return Promise.resolve(this.getRecipesData())
   },
 
-  getTodayRecipes() {
-    const result = Promise.resolve(
-      this.getRecipesData().then((recipes) => recipes.filter((recipe) => recipe.istoday === true))
-    )
-    return result
+  async getTodayRecipes() {
+    const recipes = await this.getRecipesData();
+    if (!Array.isArray(recipes)) {
+      throw new Error('Recipes data is not an array.');
+    }
+
+    const todayRecipes = recipes.filter((recipe) => recipe.istoday === true);
+    return todayRecipes;
   },
 
   async getImageUrl(image) {
