@@ -26,7 +26,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: / 
   {{if eq .Values.tls true}}
-     cert-manager.io/cluster-issuer: letsencrypt-prod
+     cert-manager.io/cluster-issuer: "letsencrypt-staging"
   {{end}}
 
 spec:
@@ -39,13 +39,12 @@ spec:
 {{if eq .Values.tls true}}
   tls:
   - hosts: 
-    - host1.domain.ext
-    - host2.domain.ext
-    secretName: {{ .Release.Name }}-tls
+    - api.averbuchpro.com
+    secretName: letsencrypt-staging 
 {{end}}
   rules:
   # - host: api.{{ .Release.Name }}.com
-  - host:
+  - host: api.averbuchpro.com
     http:
       paths:
         - path: /
@@ -57,4 +56,25 @@ spec:
                 number: {{.Values.AppsPorts.http.port}}
 
 --- 
+
+# apiVersion: cert-manager.io/v1
+# kind: Issuer
+# metadata:
+#   name: letsencrypt-staging
+# spec:
+#   acme:
+#     # The ACME server URL
+#     server: https://acme-staging-v02.api.letsencrypt.org/directory
+#     # Email address used for ACME registration
+#     email: ebta.alex.russia@gmail.com
+#     # Name of a secret used to store the ACME account private key
+#     privateKeySecretRef:
+#       name: letsencrypt-staging
+#     # Enable the HTTP-01 challenge provider
+#     solvers:
+#       - http01:
+#           ingress:
+#             ingressClassName: nginx
+
+# ---
 
