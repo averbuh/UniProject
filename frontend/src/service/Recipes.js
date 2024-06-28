@@ -34,10 +34,12 @@ export const Recipes = {
 
   async getTodayRecipes() {
     const recipes = await this.getRecipesData();
+
+    console.log(typeof recipes)
+    
     if (!Array.isArray(recipes)) {
       throw new Error('Recipes data is not an array.');
     }
-    console.log(typeof recipes)
     const todayRecipes = recipes.filter((recipe) => recipe.istoday === true);
     return todayRecipes;
   },
