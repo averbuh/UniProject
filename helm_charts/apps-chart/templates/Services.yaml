@@ -53,9 +53,8 @@ spec:
             service:
               name: {{ .Release.Name }}-service
               port:
-                number: {{.Values.AppsPorts.http.port}}
+                number: {{ .Values.AppsPorts.http.port }}
 
---- 
 
 # apiVersion: cert-manager.io/v1
 # kind: Issuer
