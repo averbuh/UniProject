@@ -25,9 +25,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: / 
-  {{if eq .Values.tls true}}
+  # {{if eq .Values.tls true}}
      cert-manager.io/cluster-issuer: "letsencrypt-staging"
-  {{end}}
+  # {{end}}
 
 spec:
   ingressClassName: nginx
@@ -36,12 +36,12 @@ spec:
   #     name: api-ingress
   #     port:
   #       name: svc-port
-{{if eq .Values.tls true}}
+# {{if eq .Values.tls true}}
   tls:
   - hosts: 
     - api.averbuchpro.com
     secretName: letsencrypt-staging 
-{{end}}
+# {{end}}
   rules:
   # - host: api.{{ .Release.Name }}.com
   - host: api.averbuchpro.com
