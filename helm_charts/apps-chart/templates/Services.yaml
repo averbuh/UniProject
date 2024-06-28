@@ -40,7 +40,7 @@ spec:
   tls:
   - hosts: 
     - api.averbuchpro.com
-    secretName: letsencrypt-staging 
+    secretName: letsencrypt-staging-tls 
 {{end}}
   rules:
   # - host: api.{{ .Release.Name }}.com
