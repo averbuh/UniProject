@@ -25,6 +25,6 @@ maxReplicas: 10
 
 minReplicas: 3
 
-tls: false
+tls: true 
 
 
