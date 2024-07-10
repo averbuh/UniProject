@@ -216,9 +216,9 @@ jobs:
     - run:
         name: Manual sync
         command: argocd app sync << parameters.app >>
-    # - run:
-    #     name: Wait for application to reach a synced and healthy state
-    #     command: argocd app wait << parameters.app >>
+    - run:
+        name: Wait for application to reach a synced and healthy state
+        command: argocd app wait << parameters.app >>
 
 
     #TEsts
