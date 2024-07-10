@@ -65,8 +65,7 @@ workflows:
             - build_and_push_image
 
     - argocd-manual-sync:
-        requires: 
-          - build_and_push_image
+        requires: [build_and_push_image]
         server: $ARGOCD_SERVER_DEV
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
