@@ -1,9 +1,11 @@
 import axios from 'axios'
 
+const url = 'https://api.averbuchpro.com'
+
 export const Suppliers = {
   
   async getSuppliersData() {
-    const response = await axios.get('http://localhost:3000/suppliers')
+    const response = await axios.get(url + '/suppliers')
     return response.data
   },
 
