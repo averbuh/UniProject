@@ -37,6 +37,7 @@ workflows:
     - build_and_push_image:
         context: aws-dev
         repo: recipes
+        app: recipes
 
     - slack/on-hold:
           context: slack-secrets
@@ -56,6 +57,7 @@ workflows:
     - build_and_push_image:
         context: aws-dev
         repo: suppliers
+        app: suppliers
 
     - slack/on-hold:
           context: slack-secrets
@@ -133,6 +135,8 @@ jobs:
     parameters:
       repo:
         type: string
+      app:
+        type: string
     steps:
     - aws-ecr/build_and_push_image:
         attach_workspace: true
@@ -149,8 +153,8 @@ jobs:
         # executors: base
         # extra_build_args: '--compress'
         no_output_timeout: 20m
-        path: ./recipes
-        build_path: ./recipes
+        path: ./<< parameters.app >>
+        build_path: ./<< parameters.app >>
         platform: linux/amd64
         public_registry: false
         push_image: true
@@ -213,9 +217,9 @@ jobs:
     - run:
         name: Manual sync
         command: argocd app sync << parameters.app >>
-    - run:
-        name: Wait for application to reach a synced and healthy state
-        command: argocd app wait << parameters.app >>
+    # - run:
+    #     name: Wait for application to reach a synced and healthy state
+    #     command: argocd app wait << parameters.app >>
 
 
     #TEsts
