@@ -24,6 +24,7 @@ workflows:
           recipes/.*\.go$ run-recipes-go true
           suppliers/.*\.go$ run-suppliers-go true
           ./* run-recipes-go true
+          ./* run-suppliers-go true
     - path-filtering/filter:
         filters:
           branches:
