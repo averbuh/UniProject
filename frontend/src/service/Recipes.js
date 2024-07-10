@@ -10,12 +10,12 @@ export const Recipes = {
   },
   async getRecipesData() {
     response = await axios.get(url + '/recipes')
-    return response
+    return response.data
   },
 
   async addRecipe(recipe) {
     response = await axios.post(url + '/recipes', recipe)
-    return response
+    return response.data
   },
 
   async deleteRecipe(name) {
@@ -32,11 +32,14 @@ export const Recipes = {
     return Promise.resolve(this.getRecipesData())
   },
 
-  getTodayRecipes() {
-    const result = Promise.resolve(
-      this.getRecipesData().then((recipes) => recipes.filter((recipe) => recipe.istoday === true))
-    )
-    return result
+  async getTodayRecipes() {
+    try {
+      const recipes = await this.getRecipes()
+      return recipes.filter((recipe) => recipe.istoday === true)
+    } catch (error) {
+      console.error('Error fetching today\'s recipes:', error)
+      throw error
+    }
   },
 
   async getImageUrl(image) {

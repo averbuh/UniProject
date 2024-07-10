@@ -17,7 +17,6 @@ resource "helm_release" "nginx" {
     
   }
   depends_on = [kubernetes_namespace.nginx]
-  
 }
 
 resource "kubernetes_namespace" "cert-manager" {
@@ -38,9 +37,35 @@ resource "helm_release" "cert-manager" {
     value = true
     
   }
-  depends_on = [kubernetes_namespace.cert-manager]
   
+  depends_on = [kubernetes_namespace.cert-manager]
 }
+
+# resource "helm_release" "prometheus_operator" {
+#   name             = "prometheus-operator"
+#   repository       = "https://prometheus-community.github.io/helm-charts"
+#   chart            = "kube-prometheus-stack"
+#   version          = "61.2.0"
+#   namespace        = "monitoring"
+#   create_namespace = true
+#   cleanup_on_fail  = true
+
+#   set {
+#     name = "prometheusSpec.externalLabels.cluster"
+#     value = var.eks_name
+#   }
+#   set {
+#     name = "prometheusSpec.externalLabels.environment"
+#     value = var.env
+#   }
+
+#   values = [
+#     file("${path.module}/values.yaml")
+#   ]
+
+#   depends_on = [kubernetes_namespace.cert-manager]
+# }
+
 
 # resource "kubernetes_namespace" "alb-ingress-controller" {
 #   metadata {
