@@ -32,6 +32,8 @@ spec:
     kind: Deployment
     jsonPointers:
     - /spec/containers/image
+    - /spec/envFrom
+    
 
   destination:
     name: staging-demo 
