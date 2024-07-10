@@ -66,9 +66,6 @@ spec:
                 name: postgres-secret 
                 key: POSTGRES_DB
 
-      envFrom:
-      - configMapRef:
-          name: {{ .Release.Name }}-config 
 
       imagePullSecrets:
       - name: postgres-secret
