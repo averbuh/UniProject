@@ -14,7 +14,7 @@ AppMode: stage
 
 tier: backend
 
-replicas: 3
+replicas: 2
 
 #image tag or latest
 image:

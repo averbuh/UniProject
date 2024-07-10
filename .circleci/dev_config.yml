@@ -71,7 +71,6 @@ workflows:
         password: $ARGOCD_PASSWORD
         app: suppliers
 
-  #/
   # Create Release Branch:
   #   jobs:
   #   - create_branch_or_tag:

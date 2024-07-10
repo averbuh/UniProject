@@ -14,15 +14,16 @@ AppMode: stage
 
 tier: backend
 
-replicas: 3
+replicas: 2
 
 #image tag or latest
 image:
   name: 975050257492.dkr.ecr.eu-central-1.amazonaws.com/suppliers
   tag: "latest"
+
 maxReplicas: 10
 
 minReplicas: 3
 
-tls: false
+tls: true
 
