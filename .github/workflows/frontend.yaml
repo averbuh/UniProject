@@ -32,7 +32,7 @@ jobs:
     # Runs a set of commands using the runners shell
     - name: Run a multi-line script
       working-directory: ./frontend
-      run: "npm install \nnpm run build \n#magic___^_^___line\n"
+      run: "npm install \nnpm run build \n"
     # Syncs your 'dist' folder from buildng the Vue app with an S3 bucket
     - name: S3 Sync
       uses: jakejarvis/s3-sync-action@master
