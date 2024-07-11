@@ -4,6 +4,10 @@ resource "kubernetes_namespace" "argocd" {
   }
 
   depends_on = [aws_eks_cluster.test]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "helm_release" "argocd" {
@@ -11,6 +15,10 @@ resource "helm_release" "argocd" {
   chart      = "https://github.com/argoproj/argo-helm/releases/download/argo-cd-5.36.11/argo-cd-5.36.11.tgz"
   namespace  = "argocd"
   depends_on = [kubernetes_namespace.argocd]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 
