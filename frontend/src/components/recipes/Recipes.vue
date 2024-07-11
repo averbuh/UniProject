@@ -44,7 +44,7 @@ function addRecipe() {
   }
   setTimeout(() => {
     Recipes.addRecipe(data).then((response) => {
-      if (response.status == 200) {
+      if (response.status == 'success') {
         toast.add({
           severity: 'info',
           summary: 'Success',
@@ -54,7 +54,7 @@ function addRecipe() {
       } else {
         toast.add({
           severity: 'error',
-          summary: 'Error' + response.status,
+          summary: 'Error',
           detail: 'Recipe Not Added',
           life: 10000
         })
