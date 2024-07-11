@@ -42,22 +42,24 @@ function addRecipe() {
     description: description.value,
     image: fileName.value
   }
-  Recipes.addRecipe(data).then((response) => {
-    if (response.status == 200) {
-      toast.add({
-        severity: 'info',
-        summary: 'Success',
-        detail: 'Recipe Added',
-        life: 10000
-      })
-    } else {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Recipe Not Added',
-        life: 10000
-      })
-    }
+  setTimeout(() => {
+    Recipes.addRecipe(data).then((response) => {
+      if (response.status == 200) {
+        toast.add({
+          severity: 'info',
+          summary: 'Success',
+          detail: 'Recipe Added',
+          life: 10000
+        })
+      } else {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Recipe Not Added',
+          life: 10000
+        })
+      }
+    })
   })
 
   ingredients_list.value = []

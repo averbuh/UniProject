@@ -34,12 +34,12 @@ workflows:
         mapping: |
           .circleci/dev_config.yml run-recipes-go true
           .circleci/dev_config.yml run-suppliers-go true
-          .circleci/config.yml run-recipes-go true
           helm_charts/* run-recipes-go true
           recipes/.*\.go$ run-recipes-go true
           suppliers/.*\.go$ run-suppliers-go true
-          .* run-recipes-go true
-          .* run-suppliers-go true
+#          .circleci/config.yml run-recipes-go true
+#           .* run-recipes-go true
+#           .* run-suppliers-go true
           
     - path-filtering/filter:
         filters:
