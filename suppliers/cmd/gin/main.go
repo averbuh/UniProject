@@ -1,11 +1,7 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
-	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -17,7 +13,6 @@ import (
 )
 
 //TODO: Add suppliers class
-
 
 func main() {
 	// Create Gin router
@@ -34,70 +29,68 @@ func main() {
 	router.Use(cors.New(config))
 	// Instantiate recipe Handler and provide a data store
 
-	s3 := recipes.NewS3Store("us-east-1", "test-images-vue")
+	// s3 := recipes.NewS3Store("us-east-1", "test-images-vue")
 
-	var psqlconn string
-	host, exist := os.LookupEnv("POSTGRES_HOST")
-	if !exist {
-		panic("POSTGRES_HOST not set")
-	}
-	port := 5432
-	user, exist := os.LookupEnv("POSTGRES_USER")
-	if !exist {
-		panic("POSTGRES_USER not set")
-	}
-	password, exist := os.LookupEnv("POSTGRES_PASSWORD")
-	if !exist {
-		panic("POSTGRES_PASSWORD not set")
-	}
-	dbname, exist := os.LookupEnv("POSTGRES_DB")
-	if !exist {
-		panic("POSTGRES_DB not set")
-	}
-	Addr, exist := os.LookupEnv("REDIS_HOST")
-	if !exist {
-		panic("REDIS_HOST not set")
-	}
-	DB := 0
-	Password, exist := os.LookupEnv("REDIS_PASSWORD")
-	if !exist {
-		panic("REDIS_PASSWORD not set")
-	}
+	// var psqlconn string
+	// host, exist := os.LookupEnv("POSTGRES_HOST")
+	// if !exist {
+	// 	panic("POSTGRES_HOST not set")
+	// }
+	// port := 5432
+	// user, exist := os.LookupEnv("POSTGRES_USER")
+	// if !exist {
+	// 	panic("POSTGRES_USER not set")
+	// }
+	// password, exist := os.LookupEnv("POSTGRES_PASSWORD")
+	// if !exist {
+	// 	panic("POSTGRES_PASSWORD not set")
+	// }
+	// dbname, exist := os.LookupEnv("POSTGRES_DB")
+	// if !exist {
+	// 	panic("POSTGRES_DB not set")
+	// }
+	// Addr, exist := os.LookupEnv("REDIS_HOST")
+	// if !exist {
+	// 	panic("REDIS_HOST not set")
+	// }
+	// DB := 0
+	// Password, exist := os.LookupEnv("REDIS_PASSWORD")
+	// if !exist {
+	// 	panic("REDIS_PASSWORD not set")
+	// }
 
-	psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlconn)
+	// psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	// db, err := sql.Open("postgres", psqlconn)
 
-	if err != nil {
-		log.Print("Failed to connect to database: ", err)
-	}
-	store, err := suppliers.NewPostgres(db)
+	// if err != nil {
+	// 	log.Print("Failed to connect to database: ", err)
+	// }
+	// store, err := suppliers.NewPostgres(db)
 
-	store.CreateTestTable(db)
+	// store.CreateTestTable(db)
 
-	defer store.CloseDB()
-	if err != nil {
-		log.Print("Failed to connect to database: ", err)
-	} else {
-		log.Print("Connected to database")
-	}
-	// Instantiate supplier Handler and provide a data store
+	// defer store.CloseDB()
+	// if err != nil {
+	// 	log.Print("Failed to connect to database: ", err)
+	// } else {
+	// 	log.Print("Connected to database")
+	// }
+	// // Instantiate supplier Handler and provide a data store
 	store := suppliers.NewPostgres()
-  suppliersHandler := NewSuppliersHandler(store)
-	defer store.CloseDB()
+	suppliersHandler := NewSuppliersHandler(store)
+	// defer store.CloseDB()
 
-
-  suppliersRoutes := map[string]string{
-    "id": "/suppliers/:id",
-  }
+	suppliersRoutes := map[string]string{
+		"id": "/suppliers/:id",
+	}
 	// Register Routes
-  router.GET("/suppliers", suppliersHandler.ListSuppliers)
-  router.POST("/suppliers", suppliersHandler.CreateSupplier)
-  router.GET(suppliersRoutes["id"], suppliersHandler.GetSupplier)
-  router.PUT(suppliersRoutes["id"], suppliersHandler.UpdateSupplier)
-  router.DELETE(suppliersRoutes["id"], suppliersHandler.DeleteSupplier)
-  //TODO: Get recommented suppliers based on today recipes ingredients
-  //TODO: Get favourite suppliers
-
+	router.GET("/suppliers", suppliersHandler.ListSuppliers)
+	router.POST("/suppliers", suppliersHandler.CreateSupplier)
+	router.GET(suppliersRoutes["id"], suppliersHandler.GetSupplier)
+	router.PUT(suppliersRoutes["id"], suppliersHandler.UpdateSupplier)
+	router.DELETE(suppliersRoutes["id"], suppliersHandler.DeleteSupplier)
+	//TODO: Get recommented suppliers based on today recipes ingredients
+	//TODO: Get favourite suppliers
 
 	// Start the server
 	router.Run()
@@ -108,7 +101,7 @@ func homePage(c *gin.Context) {
 }
 
 type SuppliersHandler struct {
-	store supplierStore 
+	store supplierStore
 }
 
 func NewSuppliersHandler(s supplierStore) *SuppliersHandler {
