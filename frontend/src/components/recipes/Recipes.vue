@@ -54,13 +54,13 @@ function addRecipe() {
       } else {
         toast.add({
           severity: 'error',
-          summary: 'Error',
+          summary: 'Error' + response.status,
           detail: 'Recipe Not Added',
           life: 10000
         })
       }
     })
-  })
+  }, 200)
 
   ingredients_list.value = []
   name.value = ''
