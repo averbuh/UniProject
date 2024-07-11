@@ -60,7 +60,7 @@ function addRecipe() {
         })
       }
     })
-  }, 200)
+  })
 
   ingredients_list.value = []
   name.value = ''
