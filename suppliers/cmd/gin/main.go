@@ -36,20 +36,20 @@ func main() {
 	var psqlconn string
 	host, exist := os.LookupEnv("POSTGRES_HOST")
 	if !exist {
-		panic("POSTGRES_HOST not set")
+		log.Print("POSTGRES_HOST not set")
 	}
 	port := 5432
 	user, exist := os.LookupEnv("POSTGRES_USER")
 	if !exist {
-		panic("POSTGRES_USER not set")
+		log.Print("POSTGRES_USER not set")
 	}
 	password, exist := os.LookupEnv("POSTGRES_PASSWORD")
 	if !exist {
-		panic("POSTGRES_PASSWORD not set")
+		log.Print("POSTGRES_PASSWORD not set")
 	}
 	dbname, exist := os.LookupEnv("POSTGRES_DB")
 	if !exist {
-		panic("POSTGRES_DB not set")
+		log.Print("POSTGRES_DB not set")
 	}
 	// Addr, exist := os.LookupEnv("REDIS_HOST")
 	// if !exist {

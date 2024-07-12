@@ -76,7 +76,7 @@ func main() {
 	}
 	store, err := recipes.NewPostgres(db)
 
-	// store.CreateTestTable(db)
+	store.CreateTestTable(db)
 
 	defer store.CloseDB()
 	if err != nil {
