@@ -36,21 +36,23 @@ export const Recipes = {
     try {
       const recipes = await this.getRecipes();
   
-      // Log the type and value of recipes for debugging
-      console.log('Type of recipes:', typeof recipes);
-      console.log('Recipes:', recipes);
-  
-      if (!Array.isArray(recipes)) {
-        throw new TypeError('Expected an array of recipes');
+      // Check if recipes is an object
+      if (typeof recipes !== 'object' || recipes === null) {
+        throw new TypeError('Expected an object of recipes');
       }
   
-      return recipes.filter(recipe => recipe.istoday === true);
+      // Convert object to array
+      const recipesArray = Object.values(recipes);
+  
+      // Filter today's recipes
+      return recipesArray.filter(recipe => recipe.istoday === true);
     } catch (error) {
       console.error('Error fetching today\'s recipes:', error);
       throw error;
     }
   },
 
+  
   async getImageUrl(image) {
     response = await axios.get(url + `/recipes/image/${image}`)
     return response.data
