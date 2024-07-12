@@ -35,17 +35,14 @@ workflows:
     when: << pipeline.parameters.run-recipes-go >>
     jobs:
     - build_and_push_image:
-        context: aws-dev
+        context: [ aws-dev, slack-secrets ]
         repo: recipes
         app: recipes
 
-    - slack/on-hold:
-          context: slack-secrets
-          requires:
-            - build_and_push_image
 
     - argocd-manual-sync:
         requires: [build_and_push_image]
+        context: slack-secrets
         server: $ARGOCD_SERVER_DEV
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
@@ -55,17 +52,14 @@ workflows:
     when: << pipeline.parameters.run-suppliers-go >>
     jobs:
     - build_and_push_image:
-        context: aws-dev
+        context: [ aws-dev, slack-secrets ]
         repo: suppliers
         app: suppliers
 
-    - slack/on-hold:
-          context: slack-secrets
-          requires:
-            - build_and_push_image
 
     - argocd-manual-sync:
         requires: [build_and_push_image]
+        context: slack-secrets
         server: $ARGOCD_SERVER_DEV
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
@@ -175,8 +169,12 @@ jobs:
         #         echo "latest";
         #         else echo "<< pipeline.trigger_parameters.circleci.event_time >><< pipeline.trigger_parameters.github_app.commit_sha >>";
         #        fi)
-
-
+    - slack/notify:
+        event: fail
+        template: basic_fail_1
+    - slack/notify:
+        event: pass
+        template: basic_success_1
 
   argocd-manual-sync:
     docker:
@@ -219,47 +217,3 @@ jobs:
         name: Wait for application to reach a synced and healthy state
         command: argocd app wait << parameters.app >>
 
-
-    #TEsts
-    # - aws-cli/setup:
-    #     #profile: OIDC-USER
-    #     role_arn: arn:aws:iam::123456789012:role/VALID_OIDC_ECR_ROLE
-    #     context: CircleCI_OIDC_Token
-    #     create_repo: true
-    #     dockerfile: Dockerfile
-    #     extra_build_args: '--compress'
-    #     no_output_timeout: 20m
-    #     path: .
-    #     platform: linux/amd64
-    #     profile_name: OIDC-User
-    #     public_registry: false
-    #     push_image: true
-    #     region: ${AWS_DEFAULT_REGION}
-    #     repo: "services-project-ops"
-    #     repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
-    #     repo_encryption_type: KMS
-    #     repo_policy_path: repo-policy.json
-    #     repo_scan_on_push: true
-    #     set_repo_policy: true
-    #     skip_when_tags_exist: false
-    #     tag: "latest"
-    # - aws-ecr/push-helm-chart:
-    #     account-url: $AWS_ECR_ACCOUNT_URL
-    #     aws-access-key-id: $AWS_ACCESS_KEY_ID
-    #     aws-secret-access-key: $AWS_SECRET_ACCESS_KEY #     create-repo: false #     path: ./charts
-    #     region: eu-central-1
-    #     repo: "${AWS_ECR_HELM_REPO_NAME}"
-    #     tag: "latest"
-    #     requires:
-    #     - aws-ecr-circle/build_and_push_image
-
-    # - argocd-configure:
-    #     cluster-name: $CLUSTER_NAME
-    #     resource-group: $RESOURCE_GROUP
-
-    # - argocd-manual-sync:
-    #     server: $ARGOCD_SERVER
-    #     username: $ARGOCD_USERNAME
-    #     password: $ARGOCD_PASSWORD
-    #     requires:
-    #     - argocd-configure
