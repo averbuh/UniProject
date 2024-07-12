@@ -1,7 +1,12 @@
 package main
 
 import (
+	"database/sql"
+	"errors"
+	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -12,12 +17,9 @@ import (
 	"practice.com/http/pkg/repository/suppliers"
 )
 
-//TODO: Add suppliers class
-
 func main() {
 	// Create Gin router
 	router := gin.Default()
-
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS", "DELETE"}
@@ -29,26 +31,26 @@ func main() {
 	router.Use(cors.New(config))
 	// Instantiate recipe Handler and provide a data store
 
-	// s3 := recipes.NewS3Store("us-east-1", "test-images-vue")
+	// s3 := suppliers.NewS3Store("us-east-1", "test-images-vue")
 
-	// var psqlconn string
-	// host, exist := os.LookupEnv("POSTGRES_HOST")
-	// if !exist {
-	// 	panic("POSTGRES_HOST not set")
-	// }
-	// port := 5432
-	// user, exist := os.LookupEnv("POSTGRES_USER")
-	// if !exist {
-	// 	panic("POSTGRES_USER not set")
-	// }
-	// password, exist := os.LookupEnv("POSTGRES_PASSWORD")
-	// if !exist {
-	// 	panic("POSTGRES_PASSWORD not set")
-	// }
-	// dbname, exist := os.LookupEnv("POSTGRES_DB")
-	// if !exist {
-	// 	panic("POSTGRES_DB not set")
-	// }
+	var psqlconn string
+	host, exist := os.LookupEnv("POSTGRES_HOST")
+	if !exist {
+		panic("POSTGRES_HOST not set")
+	}
+	port := 5432
+	user, exist := os.LookupEnv("POSTGRES_USER")
+	if !exist {
+		panic("POSTGRES_USER not set")
+	}
+	password, exist := os.LookupEnv("POSTGRES_PASSWORD")
+	if !exist {
+		panic("POSTGRES_PASSWORD not set")
+	}
+	dbname, exist := os.LookupEnv("POSTGRES_DB")
+	if !exist {
+		panic("POSTGRES_DB not set")
+	}
 	// Addr, exist := os.LookupEnv("REDIS_HOST")
 	// if !exist {
 	// 	panic("REDIS_HOST not set")
@@ -59,30 +61,30 @@ func main() {
 	// 	panic("REDIS_PASSWORD not set")
 	// }
 
-	// psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	// db, err := sql.Open("postgres", psqlconn)
+	psqlconn = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	db, err := sql.Open("postgres", psqlconn)
 
-	// if err != nil {
-	// 	log.Print("Failed to connect to database: ", err)
-	// }
-	// store, err := suppliers.NewPostgres(db)
+	if err != nil {
+		log.Print("Failed to connect to database: ", err)
+	}
+	store, err := suppliers.NewPostgres(db)
 
-	// store.CreateTestTable(db)
+	store.CreateTestTable(db)
 
-	// defer store.CloseDB()
-	// if err != nil {
-	// 	log.Print("Failed to connect to database: ", err)
-	// } else {
-	// 	log.Print("Connected to database")
-	// }
-	// // Instantiate supplier Handler and provide a data store
-	store := suppliers.NewPostgres()
+	defer store.CloseDB()
+	if err != nil {
+		log.Print("Failed to connect to database: ", err)
+	} else {
+		log.Print("Connected to database")
+	}
+	// Instantiate supplier Handler and provide a data store
 	suppliersHandler := NewSuppliersHandler(store)
 	// defer store.CloseDB()
 
 	suppliersRoutes := map[string]string{
 		"id": "/suppliers/:id",
 	}
+
 	// Register Routes
 	router.GET("/suppliers", suppliersHandler.ListSuppliers)
 	router.POST("/suppliers", suppliersHandler.CreateSupplier)
@@ -168,7 +170,7 @@ func (h SuppliersHandler) UpdateSupplier(c *gin.Context) {
 
 	err := h.store.Update(id, supplier)
 	if err != nil {
-		if err == suppliers.NotFoundErr {
+		if err == errors.New("not found") {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
@@ -185,7 +187,7 @@ func (h SuppliersHandler) DeleteSupplier(c *gin.Context) {
 
 	err := h.store.Remove(id)
 	if err != nil {
-		if err == suppliers.NotFoundErr {
+		if err == errors.New("not found") {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
