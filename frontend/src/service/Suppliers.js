@@ -13,9 +13,24 @@ export const Suppliers = {
     return Promise.resolve(this.getSuppliersData());
   },
 
-  getFavouriteSuppliers() {
-    return Promise.resolve(this.getSuppliersData().then(suppliers => suppliers.filter(supplier => supplier.favourite === true)));
-  }
-
+  async getFavouriteSuppliers() {
+    try {
+      const suppliers= await this.getRecipes();
+  
+      // Check if recipes is an object
+      if (typeof suppliers !== 'object' || suppliers === null) {
+        throw new TypeError('Expected an object of suppliers');
+      }
+  
+      // Convert object to array
+      const suppliersArray = Object.values(suppliers);
+  
+      // Filter today's recipes
+      return suppliersArray.filter(supplier=> supplier.isfavorite === true);
+    } catch (error) {
+      console.error('Error fetching fav suppliers:', error);
+      throw error;
+    }
+  }, 
 }
 
