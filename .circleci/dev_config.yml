@@ -202,9 +202,11 @@ jobs:
           [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
           $SUDO curl --insecure -sSL -o /usr/local/bin/argocd $URL
           $SUDO chmod +x /usr/local/bin/argocd
+
     - run:
         name: ArgoCD CLI login
         command: argocd login << parameters.server >> --insecure --username << parameters.username >> --password << parameters.password >>
+
     - run: 
         name: Change image tag
         command: |
@@ -216,4 +218,11 @@ jobs:
     - run:
         name: Wait for application to reach a synced and healthy state
         command: argocd app wait << parameters.app >>
+
+    - slack/notify:
+        event: fail
+        template: basic_fail_1 
+    - slack/notify:
+        event: pass
+        template: basic_success_1
 
