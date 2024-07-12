@@ -34,11 +34,20 @@ export const Recipes = {
 
   async getTodayRecipes() {
     try {
-      const recipes = await this.getRecipes()
-      return recipes.filter((recipe) => recipe.istoday === true)
+      const recipes = await this.getRecipes();
+  
+      // Log the type and value of recipes for debugging
+      console.log('Type of recipes:', typeof recipes);
+      console.log('Recipes:', recipes);
+  
+      if (!Array.isArray(recipes)) {
+        throw new TypeError('Expected an array of recipes');
+      }
+  
+      return recipes.filter(recipe => recipe.istoday === true);
     } catch (error) {
-      console.error('Error fetching today\'s recipes:', error)
-      throw error
+      console.error('Error fetching today\'s recipes:', error);
+      throw error;
     }
   },
 
