@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	_ "github.com/lib/pq"
 )
 
 type Postgres struct {
