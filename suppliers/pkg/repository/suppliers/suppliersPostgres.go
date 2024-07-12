@@ -1,10 +1,9 @@
 package suppliers
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
-
-	"context"
 )
 
 type Postgres struct {
