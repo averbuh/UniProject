@@ -15,7 +15,7 @@ export const Suppliers = {
 
   async getFavouriteSuppliers() {
     try {
-      const suppliers= await this.getRecipes();
+      const suppliers= await this.getSuppliers();
   
       // Check if recipes is an object
       if (typeof suppliers !== 'object' || suppliers === null) {
