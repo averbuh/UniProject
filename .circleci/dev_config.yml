@@ -46,7 +46,7 @@ workflows:
         server: $ARGOCD_SERVER_DEV
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
-        app: recipes
+        app: recipes-staging-demo
 
   Sync Suppliers:
     when: << pipeline.parameters.run-suppliers-go >>
@@ -63,7 +63,7 @@ workflows:
         server: $ARGOCD_SERVER_DEV
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
-        app: suppliers
+        app: suppliers-staging-demo
 
   # Create Release Branch:
   #   jobs:
@@ -210,14 +210,14 @@ jobs:
     - run: 
         name: Change image tag
         command: |
-          argocd app set << parameters.app >>-staging-demo --helm-set image.tag=v1.0.0-<< pipeline.git.revision >>
+          argocd app set << parameters.app >> --helm-set image.tag=v1.0.0-<< pipeline.git.revision >>
 
     - run:
         name: Manual sync
-        command: argocd app sync << parameters.app >>-staging-demo
+        command: argocd app sync << parameters.app >>
     - run:
         name: Wait for application to reach a synced and healthy state
-        command: argocd app wait << parameters.app >>-staging-demo
+        command: argocd app wait << parameters.app >>
 
     - slack/notify:
         event: fail
