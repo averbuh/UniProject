@@ -16,7 +16,7 @@ export const Recipes = {
     }
     else {
       url = 'https://api.averbuchpro.com'
-    }
+    } 
   },
 
   getUrl(){
