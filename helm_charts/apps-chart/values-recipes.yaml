@@ -27,4 +27,8 @@ minReplicas: 1
 
 tls: true 
 
+redis: 
+  host: redis-master.apps-cluster-1.svc.cluster.local
 
+postgres: 
+  host: postgres-master.apps-cluster-1.svc.cluster.local

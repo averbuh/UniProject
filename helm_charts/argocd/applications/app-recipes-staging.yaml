@@ -31,6 +31,12 @@ spec:
       valueFiles:
       - values-recipes.yaml
 
+      parameters:
+      - name: postgres.host
+        value: "postgres-staging-postgresql.postgres.svc.cluster.local"
+      - name: redis.host
+        value: "redis-staging-master.redis.svc.cluster.local:6379"
+
   ignoreDifferences:
   - group: apps
     kind: Deployment

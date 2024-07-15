@@ -10,10 +10,12 @@ spec:
    - list:
       elements:
       - cluster: staging-demo
+        name: staging
       - cluster: prod-demo
+        name: prod
   template:
     metadata:
-      name: postgres-{{.cluster}}
+      name: postgres-{{.name}}
       namespace: argocd
       labels:
         app.kubernetes.io/managed-by: "Helm" # Label indicating that Helm manages this application
@@ -86,10 +88,12 @@ spec:
    - list:
       elements:
       - cluster: staging-demo
+        name: staging
       - cluster: prod-demo
+        name: prod
   template:
     metadata:
-      name: redis-{{.cluster}}
+      name: redis-{{.name}}
       namespace: argocd
       labels:
         app.kubernetes.io/managed-by: "Helm" # Label indicating that Helm manages this application
