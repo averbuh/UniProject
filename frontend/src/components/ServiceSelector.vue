@@ -11,13 +11,13 @@ defineProps({
   }
 })
 
-const ariaLabel = ref("Switch");
+const ButtonLabel = ref("Switch Backend Endpoint");
 
 function ChangeApiUrl() {
   Recipes.changeURL();
   Suppliers.changeURL();
     
-  ariaLabel.value = Recipes.getUrl();
+  ButtonLabel.value = Recipes.getUrl();
 
 }
 
@@ -28,7 +28,7 @@ function ChangeApiUrl() {
     <Button label="Recipes" icon="pi pi-apple" @click="ButtonAction('recipes')"/>
     <Button @click="ButtonAction('restaurant')" label="Restourant" icon="pi pi-briefcase" aria-label="Restourant"/>
     <Button @click="ButtonAction('suppliers')" label="Suppliers" icon="pi pi-truck" aria-label="Suppliers"/>
-    <Button @click="ChangeApiUrl()" label="Switch Backend Endpoint" icon="pi pi-refresh" aria-label="Switch"/>
+    <Button @click="ChangeApiUrl()" label="Switch Backend Endpoint" icon="pi pi-refresh" aria-label="Switch Backend"/>
   </div>
 </template>
 
