@@ -2,7 +2,7 @@ import axios from 'axios'
 
 
 
-export let url = 'https://api.averbuchpro.com'
+export let url
 // const url_dev = 'http://localhost:8080'
 let response
 export const Recipes = {
@@ -12,6 +12,9 @@ export const Recipes = {
       url = 'https://stage.api.averbuchpro.com'
     } 
     else if (url === 'http://stage.api.averbuchpro.com') {
+      url = 'https://api.averbuchpro.com'
+    }
+    else {
       url = 'https://api.averbuchpro.com'
     }
   },

@@ -22,7 +22,7 @@ function ChangeApiUrl() {
     <Button label="Recipes" icon="pi pi-apple" @click="ButtonAction('recipes')"/>
     <Button @click="ButtonAction('restaurant')" label="Restourant" icon="pi pi-briefcase" aria-label="Restourant"/>
     <Button @click="ButtonAction('suppliers')" label="Suppliers" icon="pi pi-truck" aria-label="Suppliers"/>
-    <Button @click="ChangeApiUrl()" label="Change Api Url" icon="pi pi-refresh" aria-label="Change Api Url"/>
+    <Button @click="ChangeApiUrl()" label="Switch Backend Endpoint" icon="pi pi-refresh" aria-label="Change Api Url"/>
   </div>
 </template>
 
