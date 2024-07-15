@@ -32,6 +32,11 @@ spec:
     helm:
       valueFiles:
       - values-recipes.yaml
+      parameters:
+      - name: postgres.host
+        value: "postgres-prod-postgresql.postgres.svc.cluster.local"
+      - name: redis.host
+        value: "redis-prod-master.redis.svc.cluster.local:6379"
 
   ignoreDifferences:
   - group: apps
