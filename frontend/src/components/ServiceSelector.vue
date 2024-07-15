@@ -1,4 +1,7 @@
 <script setup>
+import { Recipes } from '@/service/Recipes';
+import { Suppliers } from '@/service/Suppliers';
+
 defineProps({
   ButtonAction: {
     type: Function,
@@ -6,6 +9,12 @@ defineProps({
 
   }
 })
+
+function ChangeApiUrl() {
+  Recipes.changeURL();
+  Suppliers.changeURL();
+}
+
 </script>
 
 <template>
@@ -13,6 +22,7 @@ defineProps({
     <Button label="Recipes" icon="pi pi-apple" @click="ButtonAction('recipes')"/>
     <Button @click="ButtonAction('restaurant')" label="Restourant" icon="pi pi-briefcase" aria-label="Restourant"/>
     <Button @click="ButtonAction('suppliers')" label="Suppliers" icon="pi pi-truck" aria-label="Suppliers"/>
+    <Button @click="ChangeApiUrl()" label="Change Api Url" icon="pi pi-refresh" aria-label="Change Api Url"/>
   </div>
 </template>
 

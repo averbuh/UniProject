@@ -1,9 +1,15 @@
 import axios from 'axios'
 
-const url = 'https://api.averbuchpro.com'
+
+
+export let url = 'https://api.averbuchpro.com'
 // const url_dev = 'http://localhost:8080'
 let response
 export const Recipes = {
+
+  changeURL(url) {
+    url = url
+  },
 
   getUrl(){
     return url

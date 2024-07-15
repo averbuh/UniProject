@@ -24,7 +24,7 @@ resource "kubernetes_namespace" "cert-manager" {
     name = "cert-manager"
   }
 
-  depends_on = [aws_eks_cluster.this]
+  depends_on = [aws_eks_cluster.this, helm_release.nginx]
 }
 resource "helm_release" "cert-manager" {
   name       = "cert-manager"
