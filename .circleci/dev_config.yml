@@ -42,7 +42,7 @@ workflows:
 
 
     - argocd-manual-sync:
-        requires: [build_and_push_image]
+        requires: [recipes-build-push]
         name: recipes-manual-sync
         context: slack-secrets
         server: $ARGOCD_SERVER_DEV
@@ -61,7 +61,7 @@ workflows:
 
 
     - argocd-manual-sync:
-        requires: [build_and_push_image]
+        requires: [suppliers-build-push]
         name: suppliers-manual-sync
         context: slack-secrets
         server: $ARGOCD_SERVER_DEV
