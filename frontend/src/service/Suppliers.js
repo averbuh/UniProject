@@ -4,9 +4,15 @@ export let url = 'https://api.averbuchpro.com'
 
 export const Suppliers = {
 
-  changeURL(url) {
-    url = url
+  changeURL() {
+    if (url === 'https://api.averbuchpro.com') {
+      url = 'https://stage.api.averbuchpro.com'
+    } 
+    else if (url === 'http://stage.api.averbuchpro.com') {
+      url = 'https://api.averbuchpro.com'
+    }
   },
+
   async getSuppliersData() {
     const response = await axios.get(url + '/suppliers')
     return response.data

@@ -7,8 +7,13 @@ export let url = 'https://api.averbuchpro.com'
 let response
 export const Recipes = {
 
-  changeURL(url) {
-    url = url
+  changeURL() {
+    if (url === 'https://api.averbuchpro.com') {
+      url = 'https://stage.api.averbuchpro.com'
+    } 
+    else if (url === 'http://stage.api.averbuchpro.com') {
+      url = 'https://api.averbuchpro.com'
+    }
   },
 
   getUrl(){
