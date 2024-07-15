@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export let url = 'https://api.averbuchpro.com'
+export let url 
 
 export const Suppliers = {
 
@@ -11,6 +11,9 @@ export const Suppliers = {
     else if (url === 'http://stage.api.averbuchpro.com') {
       url = 'https://api.averbuchpro.com'
     }
+    else {
+      url = 'https://api.averbuchpro.com'
+    } 
   },
 
   async getSuppliersData() {

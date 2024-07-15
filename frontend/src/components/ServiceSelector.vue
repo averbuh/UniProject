@@ -1,7 +1,6 @@
 <script setup>
 import { Recipes } from '@/service/Recipes';
 import { Suppliers } from '@/service/Suppliers';
-import { ref } from 'vue';
 
 defineProps({
   ButtonAction: {
@@ -11,14 +10,9 @@ defineProps({
   }
 })
 
-const ButtonLabel = ref("Switch Backend Endpoint");
-
 function ChangeApiUrl() {
   Recipes.changeURL();
   Suppliers.changeURL();
-    
-  ButtonLabel.value = Recipes.getUrl();
-
 }
 
 </script>

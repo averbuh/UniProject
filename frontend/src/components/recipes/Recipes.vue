@@ -152,6 +152,9 @@ const onUpload = async (event) => {
   <br />
   recipes: {{ recipes }}
   <br />
+  <br />
+  URL: {{ Recipes.getUrl() }}
+  <br />
   <div class="add-recipe">
     <Toast />
     <label for="name">Recipe's Name</label>
