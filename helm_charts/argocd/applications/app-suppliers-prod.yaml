@@ -1,0 +1,58 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: suppliers-prod
+  # You'll usually want to add your resources to the argocd namespace.
+  namespace: argocd
+  # Add this finalizer ONLY if you want these to cascade delete.
+  finalizers:
+    # The default behaviour is foreground cascading deletion
+    - resources-finalizer.argocd.argoproj.io
+    # Alternatively, you can use background cascading deletion
+    # - resources-finalizer.argocd.argoproj.io/background
+  # Add labels to your application object.
+  labels:
+    name: suppliers-prod
+    app.kubernetes.io/managed-by: "Helm" # Label indicating that Helm manages this application
+  annotations:
+    meta.helm.sh/release-name: "argocd"
+    meta.helm.sh/release-namespace: "argocd"
+# Specification section outlines the details of the application
+spec:
+  project: recipes-suppliers-app # Project to which this application belongs
+
+  # Source section specifies the Git repository details and the desired revision
+  source:
+    repoURL: https://github.com/averbuh/UniProject # Git repository URL
+    targetRevision: main # Git branch, tag, or commit hash
+    path: helm_charts/apps-chart # Path within the repository where the application manifests are located
+
+    helm:
+      valueFiles:
+      - values-suppliers.yaml
+
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/containers/image
+    - /spec/envFrom
+
+  # Destination section defines the target Kubernetes cluster and namespace
+  destination:
+    name: prod-demo
+    namespace: apps # Target namespace for deploying the application
+
+  syncPolicy:
+      automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
+        prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
+        selfHeal: true # Specifies if partial app sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected ( false by default ).
+        allowEmpty: false # Allows deleting all application resources during automatic syncing ( false by default ).
+      syncOptions: # Sync options which modifies sync behavior
+      - Validate=true # disables resource validation (equivalent to 'kubectl apply --validate=false') ( true by default ).
+      - CreateNamespace=true # Namespace Auto-Creation ensures that namespace specified as the application destination exists in the destination cluster.
+      - PrunePropagationPolicy=foreground # Supported policies are background, foreground and orphan.
+      - PruneLast=true # Allow the ability for resource pruning to happen as a final, implicit wave of a sync operation
+      - RespectIgnoreDifferences=true # When syncing changes, respect fields ignored by the ignoreDifferences configuration
+      - ApplyOutOfSyncOnly=true 
+
