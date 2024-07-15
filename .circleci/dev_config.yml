@@ -210,14 +210,14 @@ jobs:
     - run: 
         name: Change image tag
         command: |
-          argocd app set << parameters.app >> --helm-set image.tag=v1.0.0-<< pipeline.git.revision >>
+          argocd app set << parameters.app >>-staging-demo --helm-set image.tag=v1.0.0-<< pipeline.git.revision >>
 
     - run:
         name: Manual sync
-        command: argocd app sync << parameters.app >>
+        command: argocd app sync << parameters.app >>-staging-demo
     - run:
         name: Wait for application to reach a synced and healthy state
-        command: argocd app wait << parameters.app >>
+        command: argocd app wait << parameters.app >>-staging-demo
 
     - slack/notify:
         event: fail
