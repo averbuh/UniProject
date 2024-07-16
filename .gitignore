@@ -78,3 +78,40 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+
+scripts-notes/*
+
+
+# Terraform files
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform/
+.terraform.lock.hcl
+
+# Terragrunt files
+*.terragrunt-cache
+.terragrunt-cache/
+
+# Sensitive files
+secrets.auto.tfvars
+
+# IDE/editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Other
+*.log

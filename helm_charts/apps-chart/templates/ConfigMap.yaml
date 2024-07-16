@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-config
 data:
-  POSTGRES_HOST: "postgres-postgresql.postgres.svc.cluster.local"
-  REDIS_HOST: "redis-master.redis.svc.cluster.local:6379"
+  POSTGRES_HOST: {{ .Values.postgres.host }}
+  REDIS_HOST: {{ .Values.redis.host }}

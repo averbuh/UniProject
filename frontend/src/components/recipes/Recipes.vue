@@ -42,22 +42,24 @@ function addRecipe() {
     description: description.value,
     image: fileName.value
   }
-  Recipes.addRecipe(data).then((response) => {
-    if (response.status == 200) {
-      toast.add({
-        severity: 'info',
-        summary: 'Success',
-        detail: 'Recipe Added',
-        life: 10000
-      })
-    } else {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Recipe Not Added',
-        life: 10000
-      })
-    }
+  setTimeout(() => {
+    Recipes.addRecipe(data).then((response) => {
+      if (response.status == 'success') {
+        toast.add({
+          severity: 'info',
+          summary: 'Success',
+          detail: 'Recipe Added',
+          life: 10000
+        })
+      } else {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Recipe Not Added',
+          life: 10000
+        })
+      }
+    })
   })
 
   ingredients_list.value = []
@@ -101,7 +103,7 @@ const onUpload = async (event) => {
   body.append('file', fileUp)
 
   console.log(body)
-  const imgUpload = await axios.post('http://localhost:8080/recipes/upload', body, {
+  const imgUpload = await axios.post(Recipes.getUrl() + '/recipes/upload', body, {
     headers: {
       'Content-Type': 'multipart/form-data'
     },
@@ -149,6 +151,9 @@ const onUpload = async (event) => {
   <Button id="delete-recipe" label="Delete" icon="pi pi-trash" @click="deleteRecipe()" />
   <br />
   recipes: {{ recipes }}
+  <br />
+  <br />
+  URL: {{ Recipes.getUrl() }}
   <br />
   <div class="add-recipe">
     <Toast />

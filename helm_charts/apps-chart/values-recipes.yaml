@@ -14,17 +14,21 @@ AppMode: stage
 
 tier: backend
 
-replicas: 3
+replicas: 2
 
 #image tag or latest
 image:
   name: 975050257492.dkr.ecr.eu-central-1.amazonaws.com/recipes
   tag: "latest"
 
-maxReplicas: 10
+maxReplicas: 5
 
-minReplicas: 3
+minReplicas: 1
 
-tls: false
+tls: true 
 
+redis: 
+  host: redis-master.apps-cluster-1.svc.cluster.local
 
+postgres: 
+  host: postgres-master.apps-cluster-1.svc.cluster.local

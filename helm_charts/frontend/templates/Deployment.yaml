@@ -19,8 +19,13 @@ spec:
           imagePullPolicy: {{ .Values.frontend.deploy.containers.imagePullPolicy }}
           image: "{{ .Values.frontend.deploy.containers.image }}:{{ .Values.frontend.deploy.containers.tag }}"
           ports:
-            - containerPort: {{ .Values.frontend.deploy.containers.ports.containerPort }} 
-              name: {{ .Values.frontend.deploy.containers.ports.name }}
+            - containerPort: 80 
+              name: http 
+
+      imagePullSecrets:
+      - name: postgres-secret
+      - name: redis-secret
+      - name: regcred
 ---
 apiVersion: v1
 kind: Service
@@ -29,33 +34,8 @@ metadata:
 spec:
   selector:
     app: frontend # select the users pod and expose
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 80
       targetPort: 80
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: frontend-deployment
-spec:
-  replicas: 2 
-  selector:
-    matchLabels:
-      app: frontend
-  template:
-    metadata:
-      labels:
-        app: frontend # label by which pod can be selected
-    spec:
-      containers:
-        - name: frontend-app-container
-          image: gomurali/k8s-frontend-app:latest
-
-
-            #TODO: Add health check
-            #HACK: This is a hack to get around a k8s bug.
-            #WARNING: This is not safe for production.
-            #FIX: Fix this shit.
-

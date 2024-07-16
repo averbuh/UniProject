@@ -1,0 +1,18 @@
+frontend: 
+  labels: 
+    app: frontend
+  deploy: 
+    name: frontend-deployment
+    replicas: 1
+    containers:
+      name: frontend-app
+      image: 975050257492.dkr.ecr.eu-central-1.amazonaws.com/frontend
+      tag: latest
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 80
+          name: http
+
+  
+namespace: apps
+

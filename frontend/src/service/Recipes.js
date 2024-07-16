@@ -1,9 +1,27 @@
 import axios from 'axios'
 
-const url_prod = 'http://recipes-service.apps.svc.cluster.local:80'
-const url = 'http://localhost:8080'
+
+
+export let url
+// const url_dev = 'http://localhost:8080'
 let response
 export const Recipes = {
+
+  changeURL() {
+    if (url === 'https://prod.api.averbuchpro.com') {
+      url = 'https://stage.api.averbuchpro.com'
+    } 
+    else if (url === 'http://stage.api.averbuchpro.com') {
+      url = 'https://prod.api.averbuchpro.com'
+    }
+    else {
+      url = 'https://prod.api.averbuchpro.com'
+    } 
+  },
+
+  getUrl(){
+    return url
+  },
   async getRecipesData() {
     response = await axios.get(url + '/recipes')
     return response.data
@@ -11,7 +29,7 @@ export const Recipes = {
 
   async addRecipe(recipe) {
     response = await axios.post(url + '/recipes', recipe)
-    return response
+    return response.data
   },
 
   async deleteRecipe(name) {
@@ -28,14 +46,40 @@ export const Recipes = {
     return Promise.resolve(this.getRecipesData())
   },
 
-  getTodayRecipes() {
-    return Promise.resolve(
-      this.getRecipesData().then((recipes) => recipes.filter((recipe) => recipe.istoday === true))
-    )
+  async getTodayRecipes() {
+    try {
+      const recipes = await this.getRecipes();
+  
+      // Check if recipes is an object
+      if (typeof recipes !== 'object' || recipes === null) {
+        throw new TypeError('Expected an object of recipes');
+      }
+  
+      // Convert object to array
+      const recipesArray = Object.values(recipes);
+  
+      // Filter today's recipes
+      return recipesArray.filter(recipe => recipe.istoday === true);
+    } catch (error) {
+      console.error('Error fetching today\'s recipes:', error);
+      throw error;
+    }
   },
 
+  
   async getImageUrl(image) {
     response = await axios.get(url + `/recipes/image/${image}`)
     return response.data
   }
+  // async uploadImage(body) {
+  //   response =await axios.post(url +'/recipes/upload', body, {
+  //     headers: {
+  //       'Content-Type': 'multipart/form-data'
+  //     },
+  //     onUploadProgress: (progressEvent) => {
+  //       const { loaded, total } = progressEvent
+  //     }
+  //   })
+  //   return response
+  // }
 }

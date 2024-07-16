@@ -8,8 +8,12 @@ import axios from 'axios'
 
 
 onMounted(() => {
-  Suppliers.getFavouriteSuppliers().then((data) => suppliers.value = data);
-  Recipes.getTodayRecipes().then((data) => recipes.value = data);
+  setTimeout(() => {
+    Suppliers.getFavouriteSuppliers().then((data) => suppliers.value = data);
+  })
+  setTimeout(() => {
+    Recipes.getTodayRecipes().then((data) => recipes.value = data);
+  })
 });
 
 let suppliers = ref();

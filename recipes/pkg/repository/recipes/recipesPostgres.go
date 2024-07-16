@@ -38,11 +38,11 @@ func (p Postgres) CreateTestTable(db *sql.DB) error {
 	_, e := db.Exec("CREATE TABLE IF NOT EXISTS recipes(name varchar not null primary key, istoday boolean, ingredients text[] , description varchar, image varchar)")
 	CheckError(e)
 	// new recipes
-	ins := "INSERT INTO recipes (name, istoday, ingredients, description, image) VALUES ($1, $2, $3, $4, $5)"
+	// ins := "INSERT INTO recipes (name, istoday, ingredients, description, image) VALUES ($1, $2, $3, $4, $5)"
 
-	ingredients := []string{"eggs", "milk", "flour", "sugar"}
+	// ingredients := []string{"eggs", "milk", "flour", "sugar"}
 
-	_, e = db.Exec(ins, "toast", true, pq.Array(ingredients), "some description", "")
+	// _, e = db.Exec(ins, "toast", true, pq.Array(ingredients), "some description", "")
 
 	CheckError(e)
 	return e
