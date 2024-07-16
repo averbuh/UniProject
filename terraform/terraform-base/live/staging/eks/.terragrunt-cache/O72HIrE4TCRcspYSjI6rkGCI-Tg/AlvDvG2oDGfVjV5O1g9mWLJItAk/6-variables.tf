@@ -40,6 +40,11 @@ variable "enable_irsa" {
   default     = true
 }
 
+
+variable "s3_bucket_name" {
+  description = "S3 bucket name"
+  type        = string
+}
 variable "route53_zone_name" {
   description = "Route53 zone name"
   type        = string
@@ -50,22 +55,3 @@ variable "route53_record_name" {
   type        = string
 }
 
-# variable "s3_access_manifest" {
-#   description = "S3 manifest path"
-#   type        = string
-# }
-
-variable "ingress_manifest" {
-  description = "Ingress manifest path"
-  type        = string 
-}
-
-variable "cert_issuer_manifest" {
-  description = "Cert issuer manifest path"
-  type        = string
-}
-
-variable "s3_bucket_name" {
-  description = "S3 bucket name"
-  type        = string
-}
