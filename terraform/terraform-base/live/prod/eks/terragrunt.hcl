@@ -19,7 +19,7 @@ inputs = {
   subnet_ids  = dependency.vpc.outputs.private_subnet_ids
 
   route53_zone_name = "averbuchpro.com"
-  route53_record_name = "api.averbuchpro.com"
+  route53_record_name = "prod.api.averbuchpro.com"
 
   cert_issuer_manifest = "${get_terragrunt_dir()}/cert-issuer-prod.yaml"
   ingress_manifest = "${get_terragrunt_dir()}/ingress-prod.yaml"

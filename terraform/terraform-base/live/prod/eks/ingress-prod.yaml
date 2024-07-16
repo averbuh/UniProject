@@ -16,10 +16,10 @@ spec:
   #       name: svc-port
   tls:
   - hosts: 
-    - api.averbuchpro.com
+    - prod.api.averbuchpro.com
     secretName: letsencrypt-prod-tls
   rules:
-  - host: api.averbuchpro.com
+  - host: prod.api.averbuchpro.com
     http:
       paths:
         - path: /recipes
