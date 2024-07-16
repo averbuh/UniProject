@@ -5,14 +5,14 @@ export let url
 export const Suppliers = {
 
   changeURL() {
-    if (url === 'https://api.averbuchpro.com') {
+    if (url === 'https://prod.api.averbuchpro.com') {
       url = 'https://stage.api.averbuchpro.com'
     } 
     else if (url === 'http://stage.api.averbuchpro.com') {
-      url = 'https://api.averbuchpro.com'
+      url = 'https://prod.api.averbuchpro.com'
     }
     else {
-      url = 'https://api.averbuchpro.com'
+      url = 'https://prod.api.averbuchpro.com'
     } 
   },
 
