@@ -18,6 +18,14 @@ inputs = {
   eks_name    = "demo"
   subnet_ids  = dependency.vpc.outputs.private_subnet_ids
 
+  route53_zone_name = "averbuchpro.com"
+  route53_record_name = "api.averbuchpro.com"
+
+  cert_issuer_manifest = "${get_terragrunt_dir()}/cert-issuer-prod.yaml"
+  ingress_manifest = "${get_terragrunt_dir()}/ingress-prod.yaml"
+  # s3_access_manifest = "${get_terragrunt_dir()}/s3-serviceAccount.yaml"
+  s3_bucket_name = "test-images-vue"
+
   node_groups = {
     general = {
       capacity_type  = "ON_DEMAND"

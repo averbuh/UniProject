@@ -11,8 +11,8 @@ spec:
       elements:
       - cluster: staging-demo
         name: staging
-      - cluster: prod-demo
-        name: prod
+      # - cluster: prod-demo
+      #   name: prod
   template:
     metadata:
       name: postgres-{{.name}}
@@ -89,8 +89,8 @@ spec:
       elements:
       - cluster: staging-demo
         name: staging
-      - cluster: prod-demo
-        name: prod
+      # - cluster: prod-demo
+      #   name: prod
   template:
     metadata:
       name: redis-{{.name}}
