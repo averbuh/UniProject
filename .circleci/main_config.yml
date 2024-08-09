@@ -36,9 +36,6 @@ parameters:
   service-path:
     default: "."
     type: string
-  test-passed:
-    default: false
-    type: boolean
 
 commands:
   to_service_dir:
@@ -102,6 +99,7 @@ workflows:
         app: << pipeline.parameters.service-path >>-prod
 
   Suppliers-Deployment:
+    when: << pipeline.parameters.run-suppliers-go >>
     pipeline.parameters.service-path: suppliers
     jobs:
     - Lint
