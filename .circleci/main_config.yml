@@ -100,7 +100,7 @@ workflows:
         server: $ARGOCD_SERVER_DEV
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
-        app: << pipeline.parameters.service-path >>
+        app: << pipeline.parameters.service-path >>-prod
 
   Suppliers-Tests:
     when: << pipeline.parameters.run-suppliers-go >>
@@ -131,7 +131,7 @@ workflows:
         server: $ARGOCD_SERVER_DEV
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
-        app: << pipeline.parameters.service-path >>
+        app: << pipeline.parameters.service-path >>-prod
         #TODO change app's name consider the name of the argocd application
 
   # Static Analisis:
