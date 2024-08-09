@@ -20,7 +20,7 @@ executors:
     - image: cimg/go:1.21.6
   node-executor:
     docker:
-    - image: cimg/node:16.14.2
+    - image: cimg/node:21.7.3
 
 
 parameters: 
@@ -157,8 +157,12 @@ jobs:
 
   release:
     executor: node-executor
+    working_directory: ~/repo
     steps:
       - checkout
+      - run:
+          name: Clear NPM Cache
+          command: npm cache clean --force
       - run:
           name: Install dependencies
           command: npm ci
