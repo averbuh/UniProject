@@ -114,7 +114,7 @@ workflows:
         name: suppliers-build-push
         context: [ aws-dev, slack-secrets ]
         repo: suppliers 
-        app: suppliers-prod
+        app: suppliers
 
     - argocd-manual-sync:
         requires: [suppliers-build-push]

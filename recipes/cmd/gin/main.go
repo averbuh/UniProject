@@ -74,9 +74,9 @@ func main() {
 		log.Print("Failed to connect to database: ", err)
 	}
 	store, err := recipes.NewPostgres(db)
-	CheckError(err)
+	recipes.CheckError(err)
 
-	CheckError(store.CreateTestTable(db))
+	recipes.CheckError(store.CreateTestTable(db))
 
 	defer store.CloseDB()
 	if err != nil {
@@ -85,14 +85,14 @@ func main() {
 		log.Print("Connected to database")
 	}
 	// Create new handler
-	recipesHandler := NewRecipesHandler(store, &s3, redis)
+	recipesHandler := recipes.NewRecipesHandler(store, &s3, redis)
 
 	recipesRoutes := map[string]string{
 		"id": "/recipes/:id",
 	}
 
 	// Register Routes
-	router.GET("/", homePage)
+	router.GET("/", recipesHandler.HomePage)
 	router.GET("/recipes", recipesHandler.ListRecipes)
 	router.POST("/recipes", recipesHandler.CreateRecipe)
 	router.POST("/recipes/upload", recipesHandler.UploadImage)
@@ -102,5 +102,7 @@ func main() {
 	router.DELETE(recipesRoutes["id"], recipesHandler.DeleteRecipe)
 
 	// Start the server
-	CheckError(router.Run())
+	err = router.Run()
+	recipes.CheckError(err)
+
 }
