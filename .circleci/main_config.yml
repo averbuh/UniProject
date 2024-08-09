@@ -36,6 +36,9 @@ parameters:
   service-path:
     default: "."
     type: string
+  test-passed:
+    default: false
+    type: boolean
 
 commands:
   to_service_dir:
@@ -73,8 +76,8 @@ commands:
 
 workflows:
 
-  Recipes-Tests:
-    when: << pipeline.parameters.run-recipes-go >>
+  Recipes-Deployment:
+    when: << pipeline.parameters.run-recipes-go >> 
     pipeline.parameters.service-path: recipes
     jobs:
     - Lint
@@ -83,12 +86,8 @@ workflows:
         requires:
         - Lint
         - Test and coverage
-
-  Recipes-Deployment:
-    requires: [Recipes-Tests]
-    pipeline.parameters.service-path: recipes
-    jobs:
     - build_and_push_image:
+        requires: [Sonar]
         name: << pipeline.parameters.service-path >>-build-push
         context: [ aws-dev, slack-secrets ]
         repo: recipes
@@ -102,8 +101,7 @@ workflows:
         password: $ARGOCD_PASSWORD
         app: << pipeline.parameters.service-path >>-prod
 
-  Suppliers-Tests:
-    when: << pipeline.parameters.run-suppliers-go >>
+  Suppliers-Deployment:
     pipeline.parameters.service-path: suppliers
     jobs:
     - Lint
@@ -112,13 +110,8 @@ workflows:
         requires:
         - Lint
         - Test and coverage
-
-
-  Suppliers-Deployment:
-    requires: [Suppliers-Tests]
-    pipeline.parameters.service-path: suppliers
-    jobs:
     - build_and_push_image:
+        requires: [Sonar]
         name: <<pipeline.parameters.service-path >>-build-push
         context: [ aws-dev, slack-secrets ]
         repo: <<pipeline.parameters.service-path >> 
@@ -147,8 +140,7 @@ workflows:
   # Security tests
 
   Create Release:
-    depends: [Recipes-Deployment, Suppliers-Deployment]
-    when: << pipeline.parameters.run-pipeline >>
+    when: << pipeline.parameters.
     jobs:
     - release:
         filters:
