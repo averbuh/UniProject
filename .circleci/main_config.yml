@@ -91,7 +91,7 @@ workflows:
         app: recipes
     - argocd-manual-sync:
         requires: [<< pipeline.parameters.service-path >>-build-push]
-        name: suppliers-manual-sync
+        name: recipes-manual-sync
         context: slack-secrets
         server: $ARGOCD_SERVER_DEV
         username: $ARGOCD_USERNAME
@@ -123,24 +123,12 @@ workflows:
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
         app: << pipeline.parameters.service-path >>-prod
-        #TODO change app's name consider the name of the argocd application
 
-  # Static Analisis:
-  # Integrations Tests: 
-  # Api Checks: 
-  # Create tag: 
-  # Create release on Github:
-  # Sync Production:
-
-  # End-to-End
-  # Smoke Tests
-  # Performance tests
-  # Security tests
-
-  Create Release:
-    when: << pipeline.parameters.
+  Create Release-r:
+    when: << pipeline.parameters.run-recipes-go >>
     jobs:
     - release:
+        requires: [recipes-manual-sync]
         filters:
           branches:
               only: main
