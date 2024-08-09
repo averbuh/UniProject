@@ -10,5 +10,5 @@ type Recipe struct {
 }
 
 type Image struct {
-	Url string `json:"url"`
+	URL string `json:"url"`
 }

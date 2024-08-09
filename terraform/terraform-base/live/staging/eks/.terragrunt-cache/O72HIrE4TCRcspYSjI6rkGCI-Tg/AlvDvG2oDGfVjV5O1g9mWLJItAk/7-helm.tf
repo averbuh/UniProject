@@ -120,6 +120,7 @@ resource "kubernetes_service_account" "s3_access" {
 }
 
 data "kubernetes_service" "nginx_ingress" {
+  depends_on = [ helm_release.nginx ]
   metadata {
     name      = "ingress-nginx-controller"
     namespace ="nginx" 
@@ -127,6 +128,7 @@ data "kubernetes_service" "nginx_ingress" {
 }
 
 locals {
+  depends_on = [ data.kubernetes_service.nginx_ingress ]
   elb_name = regex("^(.*?)-", data.kubernetes_service.nginx_ingress.status[0].load_balancer[0].ingress[0].hostname)[0] 
 }
 

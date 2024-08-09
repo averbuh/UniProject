@@ -71,7 +71,7 @@ func (s S3Store) UploadToS3(filePath string) {
 	fmt.Println("File uploaded successfully!!!")
 }
 
-func (s S3Store) GenerateUrl(key string) Image {
+func (s S3Store) GenerateURL(key string) Image {
 	req, _ := s.svc.GetObjectRequest(&s3.GetObjectInput{
 		Bucket: aws.String(s.bucket),
 		Key:    aws.String(key),
@@ -83,5 +83,5 @@ func (s S3Store) GenerateUrl(key string) Image {
 	}
 
 	log.Println("The URL is", urlStr)
-	return Image{Url: urlStr}
+	return Image{URL: urlStr}
 }

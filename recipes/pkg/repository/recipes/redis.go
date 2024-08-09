@@ -46,7 +46,7 @@ func (r *Redis) GetImageURL(name string) (Image, error) {
 	if err != nil {
 		return Image{}, err
 	}
-	return Image{Url: url}, nil
+	return Image{URL: url}, nil
 }
 
 func (r *Redis) Get(name string) (Recipe, error) {
@@ -58,17 +58,17 @@ func (r *Redis) Get(name string) (Recipe, error) {
 	return recipe, nil
 }
 
-func (r *Redis) List() (map[string]Recipe, error) {
+// func (r *Redis) List() (map[string]Recipe, error) {
 
-	return nil, nil
-}
+// 	return nil, nil
+// }
 
-func (r *Redis) Update(name string, recipe Recipe) error {
+// func (r *Redis) Update(name string, recipe Recipe) error {
 
-	return nil
-}
+// 	return nil
+// }
 
-func (r *Redis) Remove(name string) error {
+// func (r *Redis) Remove(name string) error {
 
-	return nil
-}
+// 	return nil
+// }

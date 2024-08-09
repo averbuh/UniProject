@@ -4,46 +4,389 @@ orbs:
   docker: circleci/docker@2.1.1
   azure-aks: circleci/azure-aks@0.3.0
   gh-cli: circleci/github-cli@2.3.0
+ # helm: circleci/helm@3.0.2
+  aws-ecr: circleci/aws-ecr@9.0.4
+    # aws-eks: circleci/aws-eks@2.2.0
+  aws-cli: circleci/aws-cli@4.1.3
+    # kubernetes: circleci/kubernetes@1.3.0
+  slack: circleci/slack@4.13.3
+  sonarcloud: sonarsource/sonarcloud@2.0.0
+
+
+
+executors:
+  go-executor:
+    docker:
+    - image: cimg/go:1.21.6
+  node-executor:
+    docker:
+    - image: cimg/node:16.14.2
 
 
 parameters: 
   run-pipeline:
     default: false
     type: boolean
+  run-recipes-go:
+    default: false
+    type: boolean
+  run-suppliers-go:
+    default: false
+    type: boolean
+  service-path:
+    default: "."
+    type: string
+
+commands:
+  to_service_dir:
+    parameters:
+      service-path:
+        default: .
+        type: string
+    steps:
+    - run:
+        name: Change directory
+        command: |
+          if [ -z << parameters.service-path >> ]; then
+            echo "Parameter service-path is empty" >&2
+            exit 1
+          fi
+          cd << parameters.service-path >>
+
+
+# Build
+# Push to ECR
+# Unit tests
+# Static Analisis
+# Integration tests (Mock)
+# Api Checks
+# Functional Tests
+# Automated UI tests
+# Create tag
+# Create release on Github
+# Sync Production Env
+# End-to-End
+# Smoke Tests
+# Performance tests
+# Security tests
+
 
 workflows:
+
+  Recipes-Tests:
+    when: << pipeline.parameters.run-recipes-go >>
+    pipeline.parameters.service-path: recipes
+    jobs:
+    - Lint
+    - Test and coverage
+    - Sonar:
+        requires:
+        - Lint
+        - Test and coverage
+
+  Recipes-Deployment:
+    requires: [Recipes-Tests]
+    pipeline.parameters.service-path: recipes
+    jobs:
+    - build_and_push_image:
+        name: << pipeline.parameters.service-path >>-build-push
+        context: [ aws-dev, slack-secrets ]
+        repo: recipes
+        app: recipes
+    - argocd-manual-sync:
+        requires: [<< pipeline.parameters.service-path >>-build-push]
+        name: suppliers-manual-sync
+        context: slack-secrets
+        server: $ARGOCD_SERVER_DEV
+        username: $ARGOCD_USERNAME
+        password: $ARGOCD_PASSWORD
+        app: << pipeline.parameters.service-path >>
+
+  Suppliers-Tests:
+    when: << pipeline.parameters.run-suppliers-go >>
+    pipeline.parameters.service-path: suppliers
+    jobs:
+    - Lint
+    - Test and coverage
+    - Sonar:
+        requires:
+        - Lint
+        - Test and coverage
+
+
+  Suppliers-Deployment:
+    requires: [Suppliers-Tests]
+    pipeline.parameters.service-path: suppliers
+    jobs:
+    - build_and_push_image:
+        name: <<pipeline.parameters.service-path >>-build-push
+        context: [ aws-dev, slack-secrets ]
+        repo: <<pipeline.parameters.service-path >> 
+        app: suppliers
+
+    - argocd-manual-sync:
+        requires: [<<pipeline.parameters.service-path >>-build-push]
+        name: suppliers-manual-sync
+        context: slack-secrets
+        server: $ARGOCD_SERVER_DEV
+        username: $ARGOCD_USERNAME
+        password: $ARGOCD_PASSWORD
+        app: << pipeline.parameters.service-path >>
+        #TODO change app's name consider the name of the argocd application
+
+  # Static Analisis:
+  # Integrations Tests: 
+  # Api Checks: 
+  # Create tag: 
+  # Create release on Github:
+  # Sync Production:
+
+  # End-to-End
+  # Smoke Tests
+  # Performance tests
+  # Security tests
+
   Create Release:
+    depends: [Recipes-Deployment, Suppliers-Deployment]
     when: << pipeline.parameters.run-pipeline >>
     jobs:
-    # - gh-cli/release:
-    #     context: aws-dev
-    #     prerelease: false
-    #     notes-file: changelog.md
-    #     tag: 1.0.0 - release 
-    #     title: The initial release
-      - create_tag
+    - release:
+        filters:
+          branches:
+              only: main
 
 jobs:
-  create_tag:
-    machine:
+  # create_tag:
+  #   machine:
+  #     image: ubuntu-2004:current
+  #   working_directory: ~/repo
+  #   steps:
+  #   - checkout
+  #   - run : 
+  #       name: Choose branch and create tag
+  #       command: |
+  #         if [[ $( git show --oneline | grep "hotfix" ) != ""  ]]; then
+  #           echo "Branch merged from hotfix"
+  #           type=patch
+  #         elif [[ $(git show --oneline | grep "v[0-9].[0-9].[0-9]-release" ) != ""  ]]; then
+  #           echo "Branch merged from release"
+  #           type=minor
+  #         else
+  #           echo "Not merge from release or hotfix"
+  #           type=major
+  #         fi
+  #         new_tag=$(./semantic-versioning.sh $type)
+  #         git push $new_tag 
+
+  release:
+    executor: node-executor
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - run:
+          name: Semantic Release
+          command: npx semantic-release
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+
+  build_and_push_image:
+    machine: 
       image: ubuntu-2004:current
     working_directory: ~/repo
+    parameters:
+      repo:
+        type: string
+      app:
+        type: string
+    steps:
+    - aws-ecr/build_and_push_image:
+        attach_workspace: true
+        auth:
+        - aws-cli/setup:
+          role_arn: arn:aws:iam::975050257492:role/Cirlce-ci-push-ecr
+          aws-region: ${AWS_REGION}
+          # optional parameters
+          role-session-name: "example-session"
+          session-duration: "1800"
+        account_id: ${AWS_ECR_REGISTRY_ID}
+        create_repo: true
+        dockerfile: Dockerfile
+        # executors: base
+        # extra_build_args: '--compress'
+        no_output_timeout: 20m
+        path: ./<< parameters.app >>
+        build_path: ./<< parameters.app >>
+        platform: linux/amd64
+        public_registry: false
+        push_image: true
+        region: ${AWS_REGION}
+        repo: << parameters.repo >> 
+        # repo_encryption_kms_key: arn:aws:kms::123456789012:key/UUID4_OF_KMS_KEY_ID
+        # repo_encryption_type: KMS
+        # repo_policy_path: repo-policy.json
+        repo_scan_on_push: true
+        # set_repo_policy: true
+        skip_when_tags_exist: false
+        # tag: 1.0.0
+        tag: $(echo "v1.0.0-<< pipeline.git.revision >>")
+        # tag: $(echo "1.0.0-<< pipeline.number >>" | sed 's/:/_/g')
+          # Tag the image with the date and time of the build.
+          # This can be done using build automation tools or scripting.
+          # The tag might look like my-app:2024-05-04T1349.
+         
+        # tag: $(if [[ -z "<< pipeline.git.tag >>" ]]; then
+        #         echo "latest";
+        #         else echo "<< pipeline.trigger_parameters.circleci.event_time >><< pipeline.trigger_parameters.github_app.commit_sha >>";
+        #        fi)
+    - slack/notify:
+        event: fail
+        template: basic_fail_1
+    - slack/notify:
+        event: pass
+        template: basic_success_1
+
+  argocd-manual-sync:
+    docker:
+    - image: cimg/base:stable
+    parameters:
+      server:
+        description: |
+          Server IP of ArgoCD
+        type: string
+      username:
+        description: |
+          Username for ArgoCD
+        type: string
+      password:
+        description: |
+          Password for ArgoCD
+        type: string
+      app:
+        type: string
+    steps:
+    - run:
+        name: Install ArgoCD CLI
+        command: |
+          URL=https://<< parameters.server >>/download/argocd-linux-amd64
+          [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
+          $SUDO curl --insecure -sSL -o /usr/local/bin/argocd $URL
+          $SUDO chmod +x /usr/local/bin/argocd
+
+    - run:
+        name: ArgoCD CLI login
+        command: argocd login << parameters.server >> --insecure --username << parameters.username >> --password << parameters.password >>
+
+    - run: 
+        name: Change image tag
+        command: |
+          argocd app set << parameters.app >>-staging --helm-set image.tag=v1.0.0-<< pipeline.git.revision >>
+
+    - run:
+        name: Manual sync
+        command: argocd app sync << parameters.app >>-staging
+    - run:
+        name: Wait for application to reach a synced and healthy state
+        command: argocd app wait << parameters.app >>-staging
+
+    - slack/notify:
+        event: fail
+        template: basic_fail_1 
+    - slack/notify:
+        event: pass
+        template: basic_success_1
+
+
+
+  Lint:
+    working_directory: ~/repo
+    executor: go-executor
     steps:
     - checkout
-    - run : 
-        name: Choose branch and create tag
-        command: |
-          if [[ $( git show --oneline | grep "hotfix" ) != ""  ]]; then
-            echo "Branch merged from hotfix"
-            type=patch
-          elif [[ $(git show --oneline | grep "v[0-9].[0-9].[0-9]-release" ) != ""  ]]; then
-            echo "Branch merged from release"
-            type=minor
-          else
-            echo "Not merge from release or hotfix"
-            type=major
-          fi
-          new_tag=$(./semantic-versioning.sh $type)
-          git push $new_tag 
+    - to_service_dir:
+        service-path: << pipeline.parameters.service-path >>
+    - run:
+        name: Install golangci-lint
+        working_directory: ./<< pipeline.parameters.service-path >>
+        command: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
 
-          
+    - run:
+        name: Run Lint
+        working_directory: ./<< pipeline.parameters.service-path >>
+        command: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
+    - persist_to_workspace:
+        root: ~/repo/<< pipeline.parameters.service-path >>
+        paths:
+        - golanci-report.xml
+
+  Test and coverage:
+    working_directory: ~/repo
+    executor: go-executor
+    resource_class: large
+    steps:
+    - checkout
+    - restore_cache:
+        working_directory: ./<< pipeline.parameters.service-path >>
+        keys:
+        - go-mod-v4-{{ checksum "./<< pipeline.parameters.service-path >>/go.sum" }}
+    - run:
+        working_directory: ./<< pipeline.parameters.service-path >>
+        name: Install Dependencies
+        command: go get ./...
+    - save_cache:
+        working_directory: ./<< pipeline.parameters.service-path >>
+        key: go-mod-v4-{{ checksum "./<< pipeline.parameters.service-path >>/go.sum" }}
+        paths:
+        - "/go/pkg/mod"
+    - run:
+        name: Run unit tests
+        working_directory: ./<< pipeline.parameters.service-path >>
+        command: |
+          mkdir -p /tmp/test-reports
+          gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+
+    - store_test_results:
+        working_directory: ./<< pipeline.parameters.service-path >>
+        path: /tmp/test-reports
+
+    - run:
+        working_directory: ./<< pipeline.parameters.service-path >>
+        name: Create temp dir for artifacts
+        command: mkdir -p /tmp/artifacts
+
+    - run:
+        working_directory: ./<< pipeline.parameters.service-path >>
+        name: Run coverage
+        command: |
+          go test ./... -race -coverprofile=coverage.out -json > report.json
+          go tool cover -html=coverage.out -o coverage.html
+          mv coverage.html /tmp/artifacts
+
+    - store_artifacts:
+        working_directory: ./<< pipeline.parameters.service-path >>
+        path: /tmp/artifacts
+
+    - persist_to_workspace:
+        root: ~/repo/<< pipeline.parameters.service-path >>
+        paths:
+        - coverage.out
+        - report.json
+
+  Sonar:
+    working_directory: ~/repo
+    executor: go-executor
+    steps:
+    - checkout
+    - attach_workspace:
+        at: ~/repo/<< pipeline.parameters.service-path >>
+
+    - sonarcloud/scan:
+        project_root: ./<< pipeline.parameters.service-path >>
+        sonar_token_variable_name: SONAR_TOKEN
+
+
+

@@ -1,17 +1,21 @@
 version: 2.1
 
 orbs:
-  # helm: circleci/helm@3.0.2
-  aws-ecr: circleci/aws-ecr@9.0.4
-    # aws-eks: circleci/aws-eks@2.2.0
-  aws-cli: circleci/aws-cli@4.1.3
-    # docker: circleci/docker@2.1.1
-    # azure-aks: circleci/azure-aks@0.3.0
-    # kubernetes: circleci/kubernetes@1.3.0
-  gh-cli: circleci/github-cli@2.3.0
-  slack: circleci/slack@4.13.3
 
-# fdf
+
+
+#SAST
+#Build
+#Push to ECR
+#Unit tests
+#Static Analisis
+#Integration tests
+#Api checks
+#Functional Tests
+#Automated UI tests
+
+
+
 parameters:
   run-recipes-go:
     default: false 
@@ -25,13 +29,7 @@ parameters:
 
 
 workflows:
-#   Sync Frontend:
-#     when: << pipeline.parameters.run-frontend >>
-#     jobs:
-#     - build_and_push_image:
-#         context: aws-dev
-#         repo: frontend
-  Sync Recipes:
+  Recipes:
     when: << pipeline.parameters.run-recipes-go >>
     jobs:
     - build_and_push_image:
@@ -39,18 +37,14 @@ workflows:
         context: [ aws-dev, slack-secrets ]
         repo: recipes
         app: recipes
+    - unit_tests:
+        name: recipes-unit-tests
+    - integration_tests:
+        name: recipes-integration-tests
+    - api_checks:
+        name: recipes-api-checks
 
-
-    - argocd-manual-sync:
-        requires: [recipes-build-push]
-        name: recipes-manual-sync
-        context: slack-secrets
-        server: $ARGOCD_SERVER_DEV
-        username: $ARGOCD_USERNAME
-        password: $ARGOCD_PASSWORD
-        app: recipes
-
-  Sync Suppliers:
+  Suppliers:
     when: << pipeline.parameters.run-suppliers-go >>
     jobs:
     - build_and_push_image:
@@ -60,21 +54,33 @@ workflows:
         app: suppliers
 
 
-    - argocd-manual-sync:
-        requires: [suppliers-build-push]
-        name: suppliers-manual-sync
-        context: slack-secrets
-        server: $ARGOCD_SERVER_DEV
-        username: $ARGOCD_USERNAME
-        password: $ARGOCD_PASSWORD
-        app: suppliers
-
-  # Create Release Branch:
+      # Create Release Branch:
   #   jobs:
   #   - create_branch_or_tag:
   #       branch_name: "release"
 
 jobs:
+
+  unit_tests:
+    machine: 
+      image: ubuntu-2004:current
+    working_directory: ~/repo
+    steps:
+    - run: echo "Unit tests"
+
+  integration_tests:
+    machine: 
+      image: ubuntu-2004:current
+    working_directory: ~/repo
+    steps:
+    - run: echo "Integration tests"
+  
+  api_checks:
+    machine: 
+      image: ubuntu-2004:current
+    working_directory: ~/repo
+    steps:
+    - run: echo "Api checks"
 
   # create_branch_or_tag:
   #   machine: 
@@ -180,52 +186,3 @@ jobs:
         event: pass
         template: basic_success_1
 
-  argocd-manual-sync:
-    docker:
-    - image: cimg/base:stable
-    parameters:
-      server:
-        description: |
-          Server IP of ArgoCD
-        type: string
-      username:
-        description: |
-          Username for ArgoCD
-        type: string
-      password:
-        description: |
-          Password for ArgoCD
-        type: string
-      app:
-        type: string
-    steps:
-    - run:
-        name: Install ArgoCD CLI
-        command: |
-          URL=https://<< parameters.server >>/download/argocd-linux-amd64
-          [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
-          $SUDO curl --insecure -sSL -o /usr/local/bin/argocd $URL
-          $SUDO chmod +x /usr/local/bin/argocd
-
-    - run:
-        name: ArgoCD CLI login
-        command: argocd login << parameters.server >> --insecure --username << parameters.username >> --password << parameters.password >>
-
-    - run: 
-        name: Change image tag
-        command: |
-          argocd app set << parameters.app >>-staging --helm-set image.tag=v1.0.0-<< pipeline.git.revision >>
-
-    - run:
-        name: Manual sync
-        command: argocd app sync << parameters.app >>-staging
-    - run:
-        name: Wait for application to reach a synced and healthy state
-        command: argocd app wait << parameters.app >>-staging
-
-    - slack/notify:
-        event: fail
-        template: basic_fail_1 
-    - slack/notify:
-        event: pass
-        template: basic_success_1

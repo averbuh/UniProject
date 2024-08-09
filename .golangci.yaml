@@ -1,0 +1,23 @@
+linters:
+  enable:
+    - govet
+    - ineffassign
+    - errcheck
+    - staticcheck
+    - revive
+    - unused
+    - gocyclo
+    - goconst
+    - goimports
+    - dupl
+
+# Optional: Disable specific linters
+
+# linters:
+#   disable:
+#     - maligned
+#     - scopelint
+
+issues:
+  exclude:
+    - "error return value not checked.*(Close|Log|Print|Write|Unlock|Unmarshal|Marshal)"
