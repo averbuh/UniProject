@@ -42,7 +42,8 @@ workflows:
     when: << pipeline.parameters.run-recipes-go >>
     pipeline.parameters.service-path: recipes
     jobs:
-    - Lint
+    - Lint:
+        service-path: recipes
     - Test and coverage
     - Sonar:
         requires:
@@ -53,7 +54,8 @@ workflows:
     when: << pipeline.parameters.run-suppliers-go >>
     pipeline.parameters.service-path: suppliers
     jobs:
-    - Lint
+    - Lint:
+        service-path: suppliers
     - Test and coverage
     - Sonar:
         requires:
@@ -65,11 +67,15 @@ jobs:
   Lint:
     working_directory: ~/repo
     executor: go-executor
+    parameters:
+      service-path:
+        default: .
+        type: string
     steps:
     - checkout
     # step from steps field
     - to_service_dir:
-        service-path: << pipeline.parameters.service-path >>
+        service-path: << parameters.service-path >>
     - run:
         name: Install golangci-lint
         working_directory: ./<< pipeline.parameters.service-path >>

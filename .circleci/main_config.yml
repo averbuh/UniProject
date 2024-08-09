@@ -33,9 +33,6 @@ parameters:
   run-suppliers-go:
     default: false
     type: boolean
-  service-path:
-    default: "."
-    type: string
 
 commands:
   to_service_dir:
@@ -75,54 +72,58 @@ workflows:
 
   Recipes-Deployment:
     when: << pipeline.parameters.run-recipes-go >> 
-    parameters.service-path: recipes
     jobs:
-    - Lint
-    - Test and coverage
+    - Lint:
+        service-path: recipes
+    - Test and coverage:
+        service-path: recipes
     - Sonar:
+        service-path: recipes
         requires:
         - Lint
         - Test and coverage
     - build_and_push_image:
         requires: [Sonar]
-        name: << pipeline.parameters.service-path >>-build-push
+        name: recipes-build-push
         context: [ aws-dev, slack-secrets ]
         repo: recipes
         app: recipes
     - argocd-manual-sync:
-        requires: [<< pipeline.parameters.service-path >>-build-push]
+        requires: [recipes-build-push]
         name: recipes-manual-sync
         context: slack-secrets
         server: $ARGOCD_SERVER_DEV
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
-        app: << pipeline.parameters.service-path >>-prod
+        app: recipes-prod 
 
   Suppliers-Deployment:
     when: << pipeline.parameters.run-suppliers-go >>
-    parameters.service-path: suppliers
     jobs:
-    - Lint
-    - Test and coverage
+    - Lint:
+        service-path: suppliers
+    - Test and coverage:
+        service-path: suppliers 
     - Sonar:
+        service-path: suppliers 
         requires:
         - Lint
         - Test and coverage
     - build_and_push_image:
         requires: [Sonar]
-        name: <<pipeline.parameters.service-path >>-build-push
+        name: suppliers-build-push
         context: [ aws-dev, slack-secrets ]
-        repo: <<pipeline.parameters.service-path >> 
-        app: suppliers
+        repo: suppliers 
+        app: suppliers-prod
 
     - argocd-manual-sync:
-        requires: [<<pipeline.parameters.service-path >>-build-push]
+        requires: [suppliers-build-push]
         name: suppliers-manual-sync
         context: slack-secrets
         server: $ARGOCD_SERVER_DEV
         username: $ARGOCD_USERNAME
         password: $ARGOCD_PASSWORD
-        app: << pipeline.parameters.service-path >>-prod
+        app: suppliers-prod
 
   Create Release:
     jobs:
@@ -281,61 +282,69 @@ jobs:
   Lint:
     working_directory: ~/repo
     executor: go-executor
+    parameters:
+      service-path:
+        default: .
+        type: string
     steps:
     - checkout
     - to_service_dir:
-        service-path: << pipeline.parameters.service-path >>
+        service-path: << parameters.service-path >>
     - run:
         name: Install golangci-lint
-        working_directory: ./<< pipeline.parameters.service-path >>
+        working_directory: ./<< parameters.service-path >>
         command: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
 
     - run:
         name: Run Lint
-        working_directory: ./<< pipeline.parameters.service-path >>
+        working_directory: ./<< parameters.service-path >>
         command: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
     - persist_to_workspace:
-        root: ~/repo/<< pipeline.parameters.service-path >>
+        root: ~/repo/<< parameters.service-path >>
         paths:
         - golanci-report.xml
 
   Test and coverage:
+    parameters:
+      service-path:
+        default: .
+        type: string
     working_directory: ~/repo
     executor: go-executor
     resource_class: large
     steps:
     - checkout
     - restore_cache:
-        working_directory: ./<< pipeline.parameters.service-path >>
+        working_directory: ./<< parameters.service-path >>
         keys:
-        - go-mod-v4-{{ checksum "./<< pipeline.parameters.service-path >>/go.sum" }}
+        - go-mod-v4-{{ checksum "./<< parameters.service-path >>/go.sum" }}
     - run:
-        working_directory: ./<< pipeline.parameters.service-path >>
+        working_directory: ./<< parameters.service-path >>
         name: Install Dependencies
         command: go get ./...
     - save_cache:
-        working_directory: ./<< pipeline.parameters.service-path >>
-        key: go-mod-v4-{{ checksum "./<< pipeline.parameters.service-path >>/go.sum" }}
+        working_directory: ./<< parameters.service-path >>
+        key: go-mod-v4-{{ checksum "./<< parameters.service-path >>/go.sum" }}
         paths:
         - "/go/pkg/mod"
     - run:
         name: Run unit tests
-        working_directory: ./<< pipeline.parameters.service-path >>
+        working_directory: ./<< parameters.service-path >>
         command: |
           mkdir -p /tmp/test-reports
           gotestsum --junitfile /tmp/test-reports/unit-tests.xml
 
     - store_test_results:
-        working_directory: ./<< pipeline.parameters.service-path >>
+        working_directory: ./<< parameters.service-path >>
         path: /tmp/test-reports
 
     - run:
-        working_directory: ./<< pipeline.parameters.service-path >>
+        working_directory: ./<< parameters.service-path >>
         name: Create temp dir for artifacts
         command: mkdir -p /tmp/artifacts
 
     - run:
-        working_directory: ./<< pipeline.parameters.service-path >>
+        working_directory: ./<< parameters.service-path >>
         name: Run coverage
         command: |
           go test ./... -race -coverprofile=coverage.out -json > report.json
@@ -343,25 +352,29 @@ jobs:
           mv coverage.html /tmp/artifacts
 
     - store_artifacts:
-        working_directory: ./<< pipeline.parameters.service-path >>
+        working_directory: ./<< parameters.service-path >>
         path: /tmp/artifacts
 
     - persist_to_workspace:
-        root: ~/repo/<< pipeline.parameters.service-path >>
+        root: ~/repo/<< parameters.service-path >>
         paths:
         - coverage.out
         - report.json
 
   Sonar:
+    parameters:
+      service-path:
+        default: .
+        type: string
     working_directory: ~/repo
     executor: go-executor
     steps:
     - checkout
     - attach_workspace:
-        at: ~/repo/<< pipeline.parameters.service-path >>
+        at: ~/repo/<< parameters.service-path >>
 
     - sonarcloud/scan:
-        project_root: ./<< pipeline.parameters.service-path >>
+        project_root: ./<< parameters.service-path >>
         sonar_token_variable_name: SONAR_TOKEN
 
 
