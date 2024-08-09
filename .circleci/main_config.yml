@@ -124,11 +124,9 @@ workflows:
         password: $ARGOCD_PASSWORD
         app: << pipeline.parameters.service-path >>-prod
 
-  Create Release-r:
-    when: << pipeline.parameters.run-recipes-go >>
+  Create Release:
     jobs:
     - release:
-        requires: [recipes-manual-sync]
         filters:
           branches:
               only: main
