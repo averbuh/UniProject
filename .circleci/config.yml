@@ -12,17 +12,16 @@ workflows:
     - path-filtering/filter:
         filters:
           branches:
-            ignore:
-            - dev
-            - main
-            - /.*release$/
-            - /.*hotfix.*/
+            only:
+            - /^feature/
         name: Push to Feature branch
         config-path: .circleci/feature_config.yml
         base-revision: HEAD
         mapping: |
           recipes/.*\.go$ run-recipes-go true
           suppliers/.*\.go$ run-suppliers-go true
+
+
     - path-filtering/filter:
         filters:
           branches:
@@ -42,6 +41,40 @@ workflows:
 #           .* run-recipes-go true
 #           .* run-suppliers-go true
 #
+
+    - path-filtering/filter:
+        filters:
+          tags:
+            only:
+              - /^rc/
+          branches:
+            ignore: /.*/
+        name: Create release branch
+        config-path: .circleci/create_branch_config.yml
+        base-revision: HEAD
+        mapping: |
+          .circleci/dev_config.yml hello true
+    #
+    #Create branch release/<latest tag>
+    #Create release rc-vX.X.X 
+
+
+
+
+    - path-filtering/filter:
+        filters:
+          branches:
+            only:
+              - /^release/
+        name: Push to Release branch
+        config-path: .circleci/release_config.yml
+        base-revision: HEAD
+        mapping: |
+          .circleci/main_config.yml run-pipeline true
+          .circleci/dev_config.yml run-pipeline true
+          .circleci/config.yml run-pipeline true
+          
+
     - path-filtering/filter:
         filters:
           branches:
@@ -55,18 +88,6 @@ workflows:
           .circleci/dev_config.yml run-pipeline true
           .circleci/config.yml run-pipeline true
 
-    - path-filtering/filter:
-        filters:
-          branches:
-            only:
-              - /.*release$/
-        name: Push to Release branch
-        config-path: .circleci/release_config.yml
-        base-revision: HEAD
-        mapping: |
-          .circleci/main_config.yml run-pipeline true
-          .circleci/dev_config.yml run-pipeline true
-          .circleci/config.yml run-pipeline true
 
 
 # fsd

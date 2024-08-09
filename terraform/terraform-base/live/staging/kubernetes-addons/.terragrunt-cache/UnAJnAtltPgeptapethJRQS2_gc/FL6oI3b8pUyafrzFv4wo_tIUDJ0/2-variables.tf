@@ -34,3 +34,17 @@ variable "openid_provider_arn" {
   description = "IAM Openid Connect Provider ARN"
   type        = string
 }
+# variable "s3_access_manifest" {
+#   description = "S3 manifest path"
+#   type        = string
+# }
+
+# variable "ingress_manifest" {
+#   description = "Ingress manifest path"
+#   type        = string 
+# }
+
+# variable "cert_issuer_manifest" {
+#   description = "Cert issuer manifest path"
+#   type        = string
+# }

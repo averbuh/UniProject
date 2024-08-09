@@ -24,7 +24,7 @@ resource "kubernetes_namespace" "cert-manager" {
     name = "cert-manager"
   }
 
-  depends_on = [aws_eks_cluster.this, helm_release.nginx]
+  depends_on = [ helm_release.nginx]
 }
 resource "helm_release" "cert-manager" {
   name       = "cert-manager"
@@ -41,87 +41,21 @@ resource "helm_release" "cert-manager" {
   depends_on = [kubernetes_namespace.cert-manager]
 }
 
- data "kubernetes_service" "nginx_ingress" {
-  metadata {
-    name      = "ingress-nginx-controller"
-    namespace = kubernetes_namespace.nginx.metadata[0].name
-  }
-  depends_on = [ helm_release.nginx ]
-}
-
-output "nginx_ingress_hostname" {
-  value = data.kubernetes_service.nginx_ingress.status[0].load_balancer[0].ingress[0].hostname
-}
-
-locals {
-  elb_name = regex("^(.*?)-", data.kubernetes_service.nginx_ingress.status[0].load_balancer[0].ingress[0].hostname)[0] 
-}
-
-output "cluster_oidc_url" {
-  value = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
-}
-
-data "aws_elb" "nginx_ingress" {
-  name = local.elb_name
-}
-
-output "elb_dns_name" {
-  value = data.aws_elb.nginx_ingress.dns_name
-}
-
-output "elb_zone_id" {
-  value = data.aws_elb.nginx_ingress.zone_id
-}
-
-output "elb_instances" {
-  value = data.aws_elb.nginx_ingress.instances
-}
-
-data "aws_route53_zone" "host" {
-  name = "${var.route53_zone_name}"
-}
-
-resource "aws_route53_record" "example" {
-  zone_id = data.aws_route53_zone.host.zone_id
-  name    = "${var.route53_record_name}"
-  type    = "A"
-  depends_on = [  data.aws_elb.nginx_ingress ] 
-
-  alias {
-    name                   = data.aws_elb.nginx_ingress.dns_name
-    zone_id                = data.aws_elb.nginx_ingress.zone_id
-    evaluate_target_health = true
-  }
-}
-
-resource "kubernetes_namespace" "apps" {
-  metadata {
-    name = "apps"
-  }
-}
-
-resource "kubernetes_manifest" "cert-issuer" {
-  manifest = yamldecode(file(var.cert_issuer_manifest))
-  depends_on = [ helm_release.cert-manager, kubernetes_namespace.apps ]
-}
-
-resource "kubernetes_manifest" "ingress" {
-  manifest = yamldecode(file(var.ingress_manifest))
-  depends_on = [ data.kubernetes_service.nginx_ingress, kubernetes_namespace.apps ]
-}
-
-output "route53_record_name" {
-  value = aws_route53_record.example.name
-}
-
-
-locals {
+ locals {
   oidc_id = regex("id/([^/]+)$", aws_iam_openid_connect_provider.this[0].url)[0]
 }
 
 output "oidc_id" {
   value = local.oidc_id
 }
+
+resource "kubernetes_namespace" "apps" {
+  depends_on = [ aws_eks_cluster.this ]
+  metadata {
+    name = "apps"
+  }
+}
+
 
 resource "aws_iam_role" "s3_access_role" {
   name = "s3-access-role-${aws_eks_cluster.this.name}"
@@ -138,12 +72,13 @@ resource "aws_iam_role" "s3_access_role" {
         Condition = {
           StringEquals = {
             "oidc.eks.eu-central-1.amazonaws.com/id/${local.oidc_id}:aud" = "sts.amazonaws.com",
-            "oidc.eks.eu-central-1.amazonaws.com/id/${local.oidc_id}:sub" = "system:serviceaccount:${kubernetes_namespace.apps.metadata[0].name}:s3-access"
+            "oidc.eks.eu-central-1.amazonaws.com/id/${local.oidc_id}:sub" = "system:serviceaccount:apps:s3-access"
           }
         }
       }
     ]
   })
+  depends_on = [ aws_eks_cluster.this ]
 }
 
 # Optional: Attach a policy to the role
@@ -173,7 +108,6 @@ resource "aws_iam_role_policy" "s3_access_policy" {
       ]
   })
 }
-
 resource "kubernetes_service_account" "s3_access" {
   depends_on = [ aws_iam_role_policy.s3_access_policy ]
   metadata {
@@ -185,7 +119,41 @@ resource "kubernetes_service_account" "s3_access" {
   }
 }
 
+data "kubernetes_service" "nginx_ingress" {
+  depends_on = [ helm_release.nginx ]
+  metadata {
+    name      = "ingress-nginx-controller"
+    namespace ="nginx" 
+  }
+}
 
+locals {
+  depends_on = [ data.kubernetes_service.nginx_ingress ]
+  elb_name = regex("^(.*?)-", data.kubernetes_service.nginx_ingress.status[0].load_balancer[0].ingress[0].hostname)[0] 
+}
+
+
+data "aws_elb" "nginx_ingress" {
+  name = local.elb_name
+}
+
+
+data "aws_route53_zone" "host" {
+  name = "${var.route53_zone_name}"
+}
+
+resource "aws_route53_record" "example" {
+  zone_id = data.aws_route53_zone.host.zone_id
+  name    = "${var.route53_record_name}"
+  type    = "A"
+  depends_on = [  data.aws_elb.nginx_ingress ] 
+
+  alias {
+    name                   = data.aws_elb.nginx_ingress.dns_name
+    zone_id                = data.aws_elb.nginx_ingress.zone_id
+    evaluate_target_health = true
+  }
+}
 data "aws_ecr_authorization_token" "ecr" {
   registry_id = "975050257492"
 }
@@ -201,11 +169,6 @@ locals {
       }
     }
   })
-}
-
-output "dockerconfigjson_debug" {
-  sensitive = true
-  value = local.dockerconfigjson
 }
 
 resource "kubernetes_secret" "regcred" {

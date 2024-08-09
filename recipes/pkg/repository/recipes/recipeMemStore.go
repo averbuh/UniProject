@@ -3,7 +3,7 @@ package recipes
 import "errors"
 
 var (
-	NotFoundErr = errors.New("not found")
+	ErrFoo = errors.New("not found")
 )
 
 type MemStore struct {
@@ -28,7 +28,7 @@ func (m MemStore) Get(name string) (Recipe, error) {
 		return val, nil
 	}
 
-	return Recipe{}, NotFoundErr
+	return Recipe{}, ErrFoo
 }
 
 func (m MemStore) List() (map[string]Recipe, error) {
@@ -42,7 +42,7 @@ func (m MemStore) Update(name string, recipe Recipe) error {
 		return nil
 	}
 
-	return NotFoundErr
+	return ErrFoo
 }
 
 func (m MemStore) Remove(name string) error {

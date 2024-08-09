@@ -29,6 +29,9 @@ resource "helm_release" "argocd" {
   }
 }
 
+# resource "kubernetes_manifest" "argocd_image_updater" {
+#   manifest = file("./argocd-image-updater.yaml")
+# }
 data "kubernetes_service" "argocd_server" {
   metadata {
     name      = "argocd-server"

@@ -3,6 +3,7 @@ package recipes
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	"context"
 
@@ -16,17 +17,18 @@ type Postgres struct {
 func NewPostgres(db *sql.DB) (*Postgres, error) {
 
 	err := db.Ping()
+	CheckError(err)
 
 	return &Postgres{
 		db: db,
-	}, CheckError(err)
+	}, err
 }
 
-func CheckError(err error) error {
+func CheckError(err error) {
 	if err != nil {
-		return fmt.Errorf("Error: %v", err)
+		log.Fatal(err)
+
 	}
-	return nil
 }
 
 func (p Postgres) CloseDB() {
@@ -58,7 +60,7 @@ func (p Postgres) CreateTestTable(db *sql.DB) error {
 // - error: an error if the insertion fails.
 func (p Postgres) Add(name string, recipe Recipe) error {
 	_, e := func() (sql.Result, error) {
-		var args []any = []any{name, recipe.IsToday, pq.Array(recipe.Ingredients), recipe.Description, recipe.Image}
+		args := []any{name, recipe.IsToday, pq.Array(recipe.Ingredients), recipe.Description, recipe.Image}
 		return p.db.ExecContext(context.Background(), "INSERT INTO recipes VALUES ($1, $2, $3, $4, $5)", args...)
 	}()
 	CheckError(e)
@@ -107,7 +109,7 @@ func (p Postgres) List() (map[string]Recipe, error) {
 
 func (p Postgres) Update(name string, recipe Recipe) error {
 	_, e := func() (sql.Result, error) {
-		var args []any = []any{name, recipe.IsToday, pq.Array(recipe.Ingredients), recipe.Description, recipe.Image}
+		args := []any{name, recipe.IsToday, pq.Array(recipe.Ingredients), recipe.Description, recipe.Image}
 		return p.db.ExecContext(context.Background(), "UPDATE recipes SET istoday = $2, ingredients = $3, description = $4, image = $5 WHERE name = $1", args...)
 	}()
 	CheckError(e)

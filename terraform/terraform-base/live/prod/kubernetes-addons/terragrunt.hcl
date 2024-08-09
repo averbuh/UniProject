@@ -17,6 +17,12 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
+
+  # cert_issuer_manifest = "${get_terragrunt_dir()}/cert-issuer-prod.yaml"
+  # ingress_manifest = "${get_terragrunt_dir()}/ingress-prod.yaml"
+  # s3_access_manifest = "${get_terragrunt_dir()}/s3-serviceAccount.yaml"
+
+
   enable_ebs = true
   provider_url = dependency.eks.outputs.cluster_oidc_issuer_url
 
