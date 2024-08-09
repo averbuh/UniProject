@@ -168,7 +168,8 @@ jobs:
           command: npm ci
       - run:
           name: Semantic Release
-          command: npx semantic-release
+          command:
+            npx semantic-release
       - persist_to_workspace:
           root: .
           paths:
