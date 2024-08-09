@@ -1,3 +1,11 @@
+## [1.0.1](https://github.com/averbuh/UniProject/compare/v1.0.0...v1.0.1) (2024-08-09)
+
+
+### Bug Fixes
+
+* Refine commit-analyzer plugin preset and release rules, update ApplicationSet ([8f721fe](https://github.com/averbuh/UniProject/commit/8f721fe1458ec9fa181d01390a1da6f3d5e5f578))
+* test versioning ([1240ae8](https://github.com/averbuh/UniProject/commit/1240ae84672cbcb3eeb60f25315dd183e11b33f8))
+
 # 1.0.0 (2024-08-09)
 
 
