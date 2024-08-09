@@ -75,7 +75,7 @@ workflows:
 
   Recipes-Deployment:
     when: << pipeline.parameters.run-recipes-go >> 
-    pipeline.parameters.service-path: recipes
+    parameters.service-path: recipes
     jobs:
     - Lint
     - Test and coverage
@@ -100,7 +100,7 @@ workflows:
 
   Suppliers-Deployment:
     when: << pipeline.parameters.run-suppliers-go >>
-    pipeline.parameters.service-path: suppliers
+    parameters.service-path: suppliers
     jobs:
     - Lint
     - Test and coverage
