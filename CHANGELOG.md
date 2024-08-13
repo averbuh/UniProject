@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/averbuh/UniProject/compare/v1.0.2...v1.1.0) (2024-08-13)
+
+
+### Features
+
+* Some changes ([55c78e9](https://github.com/averbuh/UniProject/commit/55c78e98a0cd8307f90d983a91bb294950e4e3eb))
+
 ## [1.0.2](https://github.com/averbuh/UniProject/compare/v1.0.1...v1.0.2) (2024-08-13)
 
 
