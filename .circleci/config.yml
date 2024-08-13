@@ -13,7 +13,7 @@ workflows:
         filters:
           branches:
             only:
-            - /^feature/
+            - /^feature\/.*/
         name: Push to Feature branch
         config-path: .circleci/feature_config.yml
         base-revision: HEAD
