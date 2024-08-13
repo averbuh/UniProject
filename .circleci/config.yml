@@ -44,7 +44,9 @@ workflows:
         filters:
           branches:
             only:
+
               - /^release\/v.*/
+
 
         name: Push to Release branch
         config-path: .circleci/release_config.yml
