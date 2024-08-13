@@ -13,6 +13,13 @@ orbs:
   slack: circleci/slack@4.13.3
 
 
+executors:
+  go-executor:
+    docker:
+    - image: cimg/go:1.21.6
+  node-executor:
+    docker:
+    - image: cimg/node:21.7.3
 
 # Unit tests
 # Build and Push to ECR
@@ -33,9 +40,6 @@ parameters:
     default: false 
     type: boolean
   run-suppliers-go:
-    default: false
-    type: boolean
-  run-frontend:
     default: false
     type: boolean
 
@@ -89,15 +93,9 @@ workflows:
         app: suppliers
 
 
-  Release: 
-   jobs: 
-    - manual-approval:
-      type: approval
-
-  # Create Release Branch:
-  #   jobs:
-  #   - create_branch_or_tag:
-  #       branch_name: "release"
+  Create Release:
+    jobs:
+    - release
 
 jobs:
 
@@ -255,3 +253,22 @@ jobs:
         event: pass
         template: basic_success_1
 
+  release:
+    executor: node-executor
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Clear NPM Cache
+          command: npm cache clean --force
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - run:
+          name: Semantic Release
+          command:
+            npx semantic-release
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
