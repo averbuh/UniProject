@@ -11,6 +11,8 @@ spec:
       elements:
       - cluster: staging-demo
         name: staging
+      - cluster: prod-demo
+        name: prod
       # - cluster: prod-demo
       #   name: prod
   template:
@@ -89,6 +91,8 @@ spec:
       elements:
       - cluster: staging-demo
         name: staging
+      - cluster: prod-demo
+        name: prod
       # - cluster: prod-demo
       #   name: prod
   template:

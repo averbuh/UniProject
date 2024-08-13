@@ -185,6 +185,8 @@ resource "kubernetes_secret" "regcred" {
   type = "kubernetes.io/dockerconfigjson"
 }
 
+
+
 # resource "helm_release" "prometheus_operator" {
 #   name             = "prometheus-operator"
 #   repository       = "https://prometheus-community.github.io/helm-charts"

@@ -37,12 +37,6 @@ workflows:
         context: [ aws-dev, slack-secrets ]
         repo: recipes
         app: recipes
-    - unit_tests:
-        name: recipes-unit-tests
-    - integration_tests:
-        name: recipes-integration-tests
-    - api_checks:
-        name: recipes-api-checks
 
   Suppliers:
     when: << pipeline.parameters.run-suppliers-go >>
@@ -61,28 +55,6 @@ workflows:
 
 jobs:
 
-  unit_tests:
-    machine: 
-      image: ubuntu-2004:current
-    working_directory: ~/repo
-    steps:
-    - run: echo "Unit tests"
-
-  integration_tests:
-    machine: 
-      image: ubuntu-2004:current
-    working_directory: ~/repo
-    steps:
-    - run: echo "Integration tests"
-  
-  api_checks:
-    machine: 
-      image: ubuntu-2004:current
-    working_directory: ~/repo
-    steps:
-    - run: echo "Api checks"
-
-  # create_branch_or_tag:
   #   machine: 
   #     image: ubuntu-2004:current
   #   parameters:
