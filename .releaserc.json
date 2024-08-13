@@ -2,15 +2,8 @@
     "branches": ["main",
     {
       "name": "rc-v*",
-      "prerelease": true
-    },
-    {
-      "name": "beta-v*",
-      "prerelease": true
-    },
-    {
-      "name": "alpha-v*",
-      "prerelease": true
+      "prerelease": true,
+      "channel": "rc"
     }
   ],
     "plugins": [
