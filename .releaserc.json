@@ -1,9 +1,8 @@
 {
     "branches": ["main",
     {
-      "name": "rc",
-      "prerelease": true,
-      "channel": "rc"
+      "name": "rc/*",
+      "prerelease": "${name.replace(/^rc\//g, 'rc-')}"
     }
   ],
     "plugins": [
