@@ -62,7 +62,7 @@ workflows:
         filters:
           branches:
             only:
-              - /^rc\/.*/
+              - /^beta/
         name: Push to Release branch
         config-path: .circleci/release_config.yml
         base-revision: HEAD
