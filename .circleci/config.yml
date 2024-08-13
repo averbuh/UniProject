@@ -39,19 +39,19 @@ workflows:
           .* run-suppliers-go true
 #
 
-    - path-filtering/filter:
-        filters:
-          tags:
-            only:
-              - /^rc/
-          branches:
-            ignore: /.*/
-        name: Create release branch
-        config-path: .circleci/create_branch_config.yml
-        base-revision: HEAD
-        mapping: |
-          .circleci/dev_config.yml hello true
-    #
+    # - path-filtering/filter:
+    #     filters:
+    #       tags:
+    #         only:
+    #           - /^rc/
+    #       branches:
+    #         ignore: /.*/
+    #     name: Create release branch
+    #     config-path: .circleci/create_branch_config.yml
+    #     base-revision: HEAD
+    #     mapping: |
+    #       .circleci/dev_config.yml hello true
+    # #
     #Create branch release/<latest tag>
     #Create release rc-vX.X.X 
 
