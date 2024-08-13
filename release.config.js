@@ -1,5 +1,6 @@
 
 
+
 module.exports = {
     "branches": ['main',
       {
@@ -10,6 +11,7 @@ module.exports = {
         name: 'release/*-beta', // Beta branches like release/v1.2.2-beta
         prerelease: 'beta' // Use 'beta' as the prerelease identifier
       },
+
 
   ],
     "plugins": [

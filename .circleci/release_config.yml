@@ -55,7 +55,7 @@ workflows:
 
   #Unit tests
   Sync Recipes:
-    when: << pipeline.parameters.run-recipes-go >>
+    # when: << pipeline.parameters.run-recipes-go >>
     jobs:
     - build_and_push_image:
         name: recipes-build-push
@@ -74,7 +74,7 @@ workflows:
         app: recipes
 
   Sync Suppliers:
-    when: << pipeline.parameters.run-suppliers-go >>
+    # when: << pipeline.parameters.run-suppliers-go >>
     jobs:
     - build_and_push_image:
         name: suppliers-build-push
