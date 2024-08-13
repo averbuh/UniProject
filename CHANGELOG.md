@@ -1,3 +1,12 @@
+## [1.0.2](https://github.com/averbuh/UniProject/compare/v1.0.1...v1.0.2) (2024-08-13)
+
+
+### Bug Fixes
+
+* .config ([6abf507](https://github.com/averbuh/UniProject/commit/6abf50704b011bff485847e8680d86992c08d22e))
+* config ([497cc10](https://github.com/averbuh/UniProject/commit/497cc10c32df4953b16ff0496549d27e3915f2d3))
+* Merge pull request [#40](https://github.com/averbuh/UniProject/issues/40) from averbuh/feature/some-test ([2a31bf5](https://github.com/averbuh/UniProject/commit/2a31bf5efd107616e8a029f8d9a8cd26d2de7ed3))
+
 ## [1.0.1](https://github.com/averbuh/UniProject/compare/v1.0.0...v1.0.1) (2024-08-09)
 
 
