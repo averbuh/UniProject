@@ -1,7 +1,7 @@
 {
     "branches": ["main",
     {
-      "name": "rc.*",
+      "name": "^rc.*",
       "prerelease": true,
       "channel": "rc"
     }
