@@ -1,4 +1,5 @@
 
+
 module.exports = {
     "branches": ['main',
       {
@@ -19,8 +20,7 @@ module.exports = {
           "releaseRules": [
             { "type": "feat", "release": "minor" },
             { "type": "fix", "release": "patch" },
-            { "type": "BREAKING CHANGE", "release": "major" },
-            { "type": "rc"}
+            { "type": "BREAKING CHANGE", "release": "major" }
           ]
         }
       ],
