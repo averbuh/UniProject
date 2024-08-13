@@ -5,3 +5,6 @@ latest_tag=$(npx semantic-release --dry-run | grep "The next release version is"
 pre_release_branch="prerelease/v${latest_tag}-rc.1"
 git checkout -b $pre_release_branch
 git push origin $pre_release_branch
+
+
+git tag -l 'v?.?.?' --sort=creatordate | tail -n 1
