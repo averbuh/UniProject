@@ -80,8 +80,8 @@ workflows:
         config-path: .circleci/main_config.yml
         base-revision: HEAD
         mapping: |
-          *. run-recipes-go true
-          *. run-suppliers-go true
+          .* run-recipes-go true
+          .* run-suppliers-go true
 
 
 # fsd
