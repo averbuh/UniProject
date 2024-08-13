@@ -1,7 +1,15 @@
 {
     "branches": ["main",
     {
-      "name": "release-v.*",
+      "name": "rc-v*",
+      "prerelease": true
+    },
+    {
+      "name": "beta-v*",
+      "prerelease": true
+    },
+    {
+      "name": "alpha-v*",
       "prerelease": true
     }
   ],
@@ -13,8 +21,7 @@
           "releaseRules": [
             { "type": "feat", "release": "minor" },
             { "type": "fix", "release": "patch" },
-            { "type": "BREAKING CHANGE", "release": "major" },
-            { "type": "rc"}
+            { "type": "BREAKING CHANGE", "release": "major" }
           ]
         }
       ],
