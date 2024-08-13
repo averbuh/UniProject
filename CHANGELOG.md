@@ -1,3 +1,24 @@
+# [1.2.0](https://github.com/averbuh/UniProject/compare/v1.1.0...v1.2.0) (2024-08-13)
+
+
+### Features
+
+* Init ([83ae3d0](https://github.com/averbuh/UniProject/commit/83ae3d0669b160d05c4bd399e1498897e7beb32a))
+* Merge pull request [#42](https://github.com/averbuh/UniProject/issues/42) from averbuh/rc/v1.2.0 ([bcc1390](https://github.com/averbuh/UniProject/commit/bcc139070bb959770d70f73f1c77f690e14dd469))
+* Merge pull request [#43](https://github.com/averbuh/UniProject/issues/43) from averbuh/beta ([8511f17](https://github.com/averbuh/UniProject/commit/8511f17e342fa937e7f608c279a5bad6be4f8410))
+* Refactor branch naming conventions and executor configurations ([bd6f931](https://github.com/averbuh/UniProject/commit/bd6f931a3333bb3b195225d38de64d2359d78b50)), closes [#ISSUE-123](https://github.com/averbuh/UniProject/issues/ISSUE-123)
+* test ([a34e0a3](https://github.com/averbuh/UniProject/commit/a34e0a3b21a8704939c1e22af55b841d52f5baa7))
+* test ([8836509](https://github.com/averbuh/UniProject/commit/8836509427b4bc3d2936fae5e916ad5d6874b4e2))
+* test ([68ba9b4](https://github.com/averbuh/UniProject/commit/68ba9b456b5d62f88638885e8ac8d76c280faab4))
+* test ([b796e17](https://github.com/averbuh/UniProject/commit/b796e172febc129af8c3d2fb367495843d0124ec))
+* test ([a29c61a](https://github.com/averbuh/UniProject/commit/a29c61a94c0ecf5ce4c6fb0a17e9d3dca4094ad1))
+* test ([33d5e00](https://github.com/averbuh/UniProject/commit/33d5e00963ea90014f3067c5692945c6ab1f8842))
+* test ([ffa5263](https://github.com/averbuh/UniProject/commit/ffa5263c73ce6012f115365b29205ce64466163e))
+* test ([654915b](https://github.com/averbuh/UniProject/commit/654915b0775e6937fb1d6447830d558eea222671))
+* test ([6465f29](https://github.com/averbuh/UniProject/commit/6465f2903cdd2dcf38870e626f1e2f6aecbd3d90))
+* test ([e9c3965](https://github.com/averbuh/UniProject/commit/e9c3965779f105b29bc7b4bffde18bd8c7a6f2d3))
+* Update CircleCI config to use 'run-recipes-go' flag instead of 'run-pipeline' to align with actual workflow. This change removes unused 'run-frontend' parameter. (#issue123) ([089c99e](https://github.com/averbuh/UniProject/commit/089c99ed4f044ef1a3cc49859277e29913bd53ab)), closes [#issue123](https://github.com/averbuh/UniProject/issues/issue123)
+
 # [1.2.0-beta.1](https://github.com/averbuh/UniProject/compare/v1.1.0...v1.2.0-beta.1) (2024-08-13)
 
 
