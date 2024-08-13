@@ -67,7 +67,7 @@ workflows:
         config-path: .circleci/release_config.yml
         base-revision: HEAD
         mapping: |
-          .* run-pipeline true
+          .* run-recipes-go true
 
           
 

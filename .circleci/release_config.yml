@@ -42,9 +42,6 @@ parameters:
   run-suppliers-go:
     default: false
     type: boolean
-  run-frontend:
-    default: false
-    type: boolean
 
 
 workflows:
