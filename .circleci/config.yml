@@ -67,7 +67,8 @@ workflows:
         config-path: .circleci/release_config.yml
         base-revision: HEAD
         mapping: |
-          .* run-recipes-go true
+          .* run-recipes-go false
+          .* run-suppliers-go false
 
           
 
