@@ -32,7 +32,17 @@ workflows:
   Recipes:
     when: << pipeline.parameters.run-recipes-go >>
     jobs:
+    - Lint:
+        service-path: recipes
+    - Test and coverage:
+        service-path: recipes
+    - Sonar:
+        service-path: recipes
+        requires:
+        - Lint
+        - Test and coverage
     - build_and_push_image:
+        requires: [Sonar]
         name: recipes-build-push
         context: [ aws-dev, slack-secrets ]
         repo: recipes
@@ -41,7 +51,17 @@ workflows:
   Suppliers:
     when: << pipeline.parameters.run-suppliers-go >>
     jobs:
+    - Lint:
+        service-path: suppliers
+    - Test and coverage:
+        service-path: suppliers
+    - Sonar:
+        service-path: suppliers
+        requires:
+        - Lint
+        - Test and coverage
     - build_and_push_image:
+        requires: [Sonar]
         name: suppliers-build-push
         context: [ aws-dev, slack-secrets ]
         repo: suppliers
@@ -55,53 +75,6 @@ workflows:
 
 jobs:
 
-  #   machine: 
-  #     image: ubuntu-2004:current
-  #   parameters:
-  #     branch_name:
-  #       type: string
-  #   working_directory: ~/repo
-  #   steps:
-  #   - checkout
-  #   - run:
-  #       name: Add tag/branch
-  #       command: |
-         
-  #         if [[ $( git show --oneline | grep "v[0-9].[0-9].[0-9]-release" ) != ""  ]]; then
-  #           echo "Merge from Release branch"
-  #           git fetch --all --tags 
-  #           tag=$(git tag -l 'v[0-9].[0-9].[0-9]-beta.*' --sort=-version:refname | head -n 1)
-  #           beta_version=${tag##*.}
-  #           new_beta_version=$((beta_version + 1))
-  #           # add beta tag
-  #           only_tag=${tag%.*}
-  #           new_tag=$only_tag.$new_beta_version
-  #           git tag $new_tag
-  #           git push origin $new_tag 
-  #         elif [ $( git show --oneline | grep "hotfix" ) != ""  ]]; then
-  #           echo "Merge from Hotfix branch"
-  #         else  
-  #           git fetch --all --tags
-  #           tag=$(git tag -l 'v[0-9].[0-9].[0-9]' --sort=-version:refname | head -n 1)
-  #           version=${tag#"v"}
-  #           IFS=. read -r major minor patch \<<< "$version"
-  #           minor=$((minor + 1))
-  #           patch=0
-  #           tag="v$major.$minor.$patch"
-  #           new_branch_name=$tag-<< parameters.branch_name >>
-  #           if [[ -n "$(git branch --list "$new_branch_name")" ]]; then
-  #             echo "Branch '$new_branch_name' exists locally."
-  #           else
-  #             echo "Branch '$new_branch_name' does not exist locally."
-  #             echo "Creating branch: $new_branch_name"
-  #             git checkout -b $new_branch_name
-  #             git push origin $new_branch_name
-  #             # add beta tag
-  #             git tag $tag-beta.0
-  #             git push origin $tag-beta.0
-  #           fi
-  #         fi
-    
   build_and_push_image:
     machine: 
       image: ubuntu-2004:current
@@ -158,3 +131,202 @@ jobs:
         event: pass
         template: basic_success_1
 
+  argocd-manual-sync:
+    docker:
+    - image: cimg/base:stable
+    parameters:
+      server:
+        description: |
+          Server IP of ArgoCD
+        type: string
+      username:
+        description: |
+          Username for ArgoCD
+        type: string
+      password:
+        description: |
+          Password for ArgoCD
+        type: string
+      app:
+        type: string
+    steps:
+    - run:
+        name: Install ArgoCD CLI
+        command: |
+          URL=https://<< parameters.server >>/download/argocd-linux-amd64
+          [ -w /usr/local/bin ] && SUDO="" || SUDO=sudo
+          $SUDO curl --insecure -sSL -o /usr/local/bin/argocd $URL
+          $SUDO chmod +x /usr/local/bin/argocd
+
+    - run:
+        name: ArgoCD CLI login
+        command: argocd login << parameters.server >> --insecure --username << parameters.username >> --password << parameters.password >>
+
+    - run: 
+        name: Change image tag
+        command: |
+          argocd app set << parameters.app >> --helm-set image.tag=v1.0.0-<< pipeline.git.revision >>
+
+    - run:
+        name: Manual sync
+        command: argocd app sync << parameters.app >>
+    - run:
+        name: Wait for application to reach a synced and healthy state
+        command: argocd app wait << parameters.app >>
+
+    - slack/notify:
+        event: fail
+        template: basic_fail_1 
+    - slack/notify:
+        event: pass
+        template: basic_success_1
+
+
+
+  Lint:
+    working_directory: ~/repo
+    executor: go-executor
+    parameters:
+      service-path:
+        default: .
+        type: string
+    steps:
+    - checkout
+    - to_service_dir:
+        service-path: << parameters.service-path >>
+    - run:
+        name: Install golangci-lint
+        working_directory: ./<< parameters.service-path >>
+        command: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
+
+    - run:
+        name: Run Lint
+        working_directory: ./<< parameters.service-path >>
+        command: golangci-lint run ./... --out-format=checkstyle --print-issued-lines=false --print-linter-name=false --issues-exit-code=0 --enable=revive > golanci-report.xml
+    - persist_to_workspace:
+        root: ~/repo/<< parameters.service-path >>
+        paths:
+        - golanci-report.xml
+
+  Test and coverage:
+    parameters:
+      service-path:
+        default: .
+        type: string
+    working_directory: ~/repo
+    executor: go-executor
+    resource_class: large
+    steps:
+    - checkout
+    - restore_cache:
+        working_directory: ./<< parameters.service-path >>
+        keys:
+        - go-mod-v4-{{ checksum "./<< parameters.service-path >>/go.sum" }}
+    - run:
+        working_directory: ./<< parameters.service-path >>
+        name: Install Dependencies
+        command: go get ./...
+    - save_cache:
+        working_directory: ./<< parameters.service-path >>
+        key: go-mod-v4-{{ checksum "./<< parameters.service-path >>/go.sum" }}
+        paths:
+        - "/go/pkg/mod"
+    - run:
+        name: Run unit tests
+        working_directory: ./<< parameters.service-path >>
+        command: |
+          mkdir -p /tmp/test-reports
+          gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+
+    - store_test_results:
+        working_directory: ./<< parameters.service-path >>
+        path: /tmp/test-reports
+
+    - run:
+        working_directory: ./<< parameters.service-path >>
+        name: Create temp dir for artifacts
+        command: mkdir -p /tmp/artifacts
+
+    - run:
+        working_directory: ./<< parameters.service-path >>
+        name: Run coverage
+        command: |
+          go test ./... -race -coverprofile=coverage.out -json > report.json
+          go tool cover -html=coverage.out -o coverage.html
+          mv coverage.html /tmp/artifacts
+
+    - store_artifacts:
+        working_directory: ./<< parameters.service-path >>
+        path: /tmp/artifacts
+
+    - persist_to_workspace:
+        root: ~/repo/<< parameters.service-path >>
+        paths:
+        - coverage.out
+        - report.json
+
+  Sonar:
+    parameters:
+      service-path:
+        default: .
+        type: string
+    working_directory: ~/repo
+    executor: go-executor
+    steps:
+    - checkout
+    - attach_workspace:
+        at: ~/repo/<< parameters.service-path >>
+
+    - sonarcloud/scan:
+        project_root: ./<< parameters.service-path >>
+        sonar_token_variable_name: SONAR_TOKEN
+
+
+
+  #   machine: 
+  #     image: ubuntu-2004:current
+  #   parameters:
+  #     branch_name:
+  #       type: string
+  #   working_directory: ~/repo
+  #   steps:
+  #   - checkout
+  #   - run:
+  #       name: Add tag/branch
+  #       command: |
+         
+  #         if [[ $( git show --oneline | grep "v[0-9].[0-9].[0-9]-release" ) != ""  ]]; then
+  #           echo "Merge from Release branch"
+  #           git fetch --all --tags 
+  #           tag=$(git tag -l 'v[0-9].[0-9].[0-9]-beta.*' --sort=-version:refname | head -n 1)
+  #           beta_version=${tag##*.}
+  #           new_beta_version=$((beta_version + 1))
+  #           # add beta tag
+  #           only_tag=${tag%.*}
+  #           new_tag=$only_tag.$new_beta_version
+  #           git tag $new_tag
+  #           git push origin $new_tag 
+  #         elif [ $( git show --oneline | grep "hotfix" ) != ""  ]]; then
+  #           echo "Merge from Hotfix branch"
+  #         else  
+  #           git fetch --all --tags
+  #           tag=$(git tag -l 'v[0-9].[0-9].[0-9]' --sort=-version:refname | head -n 1)
+  #           version=${tag#"v"}
+  #           IFS=. read -r major minor patch \<<< "$version"
+  #           minor=$((minor + 1))
+  #           patch=0
+  #           tag="v$major.$minor.$patch"
+  #           new_branch_name=$tag-<< parameters.branch_name >>
+  #           if [[ -n "$(git branch --list "$new_branch_name")" ]]; then
+  #             echo "Branch '$new_branch_name' exists locally."
+  #           else
+  #             echo "Branch '$new_branch_name' does not exist locally."
+  #             echo "Creating branch: $new_branch_name"
+  #             git checkout -b $new_branch_name
+  #             git push origin $new_branch_name
+  #             # add beta tag
+  #             git tag $tag-beta.0
+  #             git push origin $tag-beta.0
+  #           fi
+  #         fi
+    
