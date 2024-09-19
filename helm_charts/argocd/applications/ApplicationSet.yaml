@@ -29,7 +29,7 @@ spec:
       project: default
       source:
         repoURL: https://charts.bitnami.com/bitnami
-        targetRevision: 15.2.5 # For Helm, this refers to the chart version.
+        targetRevision: 15.5.32 # For Helm, this refers to the chart version.
         chart: postgresql # Set this when pulling directly from a Helm repo. DO NOT set for git-hosted Helm charts.
 
         helm:

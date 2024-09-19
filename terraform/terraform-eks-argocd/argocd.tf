@@ -24,6 +24,19 @@ resource "helm_release" "argocd" {
     name = "configs.secret.argocdServerAdminPassword"
     value = "$2a$10$jY88T7TYERd0gihy0ZCN0.6SAaaFyXcN91L/QY9zH1ZbCqTPtfcKa"
   }
+
+  # values = [
+  #   <<EOF
+  #   repoServer:
+  #     resources:
+  #       requests:
+  #         memory: "512Mi"
+  #         cpu: "250m"
+  #       limits:
+  #         memory: "1Gi"
+  #         cpu: "500m"
+  #   EOF
+  # ]
   lifecycle {
     prevent_destroy = true
   }
