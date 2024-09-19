@@ -186,6 +186,109 @@ resource "kubernetes_secret" "regcred" {
 }
 
 
+resource "kubernetes_config_map" "cloudwatch_agent_config" {
+  metadata {
+    name      = "cloudwatch-agent-config"
+    namespace = "kube-system"
+  }
+
+  data = {
+    "cwagent-config.json" = var.cwagent_config_json 
+  }
+}
+
+resource "kubernetes_manifest" "cloudwatch_agent_daemonset" {
+
+  depends_on = [ kubernetes_config_map.cloudwatch_agent_config, aws_eks_cluster.this,  ]
+  lifecycle {
+    ignore_changes = [manifest]
+  }
+  manifest = {
+    apiVersion = "apps/v1"
+    kind       = "DaemonSet"
+    metadata = {
+      name      = "cloudwatch-agent"
+      namespace = "kube-system"
+      labels = {
+        app = "cloudwatch-agent"
+      }
+    }
+    spec = {
+      selector = {
+        matchLabels = {
+          name = "cloudwatch-agent"
+        }
+      }
+      template = {
+        metadata = {
+          labels = {
+            name = "cloudwatch-agent"
+          }
+        }
+        spec = {
+          containers = [
+            {
+              name  = "cloudwatch-agent"
+              image = "amazon/cloudwatch-agent:latest"
+              resources = {
+                limits = {
+                  memory = "200Mi"
+                }
+                requests = {
+                  cpu    = "200m"
+                  memory = "200Mi"
+                }
+              }
+              env = [
+                {
+                  name  = "HOST_IP"
+                  valueFrom = {
+                    fieldRef = {
+                      fieldPath = "status.hostIP"
+                    }
+                  }
+                },
+                {
+                  name  = "HOST_NAME"
+                  valueFrom = {
+                    fieldRef = {
+                      fieldPath = "spec.nodeName"
+                    }
+                  }
+                },
+              ]
+              volumeMounts = [
+                {
+                  name      = "cwagentconfig"
+                  mountPath = "/etc/cwagentconfig"
+                },
+                {
+                  name      = "varlog"
+                  mountPath = "/var/log"
+                }
+              ]
+            }
+          ]
+          volumes = [
+            {
+              name = "cwagentconfig"
+              configMap = {
+                name = kubernetes_config_map.cloudwatch_agent_config.metadata[0].name
+              }
+            },
+            {
+              name = "varlog"
+              hostPath = {
+                path = "/var/log"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+
 
 # resource "helm_release" "prometheus_operator" {
 #   name             = "prometheus-operator"

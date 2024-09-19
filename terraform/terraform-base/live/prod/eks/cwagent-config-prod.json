@@ -1,0 +1,43 @@
+{
+    "metrics": {
+      "namespace": "EKS/ClusterProd",
+      "metrics_collected": {
+        "cpu": {
+          "measurement": [
+            "cpu_usage_idle",
+            "cpu_usage_iowait"
+          ],
+          "metrics_collection_interval": 60
+        },
+        "mem": {
+          "measurement": [
+            "mem_used_percent"
+          ],
+          "metrics_collection_interval": 60
+        },
+        "disk": {
+          "measurement": [
+            "used_percent"
+          ],
+          "metrics_collection_interval": 60,
+          "resources": [
+            "/"
+          ]
+        }
+      }
+    },
+    "logs": {
+      "logs_collected": {
+        "files": {
+          "collect_list": [
+            {
+              "file_path": "/var/log/containers/*.log",
+              "log_group_name": "EKS-Cluster-Logs-Prod",
+              "log_stream_name": "{instance_id}"
+            }
+          ]
+        }
+      }
+    }
+  }
+  

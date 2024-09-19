@@ -48,3 +48,29 @@ data "aws_eks_cluster_auth" "this" {
 
   depends_on = [ aws_eks_cluster.this ]
 }
+
+
+resource "aws_iam_policy" "cloudwatch_agent_policy" {
+  name        = var.cloudwatch_agent_policy_name
+  description = "IAM policy for CloudWatch Agent in EKS"
+  policy      = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams",
+                "logs:GetLogEvents",
+                "cloudwatch:PutMetricData"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+

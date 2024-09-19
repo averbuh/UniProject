@@ -19,3 +19,10 @@ resource "aws_iam_role_policy_attachment" "nodes" {
   policy_arn = each.value
   role       = aws_iam_role.nodes.name
 }
+
+
+
+resource "aws_iam_role_policy_attachment" "eks_nodes_cw_agent_policy" {
+  role       = aws_iam_role.nodes.name
+  policy_arn = aws_iam_policy.cloudwatch_agent_policy.arn
+}
