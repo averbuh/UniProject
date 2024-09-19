@@ -18,7 +18,10 @@ inputs = {
   eks_name    = "demo"
   subnet_ids  = dependency.vpc.outputs.private_subnet_ids
 
+  cloudwatch_agent_policy_name = "CloudWatchAgentPolicyStaging"
   
+  cwagent_config_json = file("./cwagent-config-staging.json")
+
   s3_bucket_name = "test-images-vue"
 
   route53_zone_name = "averbuchpro.com"

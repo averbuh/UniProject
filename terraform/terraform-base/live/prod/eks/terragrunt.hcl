@@ -7,6 +7,7 @@ include "root" {
 }
 
 include "env" {
+
   path           = find_in_parent_folders("env.hcl")
   expose         = true
   merge_strategy = "no_merge"
@@ -17,6 +18,11 @@ inputs = {
   env         = include.env.locals.env
   eks_name    = "demo"
   subnet_ids  = dependency.vpc.outputs.private_subnet_ids
+   
+  cloudwatch_agent_policy_name = "CloudWatchAgentPolicyProd"
+
+
+  cwagent_config_json = file("./cwagent-config-prod.json")
 
   s3_bucket_name = "test-images-vue"
 

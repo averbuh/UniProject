@@ -55,3 +55,14 @@ variable "route53_record_name" {
   type        = string
 }
 
+variable "cloudwatch_agent_policy_name" {
+  description = "CloudWatch Agent policy name"
+  type        = string
+}
+
+
+variable "cwagent_config_json" {
+  description = "CloudWatch Agent config"
+  # file type like file(/path/to/file)
+  type = string
+}
