@@ -22,6 +22,7 @@ resource "aws_iam_role_policy_attachment" "nodes" {
 
 
 
+
 # resource "aws_iam_role_policy_attachment" "eks_nodes_cw_agent_policy" {
 #   count = var.enable_cloudwatch ? 1 : 0
 #   role       = aws_iam_role.nodes.name

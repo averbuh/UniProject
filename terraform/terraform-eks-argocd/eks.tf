@@ -106,7 +106,7 @@ resource "aws_launch_template" "eks_worker" {
   name                   = "worker"
   ebs_optimized          = true
   image_id               = "ami-0f2a073e5c52340a0"
-  instance_type          = "t3.medium"
+  instance_type          = "t3.small"
   key_name               = "ssh"
   update_default_version = true
   vpc_security_group_ids = [aws_security_group.eks_worker.id]

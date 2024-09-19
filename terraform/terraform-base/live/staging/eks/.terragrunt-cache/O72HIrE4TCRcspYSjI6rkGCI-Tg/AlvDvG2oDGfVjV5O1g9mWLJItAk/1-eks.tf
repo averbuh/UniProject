@@ -50,6 +50,7 @@ data "aws_eks_cluster_auth" "this" {
 }
 
 
+
 # resource "aws_iam_policy" "cloudwatch_agent_policy" {
 #   name        = var.cloudwatch_agent_policy_name
 #   description = "IAM policy for CloudWatch Agent in EKS"
@@ -73,4 +74,3 @@ data "aws_eks_cluster_auth" "this" {
 # }
 # EOF
 # }
-

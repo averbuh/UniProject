@@ -186,6 +186,7 @@ resource "kubernetes_secret" "regcred" {
 }
 
 
+
 # resource "kubernetes_config_map" "cloudwatch_agent_config" {
 #   metadata {
 #     name      = "cloudwatch-agent-config"
