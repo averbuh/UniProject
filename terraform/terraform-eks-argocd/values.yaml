@@ -1,47 +1,47 @@
-objstoreConfig: |
-  type: S3
-  config:
-    bucket: "thanos-prometheus-test" # use your own bucket name
-    endpoint: "s3.amazonaws.com"
-    access_key: 
-    secret_key: 
-    insecure: false
+# objstoreConfig: |
+#   type: S3
+#   config:
+#     bucket: "thanos-prometheus-test" # use your own bucket name
+#     endpoint: "s3.amazonaws.com"
+#     access_key: 
+#     secret_key: 
+#     insecure: false
 
-receive:
-  enabled: true
-  config: |
-    type: RECEIVE
-    tsdb:
-      path: /var/thanos/receive
-      retention: 15d
-    label:
-      - name: receive_replica
-        value: $(NAME)
-    web:
-      http:
-        bind_address: 0.0.0.0
-        listen_address: 0.0.0.0:10902
-    remote_read:
-      - url: http://localhost:10901/api/v1/read
-    remote_write:
-      - url: http://localhost:10901/api/v1/write
+# receive:
+#   enabled: true
+#   config: |
+#     type: RECEIVE
+#     tsdb:
+#       path: /var/thanos/receive
+#       retention: 15d
+#     label:
+#       - name: receive_replica
+#         value: $(NAME)
+#     web:
+#       http:
+#         bind_address: 0.0.0.0
+#         listen_address: 0.0.0.0:10902
+#     remote_read:
+#       - url: http://localhost:10901/api/v1/read
+#     remote_write:
+#       - url: http://localhost:10901/api/v1/write
 
-ruler:
-  enabled: false
+# ruler:
+#   enabled: false
 
-compactor:
-  enabled: false
+# compactor:
+#   enabled: false
 
 
 
 admin:
   password: "password"
   user: "admin"
-datasources:
-  datasources.yaml:
-    apiVersion: 1
-    datasources:
-      - name: Thanos
-        type: prometheus
-        url: http://thanos-query.monitoring.svc:10901
-        isDefault: true
+# datasources:
+#   datasources.yaml:
+#     apiVersion: 1
+#     datasources:
+#       - name: Thanos
+#         type: prometheus
+#         url: http://thanos-query.monitoring.svc:10901
+#         isDefault: true
