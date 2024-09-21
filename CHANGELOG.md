@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/averbuh/UniProject/compare/v1.2.2...v1.2.3) (2024-09-21)
+
+
+### Bug Fixes
+
+* test ([938b1ab](https://github.com/averbuh/UniProject/commit/938b1ab900b64cf0826f41df3642fac8f3bcce1f))
+
 ## [1.2.2](https://github.com/averbuh/UniProject/compare/v1.2.1...v1.2.2) (2024-09-21)
 
 
