@@ -1,3 +1,36 @@
+# [1.1.0-beta.1](https://github.com/averbuh/UniProject/compare/v1.0.2...v1.1.0-beta.1) (2024-09-21)
+
+
+### Bug Fixes
+
+* Enable CloudWatch monitoring for EKS workloads, adjust instance type to t3.medium for worker nodes, and update release branch settings. These changes align resource allocations and deployment configurations, enhancing system monitoring and scalability. ([5e0b4a1](https://github.com/averbuh/UniProject/commit/5e0b4a1df8017db070b78199c5a28fb6a54d9e77))
+* Fix branch name configuration for alpha and beta releases ([0407b81](https://github.com/averbuh/UniProject/commit/0407b8155b4fb3c7b79d66aa3b074703193c7d4d))
+* Fix missing comma in release configuration file ([9080b99](https://github.com/averbuh/UniProject/commit/9080b99888c0a03dea72981ff358bd5f95542f96))
+* Fix setting of prerelease values to boolean type in .releaserc.json configuration file. This change corrects the format to ensure proper prerelease handling. ([00b280a](https://github.com/averbuh/UniProject/commit/00b280afe52ca7d4323b7dd9213fa63ec6d83fec))
+* Fix unnecessary commented-out code related to branch filtering in CircleCI configuration. ([ad7e14a](https://github.com/averbuh/UniProject/commit/ad7e14ac86f0d77885703654826c03bc16e06ccb))
+* issue related to unnecessary commented code and add clarifying comment in CircleCI configuration file. ([3120b4d](https://github.com/averbuh/UniProject/commit/3120b4d9c5c3eb902da3024575315443a624fb77))
+* Refine branch naming conventions for alpha and beta releases ([f861d34](https://github.com/averbuh/UniProject/commit/f861d34e5ed300e048597215cb44275d2e77b0a4))
+* some fix ([51babf6](https://github.com/averbuh/UniProject/commit/51babf645f11a7e759c38f9a7cf4de7913cdaa75))
+* some fix ([45074ca](https://github.com/averbuh/UniProject/commit/45074ca229672e3a791ef834719c5482429d1e69))
+
+
+### Features
+
+* Init ([4078178](https://github.com/averbuh/UniProject/commit/407817857ac6bebe3e00706a9b3d55d0e6649324))
+* Refactor branch naming conventions and executor configurations ([985675a](https://github.com/averbuh/UniProject/commit/985675a985c8b4b742f6d4015c7dbd0f284882f2)), closes [#ISSUE-123](https://github.com/averbuh/UniProject/issues/ISSUE-123)
+* Some changes ([71eec89](https://github.com/averbuh/UniProject/commit/71eec8951f6b8169beeb2a41975e01cd2a485a74))
+* test ([77b12c8](https://github.com/averbuh/UniProject/commit/77b12c862beb9facf980f106832cc617c4e9a929))
+* test ([3ee8961](https://github.com/averbuh/UniProject/commit/3ee89611939875819a60c229df6463382a49d765))
+* test ([866651b](https://github.com/averbuh/UniProject/commit/866651bdaa7d01a48a9350bbc7997c1a3f364929))
+* test ([5e02093](https://github.com/averbuh/UniProject/commit/5e0209354576cc66c00afa2d9de5f95faa3457ec))
+* test ([32c4745](https://github.com/averbuh/UniProject/commit/32c4745e595624efbe87054b4a5e03f621f25439))
+* test ([2195b07](https://github.com/averbuh/UniProject/commit/2195b07dbdbe0d62da914133b5419a54a3df5c1a))
+* test ([146036b](https://github.com/averbuh/UniProject/commit/146036b622f891eca2e08b9d54cdf5f16eec7dd2))
+* test ([8ae86cb](https://github.com/averbuh/UniProject/commit/8ae86cbb0f79b524519abc186b332c467d263e6a))
+* test ([6381ac5](https://github.com/averbuh/UniProject/commit/6381ac5f1cfc9718187ffaff1117bcea7085dd9f))
+* test ([40f84df](https://github.com/averbuh/UniProject/commit/40f84df219ee4d6992c0e4cb0094692d3e252716))
+* Update CircleCI config to use 'run-recipes-go' flag instead of 'run-pipeline' to align with actual workflow. This change removes unused 'run-frontend' parameter. (#issue123) ([f5097fc](https://github.com/averbuh/UniProject/commit/f5097fc173e41a738464a501bcb648a5a0cb5be2)), closes [#issue123](https://github.com/averbuh/UniProject/issues/issue123)
+
 ## [1.2.1](https://github.com/averbuh/UniProject/compare/v1.2.0...v1.2.1) (2024-09-21)
 
 
