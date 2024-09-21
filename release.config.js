@@ -1,4 +1,4 @@
-{
+module.exports = {
     "branches": ["main",
     {
       "name": "release*-alpha",
@@ -7,7 +7,7 @@
     {
       "name": "release*-beta",
       "prerelease": true
-    }
+    },
   ],
     "plugins": [
       [
@@ -26,4 +26,4 @@
       "@semantic-release/github",
       "@semantic-release/git"
     ]
-  }
+}
