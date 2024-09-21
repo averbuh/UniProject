@@ -13,7 +13,7 @@ metadata:
 
 # Specification section outlines the details of the application
 spec:
-  project: recipes-suppliers-app # Project to which this application belongs
+  project: default # Project to which this application belongs
 
   # Source section specifies the Git repository details and the desired revision
   source:
@@ -26,8 +26,8 @@ spec:
       - values-frontend.yaml
   # Destination section defines the target Kubernetes cluster and namespace
   destination:
-    name: staging-demo 
-    namespace: apps # Target namespace for deploying the application
+    name: in-cluster 
+    namespace: default # Target namespace for deploying the application
 
   syncPolicy:
       # automated: {} # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.

@@ -21,7 +21,6 @@ inputs = {
    
   cloudwatch_agent_policy_name = "CloudWatchAgentPolicyProd"
 
-
   cwagent_config_json = file("./cwagent-config-prod.json")
 
   s3_bucket_name = "test-images-vue"
