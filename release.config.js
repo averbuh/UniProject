@@ -1,11 +1,11 @@
 module.exports = {
-    "branches": ["main",
+    "branches": ['main',
     {
-      "name": "release*-alpha",
+      "name": 'release*-alpha',
       "prerelease": true
     },
     {
-      "name": "release*-beta",
+      "name": 'release*-beta',
       "prerelease": true
     },
   ],
