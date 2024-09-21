@@ -2,11 +2,11 @@
     "branches": ["main",
     {
       "name": "release/v.*-alpha",
-      "prerelease": "alpha"
+      "prerelease": true
     },
     {
       "name": "release/v.*-beta",
-      "prerelease": "beta"
+      "prerelease": true
     }
   ],
     "plugins": [
