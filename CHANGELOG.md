@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/averbuh/UniProject/compare/v1.2.0...v1.2.1) (2024-09-21)
+
+
+### Bug Fixes
+
+* Enable CloudWatch monitoring for EKS workloads, adjust instance type to t3.medium for worker nodes, and update release branch settings. These changes align resource allocations and deployment configurations, enhancing system monitoring and scalability. ([0b4cbc6](https://github.com/averbuh/UniProject/commit/0b4cbc6a655645006fbd98dd2243d141ba5851a9))
+
 # [1.2.0](https://github.com/averbuh/UniProject/compare/v1.1.0...v1.2.0) (2024-08-13)
 
 
