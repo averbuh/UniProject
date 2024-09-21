@@ -5,7 +5,7 @@ module.exports = {
       "prerelease": true
     },
     {
-      "name": 'release*-beta',
+      "name": 'release/v.*-beta',
       "prerelease": true
     },
   ],
