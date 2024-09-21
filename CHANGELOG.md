@@ -1,3 +1,17 @@
+## [1.2.2](https://github.com/averbuh/UniProject/compare/v1.2.1...v1.2.2) (2024-09-21)
+
+
+### Bug Fixes
+
+* Fix branch name configuration for alpha and beta releases ([49eb4e7](https://github.com/averbuh/UniProject/commit/49eb4e7fc568dad94ab94313afca2d39e8c8c418))
+* Fix missing comma in release configuration file ([b0968a3](https://github.com/averbuh/UniProject/commit/b0968a3243d6fdc9a559ce0ca96b8bc2be457fd2))
+* Fix setting of prerelease values to boolean type in .releaserc.json configuration file. This change corrects the format to ensure proper prerelease handling. ([e338ece](https://github.com/averbuh/UniProject/commit/e338ece7950cdde8260e32f64eff623abd87139b))
+* Fix unnecessary commented-out code related to branch filtering in CircleCI configuration. ([a4ff8fd](https://github.com/averbuh/UniProject/commit/a4ff8fd1db2b744f0ce6f22994f2dba1bffe2b8b))
+* issue related to unnecessary commented code and add clarifying comment in CircleCI configuration file. ([7813d8b](https://github.com/averbuh/UniProject/commit/7813d8b234bb171e48a4469bf7da50a8db19e784))
+* Refine branch naming conventions for alpha and beta releases ([ebe39d6](https://github.com/averbuh/UniProject/commit/ebe39d6656e3cbd9ba2f5c433b77d4fc383a9884))
+* some fix ([20ae929](https://github.com/averbuh/UniProject/commit/20ae92985cd24f543fc10399dc45c5a91dbd9a17))
+* some fix ([3495246](https://github.com/averbuh/UniProject/commit/34952462cdb82446967dbeec2f633ab8d5e39722))
+
 ## [1.2.1](https://github.com/averbuh/UniProject/compare/v1.2.0...v1.2.1) (2024-09-21)
 
 
