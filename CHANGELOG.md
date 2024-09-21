@@ -1,5 +1,26 @@
+# [1.3.0](https://github.com/averbuh/UniProject/compare/v1.2.3...v1.3.0) (2024-09-21)
 
 
+### Bug Fixes
+
+* Enable CloudWatch monitoring for EKS workloads, adjust instance type to t3.medium for worker nodes, and update release branch settings. These changes align resource allocations and deployment configurations, enhancing system monitoring and scalability. ([da74978](https://github.com/averbuh/UniProject/commit/da749782cd4d13c1cc3c34b6e85e29ee406c6094))
+
+
+### Features
+
+* Init ([62501ae](https://github.com/averbuh/UniProject/commit/62501aeb6aa0082a21d068ffdc321801aefc2ad1))
+* Refactor branch naming conventions and executor configurations ([c2027e3](https://github.com/averbuh/UniProject/commit/c2027e35a4e2787f28fe181bc6a19b5c1734f523))
+* Some changes ([092dbe4](https://github.com/averbuh/UniProject/commit/092dbe410f04da5c68fcdc2668e37cc978e7b559))
+* test ([080372e](https://github.com/averbuh/UniProject/commit/080372eaa6589bbd1e173092dc053260c251fcf8))
+* test ([c32c551](https://github.com/averbuh/UniProject/commit/c32c5515010bc506cf1e6b6ac1db0dda8816bb3b))
+* test ([dd1d97b](https://github.com/averbuh/UniProject/commit/dd1d97b6c3314ffdd2da47532393ea2c09aaff79))
+* test ([baf4fcc](https://github.com/averbuh/UniProject/commit/baf4fccdc102b036fee8b371e09ea60e5c11ed22))
+* test ([08ab64b](https://github.com/averbuh/UniProject/commit/08ab64bcb698fd461dfdca5fa2206632390912e5))
+* test ([eea412b](https://github.com/averbuh/UniProject/commit/eea412b37812b6eee429bed366037c4951d6e06c))
+* test ([808e2a6](https://github.com/averbuh/UniProject/commit/808e2a6900cd22e1e0b09e8bee03d13e94bef456))
+* test ([f994f66](https://github.com/averbuh/UniProject/commit/f994f6670a8d4c6f3f441c17fcf2bd15f22adfff))
+* test ([af058e4](https://github.com/averbuh/UniProject/commit/af058e4ba9ba7633ae9971c2351a153e77071bcf))
+* test ([c62dea7](https://github.com/averbuh/UniProject/commit/c62dea7d6293612277c958a8f93fdbfa3c10a752))
 
 # [1.1.0](https://github.com/averbuh/UniProject/compare/v1.0.2...v1.1.0) (2024-08-13)
 
