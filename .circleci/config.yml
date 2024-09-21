@@ -62,13 +62,13 @@ workflows:
         filters:
           branches:
             only:
-              - /^beta/
+              - /^release\/v.*/
         name: Push to Release branch
         config-path: .circleci/release_config.yml
         base-revision: HEAD
         mapping: |
-          .* run-recipes-go false
-          .* run-suppliers-go false
+          .* run-recipes-go true
+          .* run-suppliers-go true
 
           
 
