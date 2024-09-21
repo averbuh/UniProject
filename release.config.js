@@ -1,13 +1,13 @@
 module.exports = {
     "branches": ['main',
-    {
-      "name": 'release*-alpha',
-      "prerelease": true
-    },
-    {
-      "name": 'release/v.*-beta',
-      "prerelease": true
-    },
+      {
+        name: 'release/*-alpha', // Alpha branches
+        prerelease: 'alpha' // Use 'alpha' as the prerelease identifier
+      },
+      {
+        name: 'release/*-beta', // Beta branches like release/v1.2.2-beta
+        prerelease: 'beta' // Use 'beta' as the prerelease identifier
+      },
   ],
     "plugins": [
       [
