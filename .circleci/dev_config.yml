@@ -1,19 +1,26 @@
 version: 2.1
 
 orbs:
+  docker: circleci/docker@2.1.1
+  azure-aks: circleci/azure-aks@0.3.0
+  gh-cli: circleci/github-cli@2.3.0
+ # helm: circleci/helm@3.0.2
+  aws-ecr: circleci/aws-ecr@9.0.4
+    # aws-eks: circleci/aws-eks@2.2.0
+  aws-cli: circleci/aws-cli@4.1.3
+    # kubernetes: circleci/kubernetes@1.3.0
+  slack: circleci/slack@4.13.3
+  sonarcloud: sonarsource/sonarcloud@2.0.0
 
 
 
-#SAST
-#Build
-#Push to ECR
-#Unit tests
-#Static Analisis
-#Integration tests
-#Api checks
-#Functional Tests
-#Automated UI tests
-
+executors:
+  go-executor:
+    docker:
+    - image: cimg/go:1.21.6
+  node-executor:
+    docker:
+    - image: cimg/node:21.7.3
 
 
 parameters:
@@ -26,6 +33,25 @@ parameters:
   run-frontend:
     default: false
     type: boolean
+
+
+
+commands:
+  to_service_dir:
+    parameters:
+      service-path:
+        default: .
+        type: string
+    steps:
+    - run:
+        name: Change directory
+        command: |
+          if [ -z << parameters.service-path >> ]; then
+            echo "Parameter service-path is empty" >&2
+            exit 1
+          fi
+          cd << parameters.service-path >>
+
 
 
 workflows:
