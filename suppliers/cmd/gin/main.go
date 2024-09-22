@@ -86,6 +86,7 @@ func main() {
 	}
 
 	// Register Routes
+	router.GET("/suppliers/home", homePage)
 	router.GET("/suppliers", suppliersHandler.ListSuppliers)
 	router.POST("/suppliers", suppliersHandler.CreateSupplier)
 	router.GET(suppliersRoutes["id"], suppliersHandler.GetSupplier)
@@ -99,7 +100,7 @@ func main() {
 }
 
 func homePage(c *gin.Context) {
-	c.String(http.StatusOK, "This is my home page")
+	c.String(http.StatusOK, "NEW HOME PAGE")
 }
 
 type SuppliersHandler struct {
