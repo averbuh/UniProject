@@ -1,3 +1,10 @@
+## [1.3.1-beta.2](https://github.com/averbuh/UniProject/compare/v1.3.1-beta.1...v1.3.1-beta.2) (2024-09-22)
+
+
+### Bug Fixes
+
+* new release fix 3 ([55d000d](https://github.com/averbuh/UniProject/commit/55d000d1dea1e1e1d9fda18acf40362d45927206))
+
 ## [1.3.1-beta.1](https://github.com/averbuh/UniProject/compare/v1.3.0...v1.3.1-beta.1) (2024-09-22)
 
 
