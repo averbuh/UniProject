@@ -9,10 +9,6 @@ module.exports = {
         name: 'release/*-beta', // Beta branches like release/v1.2.2-beta
         prerelease: 'beta' // Use 'beta' as the prerelease identifier
       },
-
-
-
-
   ],
     "plugins": [
       [
@@ -32,3 +28,5 @@ module.exports = {
       "@semantic-release/git"
     ]
 }
+
+// test versioning 3
